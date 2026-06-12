@@ -1,0 +1,3016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智能电动轮椅系列 - 霸州市骏龙医疗器械有限公司</title>
+  <style>
+    :root {
+      --bg-top: #f6fbff;
+      --bg-bottom: #e9f3ff;
+      --nav-text: #15304d;
+      --headline: #0e2b4c;
+      --sub: #4e6a85;
+      --primary: #0b66c3;
+      --primary-hover: #0856a3;
+      --line: #d6e7f9;
+      --card: rgba(255, 255, 255, 0.74);
+      --soft-blue: rgba(11, 102, 195, 0.1);
+      --green: #167d63;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--headline);
+      background: radial-gradient(circle at 82% 16%, #ffffff 0%, transparent 34%),
+                  radial-gradient(circle at 18% 8%, #ffffff 0%, transparent 28%),
+                  linear-gradient(165deg, var(--bg-top), var(--bg-bottom));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(69, 112, 153, 0.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(69, 112, 153, 0.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, #000 45%, transparent 86%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1220px, 94vw);
+      margin: 0 auto;
+      padding: 22px 0 54px;
+    }
+
+    .top-nav {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--nav-text);
+    }
+
+    .brand-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #40a4ff, #0a5eb6);
+      box-shadow: 0 8px 20px rgba(10, 94, 182, 0.3);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .brand-dot::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      top: 11px;
+      left: 11px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: #35526f;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .hero {
+      min-height: auto;
+      display: block;
+      padding: 76px 0 42px;
+    }
+
+    .hero-copy {
+      max-width: 980px;
+      animation: slide-up 0.72s ease both;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.68);
+      border-radius: 999px;
+      padding: 7px 14px;
+      color: #33506e;
+      font-size: 13px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(3px);
+    }
+
+    .kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #1f8cff;
+      box-shadow: 0 0 0 6px rgba(31, 140, 255, 0.16);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 680px;
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.08;
+      color: var(--headline);
+    }
+
+    .sub {
+      max-width: 760px;
+      margin: 18px 0 0;
+      color: var(--sub);
+      font-size: clamp(15px, 1.8vw, 18px);
+      line-height: 1.8;
+    }
+
+    .cta {
+      margin-top: 30px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 46px;
+      border-radius: 12px;
+      border: 0;
+      padding: 0 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(11, 102, 195, 0.3);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--primary);
+      border: 1px solid #b7d6f5;
+    }
+
+    .btn.ghost:hover {
+      transform: translateY(-2px);
+      background: #fff;
+    }
+
+    .section {
+      padding: 44px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      color: var(--headline);
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.15;
+    }
+
+    .section-head p {
+      max-width: 600px;
+      margin: 10px 0 0;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .filter-spacer {
+      flex: 1 1 160px;
+    }
+
+    .filter-btn {
+      min-height: 38px;
+      border-radius: 999px;
+      border: 1px solid #b7d6f5;
+      background: rgba(255, 255, 255, 0.78);
+      color: #385873;
+      padding: 0 16px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .filter-btn .filter-delete {
+      width: 17px;
+      height: 17px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8px;
+      font-size: 14px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    .filter-add {
+      min-height: 34px;
+      border: 0;
+      background: transparent;
+      color: #0a2f55;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .filter-add::after {
+      content: "+";
+      width: 18px;
+      height: 18px;
+      border: 1px solid #9fc4e8;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      background: #f8fbff;
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .card-category-add {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 3;
+      width: 34px;
+      height: 34px;
+      border: 1px solid #9fc4e8;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(22, 66, 110, 0.14);
+    }
+
+    .card-category-add:hover {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .card-category-select {
+      position: absolute;
+      top: 52px;
+      right: 12px;
+      z-index: 4;
+      width: 148px;
+      max-width: calc(100% - 24px);
+      border: 1px solid #9fc4e8;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 7px 10px;
+      box-shadow: 0 10px 24px rgba(22, 66, 110, 0.16);
+      cursor: pointer;
+    }
+
+    .card-category-select[hidden] {
+      display: none;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .model-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 18px 46px rgba(22, 66, 110, 0.08);
+      display: flex;
+      flex-direction: column;
+      min-height: 430px;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .model-card.image-only {
+      min-height: auto;
+      padding: 20px;
+    }
+
+    .model-card:hover {
+      transform: translateY(-6px);
+      border-color: #a9d2f8;
+      box-shadow: 0 22px 54px rgba(22, 66, 110, 0.13);
+    }
+
+    .model-visual {
+      height: 150px;
+      border-radius: 14px;
+      border: 1px solid #d8e8f8;
+      background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(218,236,255,0.72));
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-only .model-visual {
+      height: 500px;
+      margin-bottom: 18px;
+    }
+
+    .image-only .model-visual img {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      object-fit: cover;
+    }
+
+    .image-only .model-visual img.cover-zoom {
+      transform: scale(1.18);
+      transform-origin: center;
+    }
+
+    .image-only .model-visual img.cover-lift {
+      object-position: center 44%;
+    }
+
+    .image-only .model-visual img.cover-third {
+      object-position: 42% center;
+    }
+
+    .image-only .model-visual img.cover-fourth {
+      object-position: 42% center;
+    }
+
+    .image-only .model-visual img.cover-fifth {
+      object-position: 42% center;
+    }
+
+    .image-only .model-visual img.cover-sixth {
+      object-position: 42% center;
+    }
+
+    .image-only .model-visual img.cover-seventh {
+      object-position: 42% center;
+    }
+
+    .model-visual::before {
+      content: "";
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      border: 14px solid rgba(11, 102, 195, 0.24);
+      box-shadow: 112px 0 0 -14px rgba(11, 102, 195, 0.18);
+      transform: translateX(-42px);
+    }
+
+    .model-visual::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 74px;
+      border: 12px solid rgba(11, 102, 195, 0.72);
+      border-bottom: 0;
+      border-radius: 76px 76px 0 0;
+      transform: translateY(-18px);
+    }
+
+    .model-visual.has-image::before,
+    .model-visual.has-image::after {
+      display: none;
+    }
+
+    .model-visual img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      background: #fff;
+    }
+
+    .model-card h3 {
+      margin: 0 0 8px;
+      color: #102d50;
+      font-size: 23px;
+    }
+
+    .model-tag {
+      margin: 0 0 14px;
+      color: #5d7790;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .model-desc {
+      margin: 0 0 16px;
+      color: var(--sub);
+      line-height: 1.75;
+      flex: 1;
+    }
+
+    .spec-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .spec-row {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid #d8e8f8;
+      color: #607a93;
+      font-size: 13px;
+    }
+
+    .spec-row strong {
+      color: #0a2f55;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .model-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .image-only .model-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .image-only .model-actions .btn {
+      width: 100%;
+      min-width: 0;
+      padding: 0 12px;
+      white-space: nowrap;
+    }
+
+    .viewer-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(8, 27, 48, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .viewer-modal.open {
+      display: flex;
+    }
+
+    .viewer-panel {
+      width: min(980px, 92vw);
+      height: min(720px, 84vh);
+      border-radius: 22px;
+      border: 1px solid rgba(214, 231, 249, 0.9);
+      background: linear-gradient(165deg, #ffffff, #eef7ff);
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.28);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+    }
+
+    .viewer-head,
+    .viewer-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 22px;
+      border-bottom: 1px solid #dbeaf9;
+    }
+
+    .viewer-foot {
+      border-top: 1px solid #dbeaf9;
+      border-bottom: 0;
+      color: #607a93;
+      font-size: 14px;
+    }
+
+    .viewer-title {
+      font-weight: 800;
+      color: #102d50;
+      font-size: 18px;
+    }
+
+    .viewer-close,
+    .viewer-nav {
+      min-width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid #b7d6f5;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 800;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .viewer-close:hover,
+    .viewer-nav:hover {
+      transform: translateY(-1px);
+      background: #fff;
+    }
+
+    .viewer-stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
+      background: #f8fbff;
+    }
+
+    .viewer-stage img {
+      max-width: 92%;
+      max-height: 92%;
+      width: auto;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      pointer-events: none;
+      border-radius: 12px;
+      box-shadow: 0 14px 34px rgba(22, 66, 110, 0.12);
+    }
+
+    .viewer-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .viewer-progress {
+      min-width: 92px;
+      color: #35526f;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .params-panel {
+      width: min(920px, 92vw);
+      max-height: 86vh;
+      border-radius: 22px;
+      border: 1px solid rgba(214, 231, 249, 0.9);
+      background: linear-gradient(165deg, #ffffff, #eef7ff);
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .params-body {
+      padding: 22px;
+      overflow: auto;
+    }
+
+    .params-block {
+      margin-bottom: 18px;
+      border: 1px solid #dbeaf9;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.72);
+      overflow: hidden;
+    }
+
+    .params-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      border-bottom: 1px solid #dbeaf9;
+    }
+
+    .params-row:last-child {
+      border-bottom: 0;
+    }
+
+    .params-label,
+    .params-value {
+      padding: 15px 16px;
+      line-height: 1.65;
+    }
+
+    .params-label {
+      color: #102d50;
+      font-weight: 800;
+      background: rgba(236, 246, 255, 0.82);
+    }
+
+    .params-value {
+      color: #425f79;
+    }
+
+    .feature-placeholder {
+      min-height: 96px;
+      border: 1px dashed #a9d2f8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      color: #7b94aa;
+      background: rgba(255, 255, 255, 0.56);
+      white-space: pre-wrap;
+    }
+
+    .feature-placeholder.is-filled {
+      border-style: solid;
+      color: #425f79;
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .params-section-title {
+      margin: 4px 0 10px;
+      color: #102d50;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .params-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .params-table th,
+    .params-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #dbeaf9;
+      text-align: left;
+      color: #425f79;
+      line-height: 1.5;
+    }
+
+    .params-table th {
+      color: #102d50;
+      background: rgba(246, 185, 66, 0.28);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .params-table tr:last-child th,
+    .params-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .params-edit-toggle {
+      min-height: 34px;
+      border: 1px solid #b7d6f5;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--primary);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    .params-edit-form {
+      display: none;
+      margin-top: 18px;
+      border: 1px solid #dbeaf9;
+      border-radius: 12px;
+      background: rgba(248, 251, 255, 0.92);
+      padding: 16px;
+    }
+
+    .params-edit-form.open {
+      display: block;
+    }
+
+    .params-edit-title {
+      margin-bottom: 12px;
+      color: #102d50;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .params-edit-field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 12px;
+      color: #284765;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .params-edit-field input,
+    .params-edit-field textarea,
+    .params-edit-row input {
+      width: 100%;
+      border: 1px solid #c9ddf1;
+      border-radius: 8px;
+      background: #fff;
+      color: #102d50;
+      font: inherit;
+      padding: 9px 10px;
+      outline: none;
+    }
+
+    .params-edit-field textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .params-edit-rows {
+      display: grid;
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+
+    .params-edit-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .params-edit-remove,
+    .params-edit-add {
+      min-height: 36px;
+      border: 1px solid #c9ddf1;
+      border-radius: 8px;
+      background: #fff;
+      color: #425f79;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .params-edit-remove {
+      color: #b42318;
+      border-color: #f4b8b1;
+    }
+
+    .params-edit-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .params-edit-actions button {
+      min-height: 38px;
+      border: 1px solid #b7d6f5;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--primary);
+      font: inherit;
+      font-weight: 800;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    .params-edit-actions button[type="submit"] {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .options-panel {
+      width: min(960px, calc(100vw - 36px));
+      height: min(780px, calc(100vh - 56px));
+      border-radius: 8px;
+      border: 1px solid #dbeaf9;
+      background: #fff;
+      color: #102d50;
+      box-shadow: 0 26px 80px rgba(8, 27, 48, 0.26);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    }
+
+    .options-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px 8px;
+    }
+
+    .options-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex: 1;
+      min-width: 0;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .options-body {
+      min-height: 0;
+      padding: 14px 18px 20px;
+      overflow: auto;
+    }
+
+    .options-category {
+      margin-bottom: 16px;
+    }
+
+    .options-category-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      min-height: 30px;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .options-category-head > span {
+      min-width: 0;
+    }
+
+    .options-category-actions {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 8px 10px;
+      margin-top: 8px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .option-item {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 1 auto;
+      flex-wrap: nowrap;
+      gap: 6px;
+      max-width: 100%;
+    }
+
+    .option-choice {
+      border: 1px solid #c9ddf1;
+      border-radius: 6px;
+      padding: 5px 9px;
+      color: #425f79;
+      background: #f8fbff;
+      font-size: 14px;
+      line-height: 1.4;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      min-width: 0;
+      max-width: 100%;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .option-choice > span:first-child {
+      min-width: 0;
+    }
+
+    .option-choice.selected {
+      border-color: var(--primary);
+      background: rgba(11, 102, 195, 0.1);
+      color: #102d50;
+      font-weight: 800;
+    }
+
+    .option-price {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .option-default-label {
+      color: #55708a;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .options-empty {
+      margin: 10px 0 0;
+      color: #7b94aa;
+      font-size: 14px;
+    }
+
+    .options-action {
+      border: 0;
+      background: transparent;
+      color: #102d50;
+      padding: 0;
+      font: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .options-action::after {
+      content: "+";
+      width: 18px;
+      height: 18px;
+      border: 1px solid #9fc4e8;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 15px;
+      line-height: 1;
+      background: #f8fbff;
+    }
+
+    .options-action:hover {
+      text-decoration: underline;
+    }
+
+    .options-action.delete {
+      color: #b42318;
+    }
+
+    .options-action.delete::after {
+      content: "×";
+      border-color: #f4b8b1;
+      color: #b42318;
+      background: #fff7f6;
+    }
+
+    .option-mini-action {
+      flex: 0 0 auto;
+      min-height: 28px;
+      border: 1px solid #c9ddf1;
+      border-radius: 6px;
+      background: #fff;
+      color: #425f79;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 0 8px;
+      cursor: pointer;
+    }
+
+    .option-mini-action.delete {
+      color: #b42318;
+      border-color: #f4b8b1;
+    }
+
+    .options-close {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #c9ddf1;
+      border-radius: 50%;
+      background: #f8fbff;
+      color: #102d50;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .options-locked {
+      padding: 0 16px 12px;
+      color: #7b94aa;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .option-edit-form {
+      display: none;
+      margin: 0 16px 12px;
+      padding: 12px;
+      border: 1px solid #dbeaf9;
+      border-radius: 8px;
+      background: #f8fbff;
+    }
+
+    .option-edit-form.open {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-edit-title {
+      color: #102d50;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .option-edit-grid {
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 10px;
+    }
+
+    .option-edit-field {
+      display: grid;
+      gap: 6px;
+      color: #425f79;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .option-edit-field input {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid #c9ddf1;
+      border-radius: 6px;
+      background: #fff;
+      color: #102d50;
+      font: inherit;
+      padding: 0 9px;
+      outline: none;
+    }
+
+    .option-edit-field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11, 102, 195, 0.12);
+    }
+
+    .option-edit-field[hidden] {
+      display: none;
+    }
+
+    .option-edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .option-edit-actions button {
+      min-height: 34px;
+      border-radius: 6px;
+      border: 1px solid #c9ddf1;
+      background: #fff;
+      color: #102d50;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    .option-edit-actions button[type="submit"] {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .options-estimate {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 12px 16px 14px;
+      border-top: 1px solid #dbeaf9;
+      background: #f8fbff;
+      color: #102d50;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .options-estimate strong {
+      color: var(--primary);
+      font-size: 20px;
+    }
+
+    .estimate-edit-button {
+      min-height: 30px;
+      border: 1px solid #c9ddf1;
+      border-radius: 6px;
+      background: #fff;
+      color: #102d50;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    .estimate-edit-button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .compare {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.74);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 46px rgba(22, 66, 110, 0.07);
+    }
+
+    .compare th,
+    .compare td {
+      padding: 16px 18px;
+      text-align: left;
+      border-bottom: 1px solid #dbeaf9;
+      color: #526d87;
+    }
+
+    .compare th {
+      color: #0f2e50;
+      background: rgba(236, 246, 255, 0.78);
+      font-size: 15px;
+    }
+
+    .compare tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .final-cta {
+      margin-top: 18px;
+      min-height: 220px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(219,237,255,0.78));
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 30px;
+      box-shadow: 0 18px 46px rgba(22, 66, 110, 0.08);
+    }
+
+    .final-cta h2 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 4vw, 40px);
+    }
+
+    .final-cta p {
+      margin: 0;
+      max-width: 680px;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(0.95);
+        opacity: 0.58;
+      }
+      50% {
+        transform: scale(1.03);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-14px);
+      }
+    }
+
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .final-cta {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 48px;
+      }
+
+      .models-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: 92vw;
+        padding-top: 10px;
+      }
+
+      .top-nav {
+        min-height: 64px;
+      }
+
+      .brand {
+        font-size: 15px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-bottom: 34px;
+      }
+
+      .compare {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .params-row {
+        grid-template-columns: 1fr;
+      }
+
+      .params-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .option-edit-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .final-cta {
+        padding: 22px;
+      }
+
+      .viewer-modal {
+        padding: 12px;
+      }
+
+      .viewer-panel {
+        height: 84vh;
+      }
+
+      .options-panel {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 24px);
+      }
+
+      .viewer-foot {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .params-edit-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .params-edit-remove {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="./auth.css" />
+  <link rel="stylesheet" href="./footer.css" />
+  <link rel="stylesheet" href="./agent-chat.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="top-nav">
+      <a class="brand" href="index.html#home">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>霸州市骏龙医疗器械有限公司</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#home">首页</a>
+        <a href="index.html#products">产品中心</a>
+        <a class="active" href="electric.html">电动轮椅</a>
+        <a href="manual.html">手动轮椅</a>
+        <a href="factory.html">工厂介绍</a>
+        <a href="staff.html" data-route="employee">员工管理</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="kicker">智能电动轮椅系列</span>
+          <h1>稳定驱动，给复杂路况更多从容</h1>
+          <p class="sub">
+            面向独立出行、护理辅助、机构采购等场景，电动轮椅系列围绕续航、操控、安全制动和舒适乘坐进行配置组合，
+            适合对日常移动半径和操控便利性有更高要求的用户。
+          </p>
+
+          <div class="cta">
+            <a class="btn primary" href="#models">查看型号</a>
+            <a class="btn ghost" href="index.html#products">返回产品中心</a>
+            <a class="btn ghost" href="index.html#contact">联系我们</a>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section class="section" id="models">
+        <div class="section-head">
+          <div>
+            <span class="kicker">型号选择</span>
+            <h2>按使用场景选择电动轮椅</h2>
+            <p>先按轻便折叠、全地形、护理舒适三类进行初选，再根据续航、承重、操控方式和售后维护需求确认配置。</p>
+          </div>
+        </div>
+
+        <div class="filter-bar" aria-label="产品筛选"></div>
+
+        <div class="models-grid">
+          <article class="model-card image-only" data-category="portable">
+            <div class="model-visual has-image">
+              <img class="cover-zoom" src="./assets/products/electric/product-1/dsc-6079.jpg" alt="JL-E100 城市轻便款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product1">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product1">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product1">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="terrain">
+            <div class="model-visual has-image">
+              <img class="cover-lift" src="./assets/products/electric/product-2/dsc-5827.jpg" alt="第二款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product2">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product2">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product2">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="care">
+            <div class="model-visual has-image">
+              <img class="cover-third" src="./assets/products/electric/product-3/dsc-5920.jpg" alt="第三款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product3">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product3">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product3">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="portable">
+            <div class="model-visual has-image">
+              <img class="cover-fourth" src="./assets/products/electric/product-4/dsc-5978.jpg" alt="第四款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product4">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product4">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product4">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="terrain">
+            <div class="model-visual has-image">
+              <img class="cover-fifth" src="./assets/products/electric/product-5/dsc-6034.jpg" alt="第五款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product5">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product5">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product5">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="care">
+            <div class="model-visual has-image">
+              <img class="cover-sixth" src="./assets/products/electric/product-6/dsc-5148.jpg" alt="第六款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product6">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product6">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product6">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="care">
+            <div class="model-visual has-image">
+              <img class="cover-seventh" src="./assets/products/electric/product-7/dsc-4831.jpg" alt="第七款电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product7">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product7">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product7">配置选配</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="compare">
+        <div class="section-head">
+          <div>
+            <span class="kicker">参数对比</span>
+            <h2>快速判断适合哪一款</h2>
+          </div>
+        </div>
+
+        <table class="compare">
+          <thead>
+            <tr>
+              <th>型号</th>
+              <th>定位</th>
+              <th>典型续航</th>
+              <th>推荐用户</th>
+              <th>重点配置</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>JL-E100</td>
+              <td>城市轻便款</td>
+              <td>约 20km</td>
+              <td>日常短途、室内外基础代步</td>
+              <td>折叠车架、轻便收纳</td>
+            </tr>
+            <tr>
+              <td>JL-E200</td>
+              <td>全地形增强款</td>
+              <td>约 35km</td>
+              <td>社区道路、坡道、户外路况</td>
+              <td>增强驱动、稳定轮组</td>
+            </tr>
+            <tr>
+              <td>JL-E300</td>
+              <td>护理舒适款</td>
+              <td>约 28km</td>
+              <td>长期乘坐、家庭护理、康复机构</td>
+              <td>舒适坐垫、护理推行配置</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="final-cta" aria-label="电动轮椅咨询">
+        <div>
+          <h2>需要按使用者情况选型？</h2>
+          <p>
+            可根据身高体重、使用路况、是否需要折叠收纳、续航半径和护理需求，进一步确认电池、摇杆、轮组和坐垫配置。
+          </p>
+        </div>
+        <div class="cta">
+          <a class="btn primary" href="index.html#contact">联系选型</a>
+          <a class="btn ghost" href="index.html#products">返回产品中心</a>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>© 霸州市骏龙医疗器械有限公司 版权所有</span>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">冀ICP备2026020752号-1</a>
+        <!-- 公安联网备案号通过审核后可在此处追加公网安备链接。 -->
+      </div>
+    </footer>
+  </div>
+
+  <div class="viewer-modal" id="wheelchairViewer" aria-hidden="true">
+    <div class="viewer-panel" role="dialog" aria-modal="true" aria-label="JL-E100 详细观察">
+      <div class="viewer-head">
+        <div class="viewer-title" id="viewerTitle">JL-E100 详细观察</div>
+        <button class="viewer-close" type="button" data-viewer-close aria-label="关闭">×</button>
+      </div>
+      <div class="viewer-stage" id="viewerStage">
+        <img id="viewerImage" src="./assets/products/electric/product-1/dsc-6079.jpg" alt="JL-E100 电动轮椅详细观察" draggable="false" />
+      </div>
+      <div class="viewer-foot">
+        <span>点击图片或右箭头查看下一张，左箭头查看上一张。</span>
+        <div class="viewer-controls">
+          <button class="viewer-nav" type="button" data-viewer-prev aria-label="上一张">‹</button>
+          <button class="viewer-nav" type="button" data-viewer-next aria-label="下一张">›</button>
+          <span class="viewer-progress" id="viewerProgress">1 / 39</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="viewer-modal" id="paramsModal" aria-hidden="true">
+    <div class="params-panel" role="dialog" aria-modal="true" aria-label="产品相关参数">
+      <div class="viewer-head">
+        <div class="viewer-title">相关参数</div>
+        <div class="viewer-controls">
+          <button class="params-edit-toggle auth-only" type="button" data-params-edit-toggle>修改参数</button>
+          <button class="viewer-close" type="button" data-params-close aria-label="关闭">×</button>
+        </div>
+      </div>
+      <div class="params-body">
+        <div class="params-block">
+          <div class="params-row">
+            <div class="params-label">产品名称</div>
+            <div class="params-value" id="paramsProductName">JL100W-01B-02</div>
+          </div>
+          <div class="params-row">
+            <div class="params-label">特点</div>
+            <div class="params-value">
+              <div class="feature-placeholder" id="paramsFeature">特点内容预留位置</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="params-section-title">产品参数</div>
+        <table class="params-table" aria-label="产品参数">
+          <tbody id="paramsTableBody">
+            <tr>
+              <th>展开尺寸</th>
+              <td>1020*630*830mm</td>
+              <th>载重</th>
+              <td>100kg</td>
+            </tr>
+            <tr>
+              <th>座宽</th>
+              <td>450mm</td>
+              <th>前轮/后轮</th>
+              <td>8寸/12寸</td>
+            </tr>
+            <tr>
+              <th>座深</th>
+              <td>430mm</td>
+              <th>扶手离地</th>
+              <td>720mm</td>
+            </tr>
+            <tr>
+              <th>座高</th>
+              <td>450mm</td>
+              <th>扶手离座</th>
+              <td>220mm</td>
+            </tr>
+            <tr>
+              <th>靠背高</th>
+              <td>370mm</td>
+              <th>净重</th>
+              <td>30kg</td>
+            </tr>
+            <tr>
+              <th>折叠尺寸</th>
+              <td>750*360*710mm</td>
+              <th>毛重</th>
+              <td>33.5kg</td>
+            </tr>
+            <tr>
+              <th>包装尺寸</th>
+              <td>750*410*780mm</td>
+              <th>车架材质</th>
+              <td>碳钢喷塑</td>
+            </tr>
+          </tbody>
+        </table>
+        <form class="params-edit-form auth-only" data-params-edit-form>
+          <div class="params-edit-title">修改相关参数</div>
+          <label class="params-edit-field">
+            产品名称
+            <input type="text" data-params-name required />
+          </label>
+          <label class="params-edit-field">
+            特点
+            <textarea data-params-feature placeholder="请输入产品特点"></textarea>
+          </label>
+          <div class="params-edit-title">参数表</div>
+          <div class="params-edit-rows" data-params-edit-rows></div>
+          <button class="params-edit-add" type="button" data-params-add-row>添加参数行</button>
+          <div class="params-edit-actions">
+            <button type="submit">保存修改</button>
+            <button type="button" data-params-edit-cancel>取消</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="viewer-modal" id="optionsModal" aria-hidden="true">
+    <div class="options-panel" role="dialog" aria-modal="true" aria-label="可选配置">
+      <div class="options-head">
+        <div class="options-title-row">
+          <span>可选配置</span>
+          <button class="options-action auth-only" type="button" data-add-category>添加新种类</button>
+        </div>
+        <button class="options-close" type="button" data-options-close aria-label="关闭">×</button>
+      </div>
+      <div class="options-locked" data-options-locked>授权账号登录后可添加、删除种类和配置。</div>
+      <form class="option-edit-form" data-option-form>
+        <div class="option-edit-title">添加配置</div>
+        <div class="option-edit-grid">
+          <label class="option-edit-field">
+            内容：
+            <input name="optionName" type="text" autocomplete="off" data-option-name required />
+          </label>
+          <label class="option-edit-field" data-option-price-field>
+            +￥：
+            <input name="optionPrice" type="number" min="0" step="0.01" value="0" data-option-price required />
+          </label>
+        </div>
+        <div class="option-edit-actions">
+          <button type="submit">确定</button>
+          <button type="button" data-option-form-cancel>取消</button>
+        </div>
+      </form>
+      <div class="options-body" id="optionsBody"></div>
+      <div class="options-estimate">
+        <span>预估价：</span>
+        <strong id="optionsEstimate">￥0</strong>
+        <button class="estimate-edit-button auth-only" type="button" data-estimate-edit>修改</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./agent-chat.js"></script>
+  <script src="./auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const filterBar = document.querySelector(".filter-bar");
+      const cards = Array.from(document.querySelectorAll(".model-card"));
+      const FILTERS_KEY = "junlongElectricFilters";
+      const CARD_CATEGORIES_KEY = "junlongElectricCardCategories";
+      const defaultFilters = [
+        { key: "all", label: "全部", locked: true },
+        { key: "portable", label: "轻便折叠" },
+        { key: "terrain", label: "全地形" },
+        { key: "care", label: "护理舒适" }
+      ];
+      let activeFilter = "all";
+
+      function readFilters() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(FILTERS_KEY) || "null");
+          return Array.isArray(stored) && stored.length ? stored : defaultFilters;
+        } catch (error) {
+          return defaultFilters;
+        }
+      }
+
+      function saveFilters(filters) {
+        localStorage.setItem(FILTERS_KEY, JSON.stringify(filters));
+      }
+
+      function readCardCategories() {
+        try {
+          return JSON.parse(localStorage.getItem(CARD_CATEGORIES_KEY) || "{}");
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function saveCardCategories(categories) {
+        localStorage.setItem(CARD_CATEGORIES_KEY, JSON.stringify(categories));
+      }
+
+      function getCardKey(card, index) {
+        return card.querySelector("[data-params-open]")?.dataset.paramsOpen || `card-${index}`;
+      }
+
+      function canManageFilters() {
+        return Boolean(window.JunlongAuth && window.JunlongAuth.isAuthorized());
+      }
+
+      function applyFilter(filter) {
+        activeFilter = filter;
+        cards.forEach((card) => {
+          const visible = filter === "all" || card.dataset.category === filter;
+          card.style.display = visible ? "flex" : "none";
+        });
+      }
+
+      function applyStoredCardCategories() {
+        const categories = readCardCategories();
+        cards.forEach((card, index) => {
+          const savedCategory = categories[getCardKey(card, index)];
+          if (savedCategory) card.dataset.category = savedCategory;
+        });
+      }
+
+      function renderCategoryAssignButtons() {
+        const canManage = canManageFilters();
+        cards.forEach((card, index) => {
+          const visual = card.querySelector(".model-visual");
+          if (!visual) return;
+          let button = visual.querySelector("[data-card-category-index]");
+          if (!button) {
+            button = document.createElement("button");
+            button.className = "card-category-add auth-only";
+            button.type = "button";
+            button.textContent = "+";
+            button.setAttribute("aria-label", "设置产品种类");
+            button.dataset.cardCategoryIndex = String(index);
+            visual.appendChild(button);
+          }
+          let select = visual.querySelector("[data-card-category-select]");
+          if (!select) {
+            select = document.createElement("select");
+            select.className = "card-category-select auth-only";
+            select.dataset.cardCategorySelect = String(index);
+            select.hidden = true;
+            visual.appendChild(select);
+          }
+          const filters = readFilters().filter((filter) => filter.key !== "all");
+          select.innerHTML = `<option value="">选择种类</option>${filters.map((filter) => `
+            <option value="${filter.key}">${escapeHtml(filter.label)}</option>
+          `).join("")}`;
+          select.value = filters.some((filter) => filter.key === card.dataset.category) ? card.dataset.category : "";
+          button.style.display = canManage ? "" : "none";
+          select.style.display = canManage ? "" : "none";
+          if (!canManage) select.hidden = true;
+        });
+      }
+
+      function closeCategorySelects(exceptSelect) {
+        document.querySelectorAll("[data-card-category-select]").forEach((select) => {
+          if (select !== exceptSelect) select.hidden = true;
+        });
+      }
+
+      function assignCardCategory(index, selectedKey) {
+        if (!canManageFilters()) return;
+        const filters = readFilters().filter((filter) => filter.key !== "all");
+        if (!filters.length) {
+          window.alert("请先添加可用种类。");
+          return;
+        }
+        const selected = filters.find((filter) => filter.key === selectedKey);
+        if (!selected) return;
+        const categories = readCardCategories();
+        const card = cards[index];
+        categories[getCardKey(card, index)] = selected.key;
+        saveCardCategories(categories);
+        card.dataset.category = selected.key;
+        applyFilter(activeFilter);
+        renderFilters();
+        renderCategoryAssignButtons();
+        closeCategorySelects();
+      }
+
+      function renderFilters() {
+        const canManage = canManageFilters();
+        const filters = readFilters();
+        filterBar.innerHTML = filters.map((filter) => `
+          <button class="filter-btn ${filter.key === activeFilter ? "active" : ""}" type="button" data-filter="${filter.key}">
+            <span>${escapeHtml(filter.label)}</span>
+            ${canManage && !filter.locked ? `<span class="filter-delete" data-filter-delete="${filter.key}" aria-label="删除${escapeHtml(filter.label)}">-</span>` : ""}
+          </button>
+        `).join("") + `<span class="filter-spacer"></span>${canManage ? `<button class="filter-add" type="button" data-filter-add>添加新种类</button>` : ""}`;
+      }
+
+      filterBar.addEventListener("click", (event) => {
+        const deleteButton = event.target.closest("[data-filter-delete]");
+        if (deleteButton) {
+          event.stopPropagation();
+          const key = deleteButton.dataset.filterDelete;
+          const filters = readFilters();
+          const item = filters.find((filter) => filter.key === key);
+          if (!item || item.locked) return;
+          if (!window.confirm(`确定删除“${item.label}”吗？`)) return;
+          const nextFilters = filters.filter((filter) => filter.key !== key);
+          saveFilters(nextFilters);
+          if (activeFilter === key) applyFilter("all");
+          renderFilters();
+          return;
+        }
+
+        if (event.target.closest("[data-filter-add]")) {
+          if (!canManageFilters()) return;
+          const label = window.prompt("请输入新种类名称");
+          if (!label || !label.trim()) return;
+          const filters = readFilters();
+          const key = `custom-${Date.now()}`;
+          filters.push({ key, label: label.trim() });
+          saveFilters(filters);
+          renderFilters();
+          return;
+        }
+
+        const button = event.target.closest("[data-filter]");
+        if (!button) return;
+        applyFilter(button.dataset.filter);
+        renderFilters();
+      });
+
+      document.addEventListener("click", (event) => {
+        const assignButton = event.target.closest("[data-card-category-index]");
+        if (assignButton) {
+          event.stopPropagation();
+          const visual = assignButton.closest(".model-visual");
+          const select = visual ? visual.querySelector("[data-card-category-select]") : null;
+          if (!select) return;
+          closeCategorySelects(select);
+          select.hidden = !select.hidden;
+          if (!select.hidden) select.focus();
+          return;
+        }
+
+        const categorySelect = event.target.closest("[data-card-category-select]");
+        if (categorySelect) {
+          event.stopPropagation();
+          return;
+        }
+
+        closeCategorySelects();
+      });
+
+      document.addEventListener("change", (event) => {
+        const categorySelect = event.target.closest("[data-card-category-select]");
+        if (!categorySelect) return;
+        assignCardCategory(Number(categorySelect.dataset.cardCategorySelect), categorySelect.value);
+      });
+
+      window.addEventListener("junlong-auth-change", () => {
+        renderFilters();
+        renderCategoryAssignButtons();
+      });
+      applyStoredCardCategories();
+      renderFilters();
+      renderCategoryAssignButtons();
+      applyFilter(activeFilter);
+
+      const galleryImageName = (name) => name.toLowerCase().replace(/^dsc_/, "dsc-");
+
+      const galleries = {
+        product1: {
+          title: "JL-E100 详细观察",
+          start: 1,
+          frames: [
+            "DSC_6078.JPG", "DSC_6079.JPG", "DSC_6080.JPG", "DSC_6081.JPG", "DSC_6082.JPG",
+            "DSC_6083.JPG", "DSC_6084.JPG", "DSC_6086.JPG", "DSC_6087.JPG", "DSC_6088.JPG",
+            "DSC_6089.JPG", "DSC_6090.JPG", "DSC_6091.JPG", "DSC_6092.JPG", "DSC_6093.JPG",
+            "DSC_6094.JPG", "DSC_6095.JPG", "DSC_6096.JPG", "DSC_6097.JPG", "DSC_6098.JPG",
+            "DSC_6099.JPG", "DSC_6100.JPG", "DSC_6101.JPG", "DSC_6103.JPG", "DSC_6104.JPG",
+            "DSC_6105.JPG", "DSC_6106.JPG", "DSC_6107.JPG", "DSC_6108.JPG", "DSC_6109.JPG",
+            "DSC_6110.JPG", "DSC_6111.JPG", "DSC_6112.JPG", "DSC_6113.JPG", "DSC_6114.JPG",
+            "DSC_6115.JPG", "DSC_6117.JPG", "DSC_6120.JPG", "DSC_6121.JPG"
+          ].map((name) => `./assets/products/electric/product-1/${galleryImageName(name)}`)
+        },
+        product2: {
+          title: "第二款电动轮椅 详细观察",
+          start: 4,
+          frames: [
+            "DSC_5818.JPG", "DSC_5819.JPG", "DSC_5820.JPG", "DSC_5822.JPG", "DSC_5827.JPG",
+            "DSC_5828.JPG", "DSC_5829.JPG", "DSC_5830.JPG", "DSC_5831.JPG", "DSC_5832.JPG",
+            "DSC_5833.JPG", "DSC_5834.JPG", "DSC_5835.JPG", "DSC_5836.JPG", "DSC_5837.JPG",
+            "DSC_5838.JPG", "DSC_5839.JPG", "DSC_5840.JPG", "DSC_5841.JPG", "DSC_5842.JPG",
+            "DSC_5843.JPG", "DSC_5844.JPG", "DSC_5846.JPG", "DSC_5847.JPG", "DSC_5849.JPG",
+            "DSC_5851.JPG", "DSC_5852.JPG", "DSC_5853.JPG", "DSC_5854.JPG", "DSC_5855.JPG",
+            "DSC_5858.JPG", "DSC_5859.JPG", "DSC_5860.JPG", "DSC_5861.JPG", "DSC_5862.JPG",
+            "DSC_5863.JPG", "DSC_5864.JPG", "DSC_5865.JPG", "DSC_5866.JPG", "DSC_5867.JPG",
+            "DSC_5868.JPG", "DSC_5870.JPG", "DSC_5871.JPG", "DSC_5873.JPG", "DSC_5875.JPG",
+            "DSC_5876.JPG"
+          ].map((name) => `./assets/products/electric/product-2/${galleryImageName(name)}`)
+        },
+        product3: {
+          title: "第三款电动轮椅 详细观察",
+          start: 4,
+          frames: [
+            "DSC_5878.JPG", "DSC_5879.JPG", "DSC_5881.JPG", "DSC_5919.JPG", "DSC_5920.JPG",
+            "DSC_5921.JPG", "DSC_5922.JPG", "DSC_5923.JPG", "DSC_5924.JPG", "DSC_5925.JPG",
+            "DSC_5926.JPG", "DSC_5927.JPG", "DSC_5928.JPG", "DSC_5929.JPG", "DSC_5930.JPG",
+            "DSC_5931.JPG", "DSC_5932.JPG", "DSC_5934.JPG", "DSC_5935.JPG", "DSC_5937.JPG",
+            "DSC_5938.JPG", "DSC_5939.JPG", "DSC_5940.JPG", "DSC_5941.JPG", "DSC_5942.JPG",
+            "DSC_5943.JPG", "DSC_5944.JPG", "DSC_5945.JPG", "DSC_5946.JPG", "DSC_5947.JPG",
+            "DSC_5948.JPG", "DSC_5950.JPG", "DSC_5951.JPG", "DSC_5952.JPG", "DSC_5953.JPG",
+            "DSC_5954.JPG", "DSC_5955.JPG", "DSC_5956.JPG", "DSC_5958.JPG", "DSC_5959.JPG",
+            "DSC_5960.JPG", "DSC_5961.JPG", "DSC_5964.JPG", "DSC_5965.JPG", "DSC_5966.JPG",
+            "DSC_5967.JPG", "DSC_5968.JPG"
+          ].map((name) => `./assets/products/electric/product-3/${galleryImageName(name)}`)
+        },
+        product4: {
+          title: "第四款电动轮椅 详细观察",
+          start: 4,
+          frames: [
+            "DSC_5972.JPG", "DSC_5973.JPG", "DSC_5974.JPG", "DSC_5977.JPG", "DSC_5978.JPG",
+            "DSC_5979.JPG", "DSC_5980.JPG", "DSC_5981.JPG", "DSC_5982.JPG", "DSC_5983.JPG",
+            "DSC_5984.JPG", "DSC_5985.JPG", "DSC_5986.JPG", "DSC_5987.JPG", "DSC_5988.JPG",
+            "DSC_5989.JPG", "DSC_5990.JPG", "DSC_5991.JPG", "DSC_5992.JPG", "DSC_5993.JPG",
+            "DSC_5995.JPG", "DSC_5997.JPG", "DSC_5998.JPG", "DSC_6003.JPG", "DSC_6004.JPG",
+            "DSC_6006.JPG", "DSC_6007.JPG", "DSC_6009.JPG", "DSC_6010.JPG", "DSC_6011.JPG",
+            "DSC_6012.JPG", "DSC_6013.JPG", "DSC_6014.JPG", "DSC_6015.JPG", "DSC_6016.JPG",
+            "DSC_6019.JPG", "DSC_6020.JPG", "DSC_6021.JPG", "DSC_6022.JPG", "DSC_6023.JPG"
+          ].map((name) => `./assets/products/electric/product-4/${galleryImageName(name)}`)
+        },
+        product5: {
+          title: "第五款电动轮椅 详细观察",
+          start: 4,
+          frames: [
+            "DSC_6025.JPG", "DSC_6026.JPG", "DSC_6028.JPG", "DSC_6029.JPG", "DSC_6034.JPG",
+            "DSC_6035.JPG", "DSC_6036.JPG", "DSC_6037.JPG", "DSC_6038.JPG", "DSC_6039.JPG",
+            "DSC_6040.JPG", "DSC_6041.JPG", "DSC_6042.JPG", "DSC_6043.JPG", "DSC_6044.JPG",
+            "DSC_6045.JPG", "DSC_6046.JPG", "DSC_6047.JPG", "DSC_6048.JPG", "DSC_6049.JPG",
+            "DSC_6050.JPG", "DSC_6051.JPG", "DSC_6052.JPG", "DSC_6053.JPG", "DSC_6054.JPG",
+            "DSC_6055.JPG", "DSC_6056.JPG", "DSC_6057.JPG", "DSC_6058.JPG", "DSC_6059.JPG",
+            "DSC_6061.JPG", "DSC_6062.JPG", "DSC_6063.JPG", "DSC_6064.JPG", "DSC_6065.JPG",
+            "DSC_6067.JPG", "DSC_6068.JPG", "DSC_6070.JPG", "DSC_6071.JPG", "DSC_6072.JPG",
+            "DSC_6073.JPG", "DSC_6075.JPG", "DSC_6076.JPG"
+          ].map((name) => `./assets/products/electric/product-5/${galleryImageName(name)}`)
+        },
+        product6: {
+          title: "第六款电动轮椅 详细观察",
+          start: 4,
+          frames: [
+            "DSC_5138.JPG", "DSC_5139.JPG", "DSC_5143.JPG", "DSC_5147.JPG", "DSC_5148.JPG",
+            "DSC_5149.JPG", "DSC_5150.JPG", "DSC_5151.JPG", "DSC_5152.JPG", "DSC_5153.JPG",
+            "DSC_5154.JPG", "DSC_5155.JPG", "DSC_5156.JPG", "DSC_5157.JPG", "DSC_5158.JPG",
+            "DSC_5159.JPG", "DSC_5160.JPG", "DSC_5161.JPG", "DSC_5162.JPG", "DSC_5163.JPG",
+            "DSC_5164.JPG", "DSC_5165.JPG", "DSC_5166.JPG", "DSC_5167.JPG", "DSC_5168.JPG",
+            "DSC_5169.JPG", "DSC_5171.JPG", "DSC_5172.JPG", "DSC_5174.JPG", "DSC_5175.JPG",
+            "DSC_5176.JPG", "DSC_5177.JPG", "DSC_5178.JPG", "DSC_5179.JPG", "DSC_5180.JPG",
+            "DSC_5181.JPG", "DSC_5182.JPG", "DSC_5183.JPG", "DSC_5184.JPG", "DSC_5185.JPG",
+            "DSC_5186.JPG"
+          ].map((name) => `./assets/products/electric/product-6/${galleryImageName(name)}`)
+        },
+        product7: {
+          title: "第七款电动轮椅 详细观察",
+          start: 7,
+          frames: [
+            "DSC_4821.JPG", "DSC_4822.JPG", "DSC_4824.JPG", "DSC_4825.JPG", "DSC_4827.JPG",
+            "DSC_4828.JPG", "DSC_4830.JPG", "DSC_4831.JPG", "DSC_4832.JPG", "DSC_4833.JPG",
+            "DSC_4834.JPG", "DSC_4835.JPG", "DSC_4836.JPG", "DSC_4837.JPG", "DSC_4841.JPG",
+            "DSC_4842.JPG", "DSC_4843.JPG", "DSC_4844.JPG", "DSC_4845.JPG", "DSC_4846.JPG",
+            "DSC_4847.JPG", "DSC_4848.JPG", "DSC_4849.JPG", "DSC_4850.JPG", "DSC_4851.JPG",
+            "DSC_4852.JPG", "DSC_4853.JPG", "DSC_4854.JPG", "DSC_4855.JPG", "DSC_4856.JPG",
+            "DSC_4857.JPG", "DSC_4858.JPG", "DSC_4859.JPG", "DSC_4860.JPG", "DSC_4861.JPG",
+            "DSC_4862.JPG", "DSC_4863.JPG", "DSC_4864.JPG", "DSC_4866.JPG", "DSC_4867.JPG",
+            "DSC_4868.JPG", "DSC_4869.JPG", "DSC_4870.JPG", "DSC_4871.JPG", "DSC_4872.JPG",
+            "DSC_4873.JPG", "DSC_4874.JPG", "DSC_4875.JPG", "DSC_4876.JPG", "DSC_4877.JPG",
+            "DSC_4878.JPG", "DSC_4880.JPG", "DSC_4881.JPG", "DSC_4883.JPG", "DSC_4884.JPG",
+            "DSC_4885.JPG", "DSC_4886.JPG", "DSC_4887.JPG", "DSC_4889.JPG"
+          ].map((name) => `./assets/products/electric/product-7/${galleryImageName(name)}`)
+        }
+      };
+
+      const productParams = {
+        product1: {
+          name: "JL100W-01B-02",
+          rows: [
+            ["展开尺寸", "1020*630*830mm", "载重", "100kg"],
+            ["座宽", "450mm", "前轮/后轮", "8寸/12寸"],
+            ["座深", "430mm", "扶手离地", "720mm"],
+            ["座高", "450mm", "扶手离座", "220mm"],
+            ["靠背高", "370mm", "净重", "30kg"],
+            ["折叠尺寸", "750*360*710mm", "毛重", "33.5kg"],
+            ["包装尺寸", "750*410*780mm", "车架材质", "碳钢喷塑"]
+          ]
+        },
+        product2: {
+          name: "JL100W-01A-01",
+          rows: [
+            ["展开尺寸", "1160*650*910mm", "载重", "100kg"],
+            ["座宽", "460mm", "前轮/后轮", "10寸/16寸"],
+            ["座深", "450mm", "扶手离地", "730mm"],
+            ["座高", "510mm", "扶手离座", "190mm"],
+            ["靠背高", "420mm", "净重", "40.6kg"],
+            ["折叠尺寸", "830*360*730mm", "毛重", "44.5kg"],
+            ["包装尺寸", "840*450*800mm", "车架材质", "碳钢喷塑"]
+          ]
+        },
+        product3: {
+          name: "JL100W-02B-01",
+          rows: [
+            ["展开尺寸", "1170*650*1280mm", "载重", "100kg"],
+            ["座宽", "460mm", "前轮/后轮", "10寸/16寸"],
+            ["座深", "450mm", "扶手离地", "730mm"],
+            ["座高", "530mm", "扶手离座", "190mm"],
+            ["靠背高", "620mm", "净重", "49kg"],
+            ["折叠尺寸", "840*430*730mm", "毛重", "53kg"],
+            ["包装尺寸", "840*450*800mm", "车架材质", "碳钢喷塑"]
+          ]
+        },
+        product4: {
+          name: "JL100W-01A-03",
+          rows: [
+            ["展开尺寸", "1160*650*910mm", "载重", "100kg"],
+            ["座宽", "460mm", "前轮/后轮", "10寸/22寸"],
+            ["座深", "450mm", "扶手离地", "730mm"],
+            ["座高", "510mm", "扶手离座", "190mm"],
+            ["靠背高", "420mm", "净重", "45kg"],
+            ["折叠尺寸", "840*450*730mm", "毛重", "49kg"],
+            ["包装尺寸", "840*450*800mm", "车架材质", "碳钢喷塑"]
+          ]
+        },
+        product5: {
+          name: "JL100W-01A-04",
+          rows: [
+            ["展开尺寸", "1240*680*965mm", "载重", "100kg"],
+            ["座宽", "453mm", "前轮/后轮", "10寸/24寸"],
+            ["座深", "430mm", "扶手离地", "740mm"],
+            ["座高", "540mm", "扶手离座", "200mm"],
+            ["靠背高", "385mm", "净重", "39kg"],
+            ["折叠尺寸", "880*450*730mm", "毛重", "44.6kg"],
+            ["包装尺寸", "920*480*830mm", "车架材质", "碳钢喷塑"]
+          ]
+        },
+        product6: {
+          name: "JL100W-01B-01",
+          rows: [
+            ["展开尺寸", "1000*620*855mm", "载重", "100kg"],
+            ["座宽", "450mm", "前轮/后轮", "6寸/12寸"],
+            ["座深", "420mm", "扶手离地", "670mm"],
+            ["座高", "430mm", "扶手离座", "240mm"],
+            ["靠背高", "370mm", "净重", "28kg"],
+            ["折叠尺寸", "750*360*710mm", "毛重", "31.5kg"],
+            ["包装尺寸", "760*410*740mm", "车架材质", "碳钢喷塑"]
+          ]
+        },
+        product7: {
+          name: "JL100W-02B-03",
+          rows: [
+            ["展开尺寸", "1240*660*1280mm", "载重", "100kg"],
+            ["座宽", "460mm", "前轮/后轮", "10寸/22寸"],
+            ["座深", "400mm", "扶手离地", "730mm"],
+            ["座高", "550mm", "扶手离座", "190mm"],
+            ["靠背高", "780mm", "净重", "43kg"],
+            ["折叠尺寸", "840*430*770mm", "毛重", "47kg"],
+            ["包装尺寸", "840*450*800mm", "车架材质", "碳钢喷塑"]
+          ]
+        }
+      };
+
+      const PARAMS_KEY = "junlongElectricProductParams";
+      const OPTIONS_KEY = "junlongProductOptions";
+      const OPTION_BASE_PRICE_KEY = "junlongElectricOptionBasePrices";
+      const OPTION_TEMPLATE_SYNC_KEY = "junlongElectricOptionCategoriesSyncedFromProduct1";
+      const OPTION_SHARED_ITEMS_SYNC_KEY = "junlongElectricNonBatteryOptionsSyncedFromProduct1And2";
+      const OPTION_PRODUCT3_BATTERY_SYNC_KEY = "junlongElectricProduct3BatteryOptionsCopied";
+      const OPTION_EMPTY_BATTERY_SYNC_KEY = "junlongElectricEmptyBatteryOptionsFilled";
+      const OPTION_PRODUCT_KEYS = ["product1", "product2", "product3", "product4", "product5", "product6", "product7"];
+      const OPTION_SHARED_SOURCE_KEYS = ["product1", "product2"];
+      const OPTION_SHARED_TARGET_KEYS = ["product3", "product4", "product5", "product6", "product7"];
+      function createEmptyElectricOptionTemplate() {
+        return createElectricOptionTemplate(false);
+      }
+      function createBatteryOptionsTemplate() {
+        return [
+          { name: "12A铅酸电池", price: 0, isDefault: true },
+          { name: "20A铅酸电池", price: 100, isDefault: false },
+          { name: "12A锂电池", price: 120, isDefault: false },
+          { name: "20A锂电池", price: 230, isDefault: false },
+          { name: "30A锂电池", price: 370, isDefault: false },
+          { name: "40A锂电池", price: 500, isDefault: false }
+        ];
+      }
+
+      function createControlOptionsTemplate() {
+        return [
+          { name: "右手摇杆", price: 0, isDefault: true },
+          { name: "左手摇杆", price: 0, isDefault: false }
+        ];
+      }
+
+      function createElectricOptionTemplate(withBatteryItems = false, withControlItems = false) {
+        return [
+          { name: "电池配置", items: withBatteryItems ? createBatteryOptionsTemplate() : [] },
+          { name: "前车轮", items: [] },
+          { name: "后车轮", items: [] },
+          { name: "车架", items: [] },
+          { name: "坐垫", items: [] },
+          { name: "手机遥控", items: [] },
+          { name: "操控配置", items: withControlItems ? createControlOptionsTemplate() : [] }
+        ];
+      }
+
+      const defaultOptions = {
+        product1: createElectricOptionTemplate(true, true),
+        product2: createElectricOptionTemplate(true, true),
+        product3: createElectricOptionTemplate(true, true),
+        product4: createElectricOptionTemplate(true, true),
+        product5: createElectricOptionTemplate(true, true),
+        product6: createElectricOptionTemplate(true, true),
+        product7: createElectricOptionTemplate(true, true)
+      };
+
+      const viewer = document.getElementById("wheelchairViewer");
+      const viewerTitle = document.getElementById("viewerTitle");
+      const viewerImage = document.getElementById("viewerImage");
+      const viewerStage = document.getElementById("viewerStage");
+      const viewerProgress = document.getElementById("viewerProgress");
+      const openViewers = Array.from(document.querySelectorAll("[data-viewer-open]"));
+      const closeViewer = document.querySelector("[data-viewer-close]");
+      const prevFrame = document.querySelector("[data-viewer-prev]");
+      const nextFrame = document.querySelector("[data-viewer-next]");
+      const paramsModal = document.getElementById("paramsModal");
+      const paramsProductName = document.getElementById("paramsProductName");
+      const paramsFeature = document.getElementById("paramsFeature");
+      const paramsTableBody = document.getElementById("paramsTableBody");
+      const openParams = Array.from(document.querySelectorAll("[data-params-open]"));
+      const closeParams = document.querySelector("[data-params-close]");
+      const paramsEditToggle = document.querySelector("[data-params-edit-toggle]");
+      const paramsEditForm = document.querySelector("[data-params-edit-form]");
+      const paramsNameInput = document.querySelector("[data-params-name]");
+      const paramsFeatureInput = document.querySelector("[data-params-feature]");
+      const paramsEditRows = document.querySelector("[data-params-edit-rows]");
+      const paramsAddRow = document.querySelector("[data-params-add-row]");
+      const paramsEditCancel = document.querySelector("[data-params-edit-cancel]");
+      const optionsModal = document.getElementById("optionsModal");
+      const optionsBody = document.getElementById("optionsBody");
+      const openOptions = Array.from(document.querySelectorAll("[data-options-open]"));
+      const closeOptions = document.querySelector("[data-options-close]");
+      const addCategory = document.querySelector("[data-add-category]");
+      const optionsLocked = document.querySelector("[data-options-locked]");
+      const optionsEstimate = document.getElementById("optionsEstimate");
+      const estimateEditButton = document.querySelector("[data-estimate-edit]");
+      const optionForm = document.querySelector("[data-option-form]");
+      const optionFormCancel = document.querySelector("[data-option-form-cancel]");
+      const optionNameInput = document.querySelector("[data-option-name]");
+      const optionPriceInput = document.querySelector("[data-option-price]");
+      const optionPriceField = document.querySelector("[data-option-price-field]");
+      const optionFormTitle = document.querySelector(".option-edit-title");
+      let activeGallery = galleries.product1;
+      let currentFrame = 1;
+      let activeOptionsProduct = "product1";
+      let activeParamsProduct = "product1";
+      let selectedOptions = new Set();
+      let pendingOptionCategory = null;
+      let pendingOptionItem = null;
+      let pendingOptionDefault = false;
+
+      function cloneDefaultOptions() {
+        return Object.fromEntries(Object.entries(defaultOptions).map(([key, categories]) => [
+          key,
+          categories.map((category) => ({
+            name: category.name,
+            items: category.items.map((item) => ({ ...item }))
+          }))
+        ]));
+      }
+
+      function normalizeOption(item) {
+        if (typeof item === "string") {
+          return { name: item, price: 0, isDefault: false };
+        }
+        if (!item || typeof item !== "object") {
+          return { name: "未命名配置", price: 0, isDefault: false };
+        }
+
+        const isDefault = Boolean(item.isDefault || item.default || item.isDefaultOption);
+        return {
+          name: item.name || "未命名配置",
+          price: isDefault ? 0 : Math.max(0, Number(item.price) || 0),
+          isDefault
+        };
+      }
+
+      function normalizeCategories(categories) {
+        if (!Array.isArray(categories)) return [];
+        return categories.map((category) => {
+          const normalizedCategory = category && typeof category === "object" ? category : {};
+          const items = Array.isArray(normalizedCategory.items) ? normalizedCategory.items.map(normalizeOption) : [];
+          if (!items.some((item) => item.isDefault)) {
+            const legacyDefaultIndex = items.findIndex((item) => item.price === 0);
+            if (legacyDefaultIndex > -1) items[legacyDefaultIndex].isDefault = true;
+          }
+          let hasDefault = false;
+          items.forEach((item) => {
+            if (!item.isDefault) return;
+            if (hasDefault) {
+              item.isDefault = false;
+              return;
+            }
+            item.price = 0;
+            hasDefault = true;
+          });
+          return {
+            name: normalizedCategory.name || "未命名种类",
+            items
+          };
+        });
+      }
+
+      function getUniqueTemplateCategories(categories) {
+        const usedNames = new Set();
+        return normalizeCategories(categories).filter((category) => {
+          if (!category.name || usedNames.has(category.name)) return false;
+          usedNames.add(category.name);
+          return true;
+        });
+      }
+
+      function isBatteryCategory(category) {
+        return category && String(category.name || "").trim() === "电池配置";
+      }
+
+      function cloneOptionCategory(category, emptyItems = false) {
+        return {
+          name: category.name,
+          items: emptyItems ? [] : category.items.map((item) => ({ ...item }))
+        };
+      }
+
+      function getSharedNonBatteryTemplate(options) {
+        const templates = new Map();
+        OPTION_SHARED_SOURCE_KEYS.forEach((productKey) => {
+          (options[productKey] || []).forEach((category) => {
+            if (isBatteryCategory(category)) return;
+            const existing = templates.get(category.name);
+            if (!existing || (!existing.items.length && category.items.length)) {
+              templates.set(category.name, cloneOptionCategory(category));
+            }
+          });
+        });
+        return Array.from(templates.values());
+      }
+
+      function applyProduct1OptionTemplateOnce(options) {
+        if (localStorage.getItem(OPTION_TEMPLATE_SYNC_KEY) === "1") return options;
+        const templateCategories = getUniqueTemplateCategories(options.product1 || defaultOptions.product1);
+        if (!templateCategories.length) return options;
+        OPTION_PRODUCT_KEYS.slice(1).forEach((productKey) => {
+          options[productKey] = templateCategories.map((category) => ({
+            name: category.name,
+            items: []
+          }));
+        });
+        localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+        localStorage.setItem(OPTION_TEMPLATE_SYNC_KEY, "1");
+        return options;
+      }
+
+      function applySharedNonBatteryOptionsOnce(options) {
+        if (localStorage.getItem(OPTION_SHARED_ITEMS_SYNC_KEY) === "1") return options;
+        const sharedTemplate = getSharedNonBatteryTemplate(options);
+        if (!sharedTemplate.length) return options;
+        if (!sharedTemplate.some((category) => category.items.length)) return options;
+        OPTION_SHARED_TARGET_KEYS.forEach((productKey) => {
+          const batteryCategories = (options[productKey] || [])
+            .filter(isBatteryCategory)
+            .map((category) => cloneOptionCategory(category));
+          options[productKey] = batteryCategories.concat(sharedTemplate.map((category) => cloneOptionCategory(category)));
+        });
+        localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+        localStorage.setItem(OPTION_SHARED_ITEMS_SYNC_KEY, "1");
+        return options;
+      }
+
+      function applyProduct3BatteryOptionsOnce(options) {
+        if (localStorage.getItem(OPTION_PRODUCT3_BATTERY_SYNC_KEY) === "1") return options;
+        const productOptions = Array.isArray(options.product3) ? options.product3 : [];
+        const batteryIndex = productOptions.findIndex(isBatteryCategory);
+        const batteryCategory = {
+          name: "电池配置",
+          items: createBatteryOptionsTemplate().map((item) => ({ ...item }))
+        };
+        if (batteryIndex > -1) {
+          productOptions[batteryIndex] = batteryCategory;
+        } else {
+          productOptions.unshift(batteryCategory);
+        }
+        options.product3 = productOptions;
+        localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+        localStorage.setItem(OPTION_PRODUCT3_BATTERY_SYNC_KEY, "1");
+        return options;
+      }
+
+      function applyEmptyBatteryOptionsOnce(options) {
+        if (localStorage.getItem(OPTION_EMPTY_BATTERY_SYNC_KEY) === "1") return options;
+        let changed = false;
+        OPTION_PRODUCT_KEYS.forEach((productKey) => {
+          const productOptions = Array.isArray(options[productKey]) ? options[productKey] : [];
+          const batteryCategory = productOptions.find(isBatteryCategory);
+          if (!batteryCategory || batteryCategory.items.length) return;
+          batteryCategory.items = createBatteryOptionsTemplate().map((item) => ({ ...item }));
+          options[productKey] = productOptions;
+          changed = true;
+        });
+        if (changed) {
+          localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+        }
+        localStorage.setItem(OPTION_EMPTY_BATTERY_SYNC_KEY, "1");
+        return options;
+      }
+
+      function shouldRestoreBatteryItems(category) {
+        const items = Array.isArray(category.items) ? category.items : [];
+        if (!items.length) return true;
+        const names = items.map((item) => String(item.name || "").trim());
+        if (names.includes("标准锂电池") || names.includes("长续航锂电池")) return true;
+        return createBatteryOptionsTemplate().some((item) => !names.includes(item.name));
+      }
+
+      function findCategory(categories, categoryName) {
+        return categories.find((category) => String(category.name || "").trim() === categoryName);
+      }
+
+      function restoreElectricOptionMemory(options) {
+        let changed = false;
+        const categoryTemplate = createElectricOptionTemplate(false);
+
+        OPTION_PRODUCT_KEYS.forEach((productKey) => {
+          const productOptions = Array.isArray(options[productKey]) ? options[productKey] : [];
+
+          categoryTemplate.forEach((templateCategory) => {
+            if (findCategory(productOptions, templateCategory.name)) return;
+            productOptions.push(cloneOptionCategory(templateCategory, true));
+            changed = true;
+          });
+
+          const batteryCategory = productOptions.find(isBatteryCategory);
+          if (batteryCategory && shouldRestoreBatteryItems(batteryCategory)) {
+            batteryCategory.items = createBatteryOptionsTemplate().map((item) => ({ ...item }));
+            changed = true;
+          }
+
+          const controlCategory = findCategory(productOptions, "操控配置");
+          if (controlCategory && !controlCategory.items.length) {
+            controlCategory.items = createControlOptionsTemplate().map((item) => ({ ...item }));
+            changed = true;
+          }
+
+          options[productKey] = productOptions;
+        });
+
+        const sharedTemplate = getSharedNonBatteryTemplate(options).filter((category) => category.items.length);
+        if (sharedTemplate.length) {
+          OPTION_PRODUCT_KEYS.forEach((productKey) => {
+            const productOptions = Array.isArray(options[productKey]) ? options[productKey] : [];
+            sharedTemplate.forEach((templateCategory) => {
+              const existingCategory = findCategory(productOptions, templateCategory.name);
+              if (!existingCategory) {
+                productOptions.push(cloneOptionCategory(templateCategory));
+                changed = true;
+                return;
+              }
+              if (!existingCategory.items.length) {
+                existingCategory.items = templateCategory.items.map((item) => ({ ...item }));
+                changed = true;
+              }
+            });
+            options[productKey] = productOptions;
+          });
+        }
+
+        if (changed) {
+          localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+        }
+
+        return options;
+      }
+
+      function readOptions() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(OPTIONS_KEY) || "{}");
+          const merged = { ...cloneDefaultOptions(), ...stored };
+          Object.keys(merged).forEach((key) => {
+            merged[key] = normalizeCategories(merged[key] || []);
+          });
+          return restoreElectricOptionMemory(applyEmptyBatteryOptionsOnce(applyProduct3BatteryOptionsOnce(applySharedNonBatteryOptionsOnce(merged))));
+        } catch (error) {
+          const defaults = cloneDefaultOptions();
+          Object.keys(defaults).forEach((key) => {
+            defaults[key] = normalizeCategories(defaults[key] || []);
+          });
+          return restoreElectricOptionMemory(applyEmptyBatteryOptionsOnce(applyProduct3BatteryOptionsOnce(applySharedNonBatteryOptionsOnce(defaults))));
+        }
+      }
+
+      function saveOptions(options) {
+        localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
+      }
+
+      function readBasePrices() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(OPTION_BASE_PRICE_KEY) || "{}");
+          return stored && typeof stored === "object" ? stored : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function getBasePrice(productKey = activeOptionsProduct) {
+        const price = Number(readBasePrices()[productKey]);
+        return Number.isFinite(price) && price >= 0 ? price : 0;
+      }
+
+      function saveBasePrice(productKey, price) {
+        const prices = readBasePrices();
+        prices[productKey] = price;
+        localStorage.setItem(OPTION_BASE_PRICE_KEY, JSON.stringify(prices));
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[char]));
+      }
+
+      function formatPrice(value) {
+        const number = Number(value) || 0;
+        return `￥${number.toLocaleString("zh-CN", { maximumFractionDigits: 2 })}`;
+      }
+
+      function formatAddPrice(value) {
+        return `+${formatPrice(value)}`;
+      }
+
+      function canEditOptions() {
+        return Boolean(window.JunlongAuth && window.JunlongAuth.isAuthorized());
+      }
+
+      function updateOptionsAuth() {
+        const canEdit = canEditOptions();
+        document.querySelectorAll(".auth-only").forEach((node) => {
+          node.style.display = canEdit ? "" : "none";
+        });
+        optionsLocked.style.display = canEdit ? "none" : "";
+      }
+
+      function getDefaultSelections(categories) {
+        const defaults = new Set();
+        categories.forEach((category, categoryIndex) => {
+          const defaultIndex = category.items.findIndex((item) => item.isDefault);
+          if (defaultIndex > -1) defaults.add(`${categoryIndex}-${defaultIndex}`);
+        });
+        return defaults;
+      }
+
+      function normalizeSelectedOptions(categories) {
+        const validKeys = new Set();
+        categories.forEach((category, categoryIndex) => {
+          category.items.forEach((item, itemIndex) => {
+            validKeys.add(`${categoryIndex}-${itemIndex}`);
+          });
+        });
+        selectedOptions = new Set(Array.from(selectedOptions).filter((key) => validKeys.has(key)));
+        categories.forEach((category, categoryIndex) => {
+          const hasSelected = category.items.some((item, itemIndex) => selectedOptions.has(`${categoryIndex}-${itemIndex}`));
+          if (hasSelected) return;
+          const defaultIndex = category.items.findIndex((item) => item.isDefault);
+          if (defaultIndex > -1) selectedOptions.add(`${categoryIndex}-${defaultIndex}`);
+        });
+      }
+
+      function updateEstimate(categories) {
+        const addOnTotal = categories.reduce((sum, category, categoryIndex) => {
+          return sum + category.items.reduce((itemSum, item, itemIndex) => {
+            return selectedOptions.has(`${categoryIndex}-${itemIndex}`) ? itemSum + item.price : itemSum;
+          }, 0);
+        }, 0);
+        optionsEstimate.textContent = formatPrice(getBasePrice(activeOptionsProduct) + addOnTotal);
+      }
+
+      function renderOptions(productKey = activeOptionsProduct, resetSelection = false) {
+        activeOptionsProduct = productKey;
+        const options = readOptions();
+        const categories = options[productKey] || [];
+        if (resetSelection) selectedOptions = getDefaultSelections(categories);
+        normalizeSelectedOptions(categories);
+
+        optionsBody.innerHTML = categories.length ? categories.map((category, index) => `
+          <section class="options-category">
+            <div class="options-category-head">
+              <span>${escapeHtml(category.name)}</span>
+              <div class="options-category-actions">
+                <button class="options-action auth-only" type="button" data-add-default-option="${index}">添加默认配置</button>
+                <button class="options-action auth-only" type="button" data-add-option="${index}">添加配置</button>
+                <button class="options-action delete auth-only" type="button" data-delete-category="${index}">删除种类</button>
+              </div>
+            </div>
+            ${category.items && category.items.length ? `
+              <ul class="options-list">
+                ${category.items.map((item, itemIndex) => {
+                  const key = `${index}-${itemIndex}`;
+                  return `
+                    <li class="option-item">
+                      <button class="option-choice ${selectedOptions.has(key) ? "selected" : ""}" type="button" data-option-toggle="${key}">
+                        <span>${escapeHtml(item.name)}${item.isDefault ? `<span class="option-default-label">（默认）</span>` : ""}</span>
+                        ${item.isDefault ? "" : `<span class="option-price">${formatAddPrice(item.price)}</span>`}
+                      </button>
+                      <button class="option-mini-action auth-only" type="button" data-edit-option="${key}">修改</button>
+                      <button class="option-mini-action delete auth-only" type="button" data-delete-option="${key}">删除</button>
+                    </li>
+                  `;
+                }).join("")}
+              </ul>
+            ` : `<p class="options-empty">暂无配置</p>`}
+          </section>
+        `).join("") : `<p class="options-empty">暂无可选配置</p>`;
+
+        updateEstimate(categories);
+        updateOptionsAuth();
+      }
+
+      function toggleOptions(open, productKey = "product1") {
+        if (open) {
+          closeOptionForm();
+          renderOptions(productKey, true);
+        }
+        optionsModal.classList.toggle("open", open);
+        optionsModal.setAttribute("aria-hidden", open ? "false" : "true");
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      function handleAddCategory() {
+        if (!canEditOptions()) return;
+        const name = window.prompt("请输入新种类名称");
+        if (!name || !name.trim()) return;
+        const options = readOptions();
+        const categories = options[activeOptionsProduct] || [];
+        categories.push({ name: name.trim(), items: [] });
+        options[activeOptionsProduct] = categories;
+        saveOptions(options);
+        renderOptions(activeOptionsProduct);
+      }
+
+      function setOptionPriceFieldVisible(visible) {
+        optionPriceField.hidden = !visible;
+        optionPriceInput.required = visible;
+        optionPriceInput.disabled = !visible;
+        if (!visible) optionPriceInput.value = "0";
+      }
+
+      function openOptionForm(categoryIndex, isDefault = false) {
+        if (!canEditOptions()) return;
+        pendingOptionCategory = categoryIndex;
+        pendingOptionItem = null;
+        pendingOptionDefault = isDefault;
+        optionFormTitle.textContent = isDefault ? "添加默认配置" : "添加配置";
+        optionForm.reset();
+        optionPriceInput.value = "0";
+        setOptionPriceFieldVisible(!isDefault);
+        optionForm.classList.add("open");
+        window.setTimeout(() => optionNameInput.focus(), 0);
+      }
+
+      function openEditOptionForm(categoryIndex, itemIndex) {
+        if (!canEditOptions()) return;
+        const options = readOptions();
+        const item = options[activeOptionsProduct]?.[categoryIndex]?.items?.[itemIndex];
+        if (!item) return;
+        pendingOptionCategory = categoryIndex;
+        pendingOptionItem = itemIndex;
+        pendingOptionDefault = Boolean(item.isDefault);
+        optionFormTitle.textContent = pendingOptionDefault ? "修改默认配置" : "修改配置";
+        optionNameInput.value = item.name;
+        optionPriceInput.value = item.price;
+        setOptionPriceFieldVisible(!pendingOptionDefault);
+        optionForm.classList.add("open");
+        window.setTimeout(() => optionNameInput.focus(), 0);
+      }
+
+      function closeOptionForm() {
+        pendingOptionCategory = null;
+        pendingOptionItem = null;
+        pendingOptionDefault = false;
+        setOptionPriceFieldVisible(true);
+        optionForm.classList.remove("open");
+      }
+
+      function handleOptionFormSubmit(event) {
+        event.preventDefault();
+        if (!canEditOptions() || pendingOptionCategory === null) return;
+        const name = optionNameInput.value.trim();
+        const isDefault = pendingOptionDefault;
+        const price = isDefault ? 0 : Number(optionPriceInput.value);
+        if (!name) return;
+        if (!Number.isFinite(price) || price < 0) {
+          window.alert("价格请输入大于等于 0 的数字。");
+          return;
+        }
+        const options = readOptions();
+        const categories = options[activeOptionsProduct] || [];
+        if (!categories[pendingOptionCategory]) return;
+        if (isDefault) {
+          categories[pendingOptionCategory].items.forEach((item) => {
+            item.isDefault = false;
+          });
+        }
+        const nextItem = { name, price, isDefault };
+        if (pendingOptionItem === null) {
+          categories[pendingOptionCategory].items.push(nextItem);
+        } else if (categories[pendingOptionCategory].items[pendingOptionItem]) {
+          categories[pendingOptionCategory].items[pendingOptionItem] = nextItem;
+        }
+        options[activeOptionsProduct] = categories;
+        saveOptions(options);
+        closeOptionForm();
+        renderOptions(activeOptionsProduct, isDefault);
+      }
+
+      function deleteOption(categoryIndex, itemIndex) {
+        if (!canEditOptions()) return;
+        const options = readOptions();
+        const categories = options[activeOptionsProduct] || [];
+        const item = categories[categoryIndex]?.items?.[itemIndex];
+        if (!item) return;
+        if (!window.confirm(`确定删除“${item.name}”吗？`)) return;
+        categories[categoryIndex].items.splice(itemIndex, 1);
+        selectedOptions.delete(`${categoryIndex}-${itemIndex}`);
+        options[activeOptionsProduct] = categories;
+        saveOptions(options);
+        closeOptionForm();
+        renderOptions(activeOptionsProduct);
+      }
+
+      function deleteCategory(categoryIndex) {
+        if (!canEditOptions()) return;
+        const options = readOptions();
+        const categories = options[activeOptionsProduct] || [];
+        const category = categories[categoryIndex];
+        if (!category) return;
+        if (!window.confirm(`确定删除“${category.name}”种类及其全部配置吗？`)) return;
+        categories.splice(categoryIndex, 1);
+        selectedOptions = new Set();
+        options[activeOptionsProduct] = categories;
+        saveOptions(options);
+        closeOptionForm();
+        renderOptions(activeOptionsProduct, true);
+      }
+
+      function handleEstimateEdit() {
+        if (!canEditOptions()) return;
+        const currentPrice = getBasePrice(activeOptionsProduct);
+        const input = window.prompt("请输入基础预估价（不含配置加价）", String(currentPrice));
+        if (input === null) return;
+        const price = Number(input);
+        if (!Number.isFinite(price) || price < 0) {
+          window.alert("预估价请输入大于等于 0 的数字。");
+          return;
+        }
+        saveBasePrice(activeOptionsProduct, price);
+        renderOptions(activeOptionsProduct);
+      }
+
+      function toggleOptionChoice(key) {
+        const [categoryIndex, itemIndex] = key.split("-").map(Number);
+        const categories = readOptions()[activeOptionsProduct] || [];
+        const category = categories[categoryIndex];
+        const item = category?.items?.[itemIndex];
+        if (!category || !item) return;
+        const wasSelected = selectedOptions.has(key);
+        category.items.forEach((option, index) => {
+          selectedOptions.delete(`${categoryIndex}-${index}`);
+        });
+        if (wasSelected && !item.isDefault) {
+          const defaultIndex = category.items.findIndex((option) => option.isDefault);
+          if (defaultIndex > -1) selectedOptions.add(`${categoryIndex}-${defaultIndex}`);
+          return;
+        }
+        selectedOptions.add(key);
+      }
+
+      function setFrame(index) {
+        currentFrame = (index + activeGallery.frames.length) % activeGallery.frames.length;
+        viewerImage.src = activeGallery.frames[currentFrame];
+        viewerProgress.textContent = `${currentFrame + 1} / ${activeGallery.frames.length}`;
+      }
+
+      function toggleViewer(open, galleryKey = "product1") {
+        if (open) {
+          activeGallery = galleries[galleryKey] || galleries.product1;
+          viewerTitle.textContent = activeGallery.title;
+          currentFrame = activeGallery.start || 0;
+        }
+        viewer.classList.toggle("open", open);
+        viewer.setAttribute("aria-hidden", open ? "false" : "true");
+        document.body.style.overflow = open ? "hidden" : "";
+        if (open) setFrame(currentFrame);
+      }
+
+      function cloneDefaultParams() {
+        return Object.fromEntries(Object.entries(productParams).map(([key, data]) => [
+          key,
+          {
+            name: data.name,
+            feature: data.feature || "",
+            rows: data.rows.map((row) => row.slice())
+          }
+        ]));
+      }
+
+      function normalizeParamRow(row) {
+        const values = Array.isArray(row) ? row : [];
+        return [0, 1, 2, 3].map((index) => String(values[index] || ""));
+      }
+
+      function readParams() {
+        try {
+          const stored = JSON.parse(localStorage.getItem(PARAMS_KEY) || "{}");
+          const merged = { ...cloneDefaultParams(), ...stored };
+          Object.keys(merged).forEach((key) => {
+            merged[key] = {
+              name: merged[key]?.name || productParams[key]?.name || "",
+              feature: merged[key]?.feature || "",
+              rows: Array.isArray(merged[key]?.rows) ? merged[key].rows.map(normalizeParamRow) : []
+            };
+          });
+          return merged;
+        } catch (error) {
+          return cloneDefaultParams();
+        }
+      }
+
+      function saveParams(params) {
+        localStorage.setItem(PARAMS_KEY, JSON.stringify(params));
+      }
+
+      function getParamData(productKey = activeParamsProduct) {
+        const params = readParams();
+        return params[productKey] || params.product1 || productParams.product1;
+      }
+
+      function renderParams(productKey = "product1") {
+        activeParamsProduct = productKey;
+        const data = getParamData(productKey);
+        const feature = data.feature && data.feature.trim() ? data.feature.trim() : "特点内容预留位置";
+        paramsProductName.textContent = data.name;
+        paramsFeature.textContent = feature;
+        paramsFeature.classList.toggle("is-filled", Boolean(data.feature && data.feature.trim()));
+        paramsTableBody.innerHTML = data.rows.map((row) => `
+          <tr>
+            <th>${escapeHtml(row[0])}</th>
+            <td>${escapeHtml(row[1])}</td>
+            <th>${escapeHtml(row[2])}</th>
+            <td>${escapeHtml(row[3])}</td>
+          </tr>
+        `).join("");
+        updateOptionsAuth();
+      }
+
+      function renderParamsEditRow(row = ["", "", "", ""]) {
+        const values = normalizeParamRow(row);
+        const rowNode = document.createElement("div");
+        rowNode.className = "params-edit-row";
+        rowNode.innerHTML = `
+          <input type="text" value="${escapeHtml(values[0])}" placeholder="参数名" />
+          <input type="text" value="${escapeHtml(values[1])}" placeholder="参数值" />
+          <input type="text" value="${escapeHtml(values[2])}" placeholder="参数名" />
+          <input type="text" value="${escapeHtml(values[3])}" placeholder="参数值" />
+          <button class="params-edit-remove" type="button" data-params-remove-row>删除</button>
+        `;
+        paramsEditRows.appendChild(rowNode);
+      }
+
+      function openParamsEditForm() {
+        if (!canEditOptions()) return;
+        const data = getParamData(activeParamsProduct);
+        paramsNameInput.value = data.name || "";
+        paramsFeatureInput.value = data.feature || "";
+        paramsEditRows.innerHTML = "";
+        data.rows.forEach((row) => renderParamsEditRow(row));
+        paramsEditForm.classList.add("open");
+      }
+
+      function closeParamsEditForm() {
+        paramsEditForm.classList.remove("open");
+      }
+
+      function handleParamsEditSubmit(event) {
+        event.preventDefault();
+        if (!canEditOptions()) return;
+        const rows = Array.from(paramsEditRows.querySelectorAll(".params-edit-row")).map((rowNode) => {
+          return Array.from(rowNode.querySelectorAll("input")).map((input) => input.value.trim());
+        }).filter((row) => row.some(Boolean)).map(normalizeParamRow);
+        const params = readParams();
+        params[activeParamsProduct] = {
+          name: paramsNameInput.value.trim() || getParamData(activeParamsProduct).name,
+          feature: paramsFeatureInput.value.trim(),
+          rows
+        };
+        saveParams(params);
+        closeParamsEditForm();
+        renderParams(activeParamsProduct);
+      }
+
+      function toggleParams(open, productKey = "product1") {
+        if (open) renderParams(productKey);
+        if (!open) closeParamsEditForm();
+        paramsModal.classList.toggle("open", open);
+        paramsModal.setAttribute("aria-hidden", open ? "false" : "true");
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      openParams.forEach((button) => {
+        button.addEventListener("click", () => toggleParams(true, button.dataset.paramsOpen));
+      });
+      closeParams.addEventListener("click", () => toggleParams(false));
+      paramsEditToggle.addEventListener("click", openParamsEditForm);
+      paramsEditForm.addEventListener("submit", handleParamsEditSubmit);
+      paramsEditForm.addEventListener("click", (event) => event.stopPropagation());
+      paramsEditCancel.addEventListener("click", closeParamsEditForm);
+      paramsAddRow.addEventListener("click", () => renderParamsEditRow());
+      paramsEditRows.addEventListener("click", (event) => {
+        const removeButton = event.target.closest("[data-params-remove-row]");
+        if (removeButton) removeButton.closest(".params-edit-row")?.remove();
+      });
+      paramsModal.addEventListener("click", (event) => {
+        if (event.target === paramsModal) toggleParams(false);
+      });
+      openOptions.forEach((button) => {
+        button.addEventListener("click", () => toggleOptions(true, button.dataset.optionsOpen));
+      });
+      closeOptions.addEventListener("click", () => toggleOptions(false));
+      addCategory.addEventListener("click", handleAddCategory);
+      estimateEditButton.addEventListener("click", handleEstimateEdit);
+      optionForm.addEventListener("submit", handleOptionFormSubmit);
+      optionForm.addEventListener("click", (event) => event.stopPropagation());
+      optionForm.addEventListener("keydown", (event) => event.stopPropagation());
+      optionFormCancel.addEventListener("click", closeOptionForm);
+      optionsModal.addEventListener("click", (event) => {
+        if (event.target === optionsModal) toggleOptions(false);
+        const addDefaultButton = event.target.closest("[data-add-default-option]");
+        if (addDefaultButton) {
+          openOptionForm(Number(addDefaultButton.dataset.addDefaultOption), true);
+          return;
+        }
+        const addButton = event.target.closest("[data-add-option]");
+        if (addButton) {
+          openOptionForm(Number(addButton.dataset.addOption));
+          return;
+        }
+        const deleteCategoryButton = event.target.closest("[data-delete-category]");
+        if (deleteCategoryButton) {
+          deleteCategory(Number(deleteCategoryButton.dataset.deleteCategory));
+          return;
+        }
+        const editButton = event.target.closest("[data-edit-option]");
+        if (editButton) {
+          const [categoryIndex, itemIndex] = editButton.dataset.editOption.split("-").map(Number);
+          openEditOptionForm(categoryIndex, itemIndex);
+          return;
+        }
+        const deleteButton = event.target.closest("[data-delete-option]");
+        if (deleteButton) {
+          const [categoryIndex, itemIndex] = deleteButton.dataset.deleteOption.split("-").map(Number);
+          deleteOption(categoryIndex, itemIndex);
+          return;
+        }
+        const optionButton = event.target.closest("[data-option-toggle]");
+        if (optionButton) {
+          toggleOptionChoice(optionButton.dataset.optionToggle);
+          renderOptions(activeOptionsProduct);
+        }
+      });
+      window.addEventListener("junlong-auth-change", () => {
+        if (optionsModal.classList.contains("open")) renderOptions(activeOptionsProduct);
+        if (!canEditOptions()) closeParamsEditForm();
+        updateOptionsAuth();
+      });
+      updateOptionsAuth();
+      openViewers.forEach((button) => {
+        button.addEventListener("click", () => toggleViewer(true, button.dataset.viewerOpen));
+      });
+      closeViewer.addEventListener("click", () => toggleViewer(false));
+      viewer.addEventListener("click", (event) => {
+        if (event.target === viewer) toggleViewer(false);
+      });
+      prevFrame.addEventListener("click", () => setFrame(currentFrame - 1));
+      nextFrame.addEventListener("click", () => setFrame(currentFrame + 1));
+      viewerStage.addEventListener("click", () => setFrame(currentFrame + 1));
+
+      document.addEventListener("keydown", (event) => {
+        if (optionsModal.classList.contains("open") && event.key === "Escape") {
+          toggleOptions(false);
+          return;
+        }
+        if (paramsModal.classList.contains("open") && event.key === "Escape") {
+          toggleParams(false);
+          return;
+        }
+        if (!viewer.classList.contains("open")) return;
+        if (event.key === "Escape") toggleViewer(false);
+        if (event.key === "ArrowLeft") setFrame(currentFrame - 1);
+        if (event.key === "ArrowRight") setFrame(currentFrame + 1);
+      });
+
+      Object.values(galleries).forEach((gallery) => {
+        gallery.frames.forEach((src) => {
+          const image = new Image();
+          image.src = src;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

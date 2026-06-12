@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>工厂介绍 - 霸州市骏龙医疗器械有限公司</title>
+  <style>
+    :root {
+      --bg-top: #f6fbff;
+      --bg-bottom: #e9f3ff;
+      --nav-text: #15304d;
+      --headline: #0e2b4c;
+      --sub: #4e6a85;
+      --primary: #0b66c3;
+      --primary-hover: #0856a3;
+      --line: #d6e7f9;
+      --card: rgba(255, 255, 255, 0.78);
+      --green: #167d63;
+      --amber: #b7791f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--headline);
+      background: radial-gradient(circle at 82% 14%, #ffffff 0%, transparent 32%),
+                  radial-gradient(circle at 14% 8%, #ffffff 0%, transparent 26%),
+                  linear-gradient(165deg, var(--bg-top), var(--bg-bottom));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(69, 112, 153, 0.08) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(69, 112, 153, 0.08) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at center, #000 45%, transparent 86%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1220px, 94vw);
+      margin: 0 auto;
+      padding: 22px 0 56px;
+    }
+
+    .top-nav {
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--nav-text);
+    }
+
+    .brand-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #40a4ff, #0a5eb6);
+      box-shadow: 0 8px 20px rgba(10, 94, 182, 0.3);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .brand-dot::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      top: 11px;
+      left: 11px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: #35526f;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .hero {
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+      align-items: center;
+      gap: 46px;
+      padding: 68px 0 48px;
+    }
+
+    .hero-copy {
+      animation: slide-up 0.72s ease both;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.68);
+      border-radius: 999px;
+      padding: 7px 14px;
+      color: #33506e;
+      font-size: 13px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(3px);
+    }
+
+    .kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(22, 125, 99, 0.14);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 660px;
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.08;
+      color: var(--headline);
+      letter-spacing: 0;
+    }
+
+    .sub {
+      max-width: 650px;
+      margin: 18px 0 0;
+      color: var(--sub);
+      font-size: clamp(15px, 1.7vw, 18px);
+      line-height: 1.85;
+    }
+
+    .cta {
+      margin-top: 30px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 46px;
+      border-radius: 12px;
+      border: 0;
+      padding: 0 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(11, 102, 195, 0.3);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--primary);
+      border: 1px solid #b7d6f5;
+    }
+
+    .btn.ghost:hover {
+      transform: translateY(-2px);
+      background: #fff;
+    }
+
+    .hero-media {
+      min-height: 500px;
+      display: grid;
+      grid-template-columns: 1fr 0.74fr;
+      grid-template-rows: 1fr 0.76fr;
+      gap: 16px;
+      animation: fade-in 0.86s ease both 0.08s;
+    }
+
+    .factory-photo {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 18px 46px rgba(22, 66, 110, 0.12);
+    }
+
+    .factory-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .factory-photo.main {
+      grid-row: 1 / 3;
+    }
+
+    .factory-photo.logo {
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(233,243,255,0.92));
+    }
+
+    .factory-photo.logo img {
+      width: min(220px, 78%);
+      height: auto;
+      object-fit: contain;
+    }
+
+    .photo-label {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #173452;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 10px 20px rgba(22, 66, 110, 0.12);
+    }
+
+    .section {
+      padding: 46px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      color: var(--headline);
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 650px;
+      margin: 10px 0 0;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .overview-item,
+    .capability-card,
+    .quality-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      box-shadow: 0 14px 34px rgba(22, 66, 110, 0.08);
+      backdrop-filter: blur(5px);
+    }
+
+    .overview-item {
+      min-height: 134px;
+      padding: 20px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .overview-item strong {
+      color: var(--primary);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .overview-item span {
+      color: #173452;
+      font-weight: 800;
+    }
+
+    .overview-item p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .capability-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .capability-card {
+      min-height: 220px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .capability-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(145deg, var(--primary), #2a9d8f);
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .capability-card h3,
+    .quality-item h3 {
+      margin: 0;
+      color: #102d50;
+      font-size: 21px;
+      line-height: 1.3;
+    }
+
+    .capability-card p,
+    .quality-item p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    .process-band {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.72);
+      padding: 22px;
+      box-shadow: 0 16px 38px rgba(22, 66, 110, 0.08);
+    }
+
+    .process-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .process-list li {
+      min-height: 132px;
+      border: 1px solid #dbeaf9;
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .process-list strong {
+      display: block;
+      color: var(--amber);
+      font-size: 13px;
+      margin-bottom: 9px;
+    }
+
+    .process-list span {
+      display: block;
+      color: #102d50;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .process-list p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .quality-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .quality-photo {
+      min-height: 430px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 16px 38px rgba(22, 66, 110, 0.08);
+    }
+
+    .quality-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .quality-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .quality-item {
+      padding: 20px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr 0.9fr;
+      grid-auto-rows: 240px;
+      gap: 16px;
+    }
+
+    .gallery-grid figure {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(22, 66, 110, 0.08);
+      position: relative;
+    }
+
+    .gallery-grid figure:first-child {
+      grid-row: span 2;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .gallery-grid figcaption {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.9);
+      color: #173452;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .contact-band {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 20px;
+      border: 1px solid #b7d6f5;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(232,246,242,0.86));
+      padding: 26px;
+      box-shadow: 0 16px 38px rgba(22, 66, 110, 0.08);
+    }
+
+    .contact-band h2 {
+      margin: 0 0 8px;
+      color: #102d50;
+      font-size: clamp(24px, 3vw, 34px);
+      letter-spacing: 0;
+    }
+
+    .contact-band p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.75;
+    }
+
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .top-nav {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .hero,
+      .quality-layout,
+      .contact-band {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 46px;
+      }
+
+      .hero-media {
+        grid-template-columns: 1fr 1fr;
+        min-height: 440px;
+      }
+
+      .overview-grid,
+      .capability-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .process-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 28px, 1220px);
+        padding-top: 16px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 34px 0 28px;
+      }
+
+      .hero-media {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        min-height: auto;
+      }
+
+      .factory-photo,
+      .factory-photo.main,
+      .quality-photo,
+      .gallery-grid figure:first-child {
+        grid-row: auto;
+      }
+
+      .factory-photo {
+        min-height: 230px;
+      }
+
+      .overview-grid,
+      .capability-grid,
+      .process-list,
+      .quality-grid,
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-grid {
+        grid-auto-rows: 230px;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .contact-band {
+        padding: 20px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="./auth.css" />
+  <link rel="stylesheet" href="./footer.css" />
+  <link rel="stylesheet" href="./agent-chat.css" />
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="top-nav">
+      <a class="brand" href="index.html#home">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>霸州市骏龙医疗器械有限公司</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#home">首页</a>
+        <a href="index.html#products">产品中心</a>
+        <a href="electric.html">电动轮椅</a>
+        <a href="manual.html">手动轮椅</a>
+        <a class="active" href="factory.html">工厂介绍</a>
+        <a href="staff.html" data-route="employee">员工管理</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="kicker">工厂介绍</span>
+          <h1>稳定制造，支撑每一台轮椅可靠交付</h1>
+          <p class="sub">
+            霸州市骏龙医疗器械有限公司围绕电动轮椅、手动轮椅及护理出行产品进行生产组织，
+            从物料确认、结构装配、整车调试到成品检查，持续把安全性、舒适性和交付稳定性放在制造流程里。
+          </p>
+          <div class="cta">
+            <a class="btn primary" href="#capability">查看制造能力</a>
+            <a class="btn ghost" href="index.html#products">返回产品中心</a>
+          </div>
+        </div>
+
+        <div class="hero-media" aria-label="工厂与产品形象">
+          <div class="factory-photo main">
+            <img src="./assets/products/electric/product-1/dsc-6079.jpg" alt="电动轮椅产品实拍" />
+            <span class="photo-label">产品装配与成品展示</span>
+          </div>
+          <div class="factory-photo logo">
+            <img src="./assets/home/xinfangyuan-mark.png" alt="鑫方元品牌标志" />
+          </div>
+          <div class="factory-photo">
+            <img src="./assets/products/manual/product-8/dsc-2971.jpg" alt="手动轮椅产品实拍" />
+            <span class="photo-label">手动轮椅系列</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="工厂概况">
+        <div class="section-head">
+          <div>
+            <span class="kicker">制造概况</span>
+            <h2>围绕轮椅产品的标准化生产组织</h2>
+            <p>
+              工厂以产品结构稳定、装配流程清晰、检查节点明确为核心，支持常规型号生产、配置组合和客户批量采购需求。
+            </p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="overview-item">
+            <strong>01</strong>
+            <span>产品制造</span>
+            <p>覆盖电动轮椅、手动轮椅及护理出行相关产品。</p>
+          </div>
+          <div class="overview-item">
+            <strong>02</strong>
+            <span>装配管理</span>
+            <p>围绕车架、轮组、坐靠、制动与电控部件进行分段装配。</p>
+          </div>
+          <div class="overview-item">
+            <strong>03</strong>
+            <span>质量检查</span>
+            <p>关注承重结构、折叠机构、刹车系统、驱动系统和外观细节。</p>
+          </div>
+          <div class="overview-item">
+            <strong>04</strong>
+            <span>交付配合</span>
+            <p>支持机构采购、渠道供货和客户配置沟通。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="capability" aria-label="制造能力">
+        <div class="section-head">
+          <div>
+            <span class="kicker">制造能力</span>
+            <h2>从结构件到整车调试的协同能力</h2>
+            <p>
+              生产过程强调部件匹配、装配一致性和整车体验，确保产品在家庭护理、机构使用和日常出行场景中保持稳定表现。
+            </p>
+          </div>
+        </div>
+
+        <div class="capability-grid">
+          <article class="capability-card">
+            <div class="capability-icon" aria-hidden="true">架</div>
+            <h3>车架与结构装配</h3>
+            <p>围绕折叠、承重、坐宽、扶手和脚踏等结构位置进行装配确认，保证整车基础结构可靠。</p>
+          </article>
+          <article class="capability-card">
+            <div class="capability-icon" aria-hidden="true">控</div>
+            <h3>电控与驱动调试</h3>
+            <p>针对电动轮椅的控制器、驱动轮、电磁刹车和电池连接进行调试，提升操作稳定性。</p>
+          </article>
+          <article class="capability-card">
+            <div class="capability-icon" aria-hidden="true">配</div>
+            <h3>配置组合支持</h3>
+            <p>根据使用场景配置坐垫、靠背、轮组、护理推把、安全带等选配项，满足不同客户需求。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-label="生产流程">
+        <div class="section-head">
+          <div>
+            <span class="kicker">生产流程</span>
+            <h2>清晰流程让交付更可控</h2>
+            <p>每台产品从物料进入到成品出库，都按固定节点推进，减少遗漏，提高装配一致性。</p>
+          </div>
+        </div>
+
+        <div class="process-band">
+          <ol class="process-list">
+            <li>
+              <strong>STEP 01</strong>
+              <span>物料确认</span>
+              <p>核对车架、轮组、坐靠、电控及包装材料。</p>
+            </li>
+            <li>
+              <strong>STEP 02</strong>
+              <span>结构装配</span>
+              <p>完成主体结构、扶手、脚踏、轮组与制动部件装配。</p>
+            </li>
+            <li>
+              <strong>STEP 03</strong>
+              <span>功能调试</span>
+              <p>检查折叠、刹车、转向、驱动和关键活动部位。</p>
+            </li>
+            <li>
+              <strong>STEP 04</strong>
+              <span>成品检查</span>
+              <p>确认外观、稳定性、配置完整度和标识信息。</p>
+            </li>
+            <li>
+              <strong>STEP 05</strong>
+              <span>包装交付</span>
+              <p>按订单要求完成包装、配件核对和出库准备。</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" aria-label="质量管控">
+        <div class="section-head">
+          <div>
+            <span class="kicker">质量管控</span>
+            <h2>把风险控制在出厂之前</h2>
+            <p>质量检查覆盖结构、功能、外观和包装环节，重点关注用户真实使用中的安全和便利。</p>
+          </div>
+        </div>
+
+        <div class="quality-layout">
+          <div class="quality-photo">
+            <img src="./assets/products/manual/detail/dsc-2534.jpg" alt="手动轮椅细节实拍" />
+          </div>
+          <div class="quality-grid">
+            <article class="quality-item">
+              <h3>承重与结构</h3>
+              <p>检查车架连接、受力部位、座面支撑和关键紧固件状态。</p>
+            </article>
+            <article class="quality-item">
+              <h3>刹车与轮组</h3>
+              <p>确认驻车刹车、前后轮转动、轮胎状态和推行顺畅度。</p>
+            </article>
+            <article class="quality-item">
+              <h3>电动系统</h3>
+              <p>针对电动型号检查操控响应、驱动状态、电池连接和制动表现。</p>
+            </article>
+            <article class="quality-item">
+              <h3>包装出库</h3>
+              <p>核对产品型号、配置、配件和包装防护，减少运输环节问题。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="产品与工艺展示">
+        <div class="section-head">
+          <div>
+            <span class="kicker">现场展示</span>
+            <h2>用产品细节呈现制造标准</h2>
+            <p>当前页面先使用已有产品实拍作为展示素材，后续可替换为厂区、车间、检测和包装照片。</p>
+          </div>
+        </div>
+
+        <div class="gallery-grid">
+          <figure>
+            <img src="./assets/products/manual/product-9/dsc-2927.jpg" alt="手动轮椅成品展示" />
+            <figcaption>成品展示</figcaption>
+          </figure>
+          <figure>
+            <img src="./assets/products/electric/product-1/dsc-6084.jpg" alt="电动轮椅局部展示" />
+            <figcaption>电动配置</figcaption>
+          </figure>
+          <figure>
+            <img src="./assets/products/manual/product-8/dsc-2975.jpg" alt="手动轮椅结构展示" />
+            <figcaption>结构细节</figcaption>
+          </figure>
+          <figure>
+            <img src="./assets/products/electric/product-1/dsc-6100.jpg" alt="轮椅产品细节展示" />
+            <figcaption>整车检查</figcaption>
+          </figure>
+          <figure>
+            <img src="./assets/products/manual/detail/dsc-2542.jpg" alt="轮椅配置展示" />
+            <figcaption>配置组合</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" aria-label="合作咨询">
+        <div class="contact-band">
+          <div>
+            <h2>需要了解产能、配置或批量采购？</h2>
+            <p>可先从产品中心选择型号，再结合使用场景确认配置、包装和交付要求。</p>
+          </div>
+          <div class="cta">
+            <a class="btn primary" href="index.html#products">查看产品</a>
+            <a class="btn ghost" href="electric.html">电动系列</a>
+            <a class="btn ghost" href="manual.html">手动系列</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>© 霸州市骏龙医疗器械有限公司 版权所有</span>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">冀ICP备2026020752号-1</a>
+        <!-- 公安联网备案号通过审核后可在此处追加公网安备链接。 -->
+      </div>
+    </footer>
+  </div>
+
+  <script src="./agent-chat.js"></script>
+  <script src="./auth.js"></script>
+</body>
+</html>

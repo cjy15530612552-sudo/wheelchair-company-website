@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>账号登录 - 信防源医疗</title>
+  <style>
+    :root {
+      --primary: #0b66c3;
+      --primary-dark: #084f98;
+      --headline: #0e2b4c;
+      --sub: #58718c;
+      --line: #d7e6f5;
+      --soft: #eef6ff;
+      --danger: #b42318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--headline);
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      background:
+        linear-gradient(135deg, rgba(11, 102, 195, 0.14), rgba(255, 255, 255, 0.8) 42%, rgba(64, 168, 130, 0.16)),
+        #f5f9fd;
+    }
+
+    .login-shell {
+      min-height: calc(100vh - 92px);
+      display: grid;
+      place-items: center;
+      padding: 34px 18px;
+    }
+
+    .login-panel {
+      width: min(460px, 100%);
+      border: 1px solid rgba(215, 230, 245, 0.95);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 22px 58px rgba(9, 39, 74, 0.16);
+      padding: 30px;
+    }
+
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: inherit;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 26px 0 8px;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+
+    .login-note,
+    .account-note,
+    .return-note {
+      margin: 0;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .login-form {
+      display: grid;
+      gap: 15px;
+      margin-top: 24px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #284765;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid #c9ddf1;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--headline);
+      font: inherit;
+      padding: 0 13px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11, 102, 195, 0.12);
+    }
+
+    .login-error {
+      min-height: 20px;
+      margin: 0;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .primary-button,
+    .secondary-button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .primary-button {
+      border: 0;
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(11, 102, 195, 0.22);
+    }
+
+    .primary-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .primary-button:disabled {
+      cursor: wait;
+      opacity: 0.72;
+    }
+
+    .secondary-button {
+      border: 1px solid rgba(11, 102, 195, 0.24);
+      background: #fff;
+      color: var(--primary);
+    }
+
+    .account-note {
+      margin-top: 18px;
+      padding: 13px 14px;
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .logged-panel {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .current-user {
+      margin: 0;
+      padding: 13px 14px;
+      border-radius: 8px;
+      background: #f4f9ff;
+      color: #284765;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 560px) {
+      .login-shell {
+        padding: 18px;
+      }
+
+      .login-panel {
+        padding: 24px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="./footer.css" />
+  <link rel="stylesheet" href="./agent-chat.css" />
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-panel" aria-labelledby="loginTitle">
+      <a class="brand-link" href="index.html">
+        <span class="brand-mark">信</span>
+        <span>信防源医疗</span>
+      </a>
+
+      <h1 id="loginTitle">账号登录</h1>
+      <p class="login-note">登录成功后会自动返回刚才访问的页面。</p>
+      <p class="return-note">返回位置：<span data-next-label>index.html</span></p>
+
+      <form class="login-form" data-login-form>
+        <label class="field">
+          账号
+          <input name="username" autocomplete="username" placeholder="请输入账号" required />
+        </label>
+        <label class="field">
+          密码
+          <input name="password" type="password" autocomplete="current-password" placeholder="请输入密码" required />
+        </label>
+        <p class="login-error" data-login-error aria-live="polite"></p>
+        <div class="actions">
+          <button class="primary-button" type="submit" data-login-submit>登录</button>
+          <a class="secondary-button" href="index.html">返回首页</a>
+        </div>
+      </form>
+
+      <div class="logged-panel hidden" data-logged-panel>
+        <p class="current-user" data-current-user></p>
+        <a class="primary-button" href="index.html" data-return-link>继续返回</a>
+        <button class="secondary-button" type="button" data-logout-button>退出当前账号</button>
+      </div>
+
+      <p class="account-note">管理员：admin / 123456；客户：customer / 123456。只有管理员账号有官网编辑和员工管理权限。</p>
+    </section>
+  </main>
+  <footer class="site-footer site-footer--compact">
+    <div class="site-footer__inner">
+      <span>© 霸州市骏龙医疗器械有限公司 版权所有</span>
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">冀ICP备2026020752号-1</a>
+      <!-- 公安联网备案号通过审核后可在此处追加公网安备链接。 -->
+    </div>
+  </footer>
+
+  <script src="./agent-chat.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const routeMap = {
+        employee: "staff.html",
+        manual: "manual.html",
+        electric: "electric.html",
+        factory: "factory.html",
+        home: "index.html#home"
+      };
+      const serverOrigin = "http://localhost:3000";
+      const allowedPages = ["index.html", "manual.html", "electric.html", "factory.html", "staff.html"];
+      const params = new URLSearchParams(window.location.search);
+      const nextTarget = safeNext(params.get("next"));
+      const form = document.querySelector("[data-login-form]");
+      const submitButton = document.querySelector("[data-login-submit]");
+      const errorNode = document.querySelector("[data-login-error]");
+      const nextLabel = document.querySelector("[data-next-label]");
+      const loggedPanel = document.querySelector("[data-logged-panel]");
+      const currentUserNode = document.querySelector("[data-current-user]");
+      const returnLink = document.querySelector("[data-return-link]");
+      const logoutButton = document.querySelector("[data-logout-button]");
+
+      if (window.location.protocol === "file:") {
+        window.location.replace(`${serverOrigin}/login.html?next=${encodeURIComponent(nextTarget.replace(/^\//, "") || "index.html")}`);
+        return;
+      }
+
+      nextLabel.textContent = decodeURIComponent(nextTarget.replace(/^\//, "")) || "index.html";
+      returnLink.href = nextTarget;
+
+      function safeNext(value) {
+        let target = String(value || "index.html").trim();
+        target = routeMap[target] || target;
+
+        if (!target || target === "#" || target.startsWith("//") || /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(target)) {
+          target = "index.html";
+        }
+
+        try {
+          const baseUrl = window.location.protocol === "file:" ? `${serverOrigin}/login.html` : window.location.href;
+          const allowedOrigin = window.location.protocol === "file:" ? serverOrigin : window.location.origin;
+          const url = new URL(target, baseUrl);
+          const pageName = decodeURIComponent(url.pathname.split("/").pop() || "index.html");
+
+          if (url.origin !== allowedOrigin || !allowedPages.includes(pageName)) {
+            return "/index.html";
+          }
+
+          return `${url.pathname}${url.search}${url.hash}`;
+        } catch (error) {
+          return "/index.html";
+        }
+      }
+
+      async function apiFetch(url, options = {}) {
+        if (window.location.protocol === "file:") {
+          throw new Error("请先运行 node server.js，然后访问 http://localhost:3000/login.html。");
+        }
+
+        let response;
+
+        try {
+          response = await fetch(url, {
+            credentials: "same-origin",
+            headers: {
+              "Content-Type": "application/json",
+              ...(options.headers || {})
+            },
+            ...options
+          });
+        } catch (error) {
+          throw new Error("无法连接登录服务器，请确认 node server.js 正在运行。");
+        }
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data.message || "请求失败");
+        }
+
+        return data;
+      }
+
+      function showError(message) {
+        errorNode.textContent = message || "";
+      }
+
+      function showLoggedIn(user) {
+        form.classList.add("hidden");
+        loggedPanel.classList.remove("hidden");
+        currentUserNode.textContent = `当前已登录：${user.name || user.username}`;
+      }
+
+      async function checkCurrentUser() {
+        try {
+          const data = await apiFetch("/api/me");
+
+          if (data.loggedIn && data.user) {
+            showLoggedIn(data.user);
+          }
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        showError("");
+        submitButton.disabled = true;
+        submitButton.textContent = "登录中...";
+
+        try {
+          const formData = new FormData(form);
+          await apiFetch("/api/login", {
+            method: "POST",
+            body: JSON.stringify({
+              username: String(formData.get("username") || "").trim(),
+              password: String(formData.get("password") || "")
+            })
+          });
+          window.location.href = nextTarget;
+        } catch (error) {
+          showError(error.message || "登录失败");
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "登录";
+        }
+      });
+
+      logoutButton.addEventListener("click", async () => {
+        try {
+          await apiFetch("/api/logout", { method: "POST", body: "{}" });
+        } catch (error) {
+          showError(error.message);
+        }
+
+        window.location.reload();
+      });
+
+      checkCurrentUser();
+    })();
+  </script>
+</body>
+</html>

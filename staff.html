@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工控制台 - 骏龙医疗内部系统</title>
+    <style>
+        /* ================= 基础重置与变量 ================= */
+        :root {
+            --primary-color: #0056b3; 
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --text-color: #333333;
+            --bg-color: #f1f5f9;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+        body { display: flex; height: 100vh; background-color: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ================= 左侧导航栏 (Sidebar) ================= */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--white);
+            text-align: center;
+            border-bottom: 1px solid #334155;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu { flex-grow: 1; padding: 20px 0; overflow-y: auto; }
+        
+        .nav-item { padding: 12px 25px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: background 0.2s; }
+        .nav-item:hover, .nav-item.active { background-color: var(--sidebar-hover); color: var(--white); border-left: 4px solid var(--primary-color); }
+        .nav-item.active { padding-left: 21px; /* 减去border宽度保持对齐 */ }
+
+        .sidebar-footer { padding: 20px; border-top: 1px solid #334155; text-align: center; font-size: 0.9rem; }
+        .logout-btn { color: #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
+        .logout-btn:hover { color: var(--danger); }
+
+        /* ================= 右侧主体内容 (Main Content) ================= */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; }
+
+        /* 顶部 Header */
+        .top-header {
+            background-color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 40px; height: 40px; background-color: var(--primary-color); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        /* 面板容器 */
+        .dashboard-container { padding: 30px; }
+        .page-title { margin-bottom: 25px; font-size: 1.5rem; color: #1e293b; }
+        .dashboard-container.view-transition {
+            opacity: 0;
+            transform: translateX(18px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        .dashboard-container.view-ready {
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.28s ease, transform 0.28s ease;
+        }
+        .view-only-sales { display: none; }
+        .view-only-warehouse { display: none; }
+        .view-only-finished { display: none; }
+        .dashboard-container.sales-mode .overview-only { display: none; }
+        .dashboard-container.sales-mode .view-only-sales { display: block; }
+        .dashboard-container.sales-mode .modules-grid { grid-template-columns: 1fr; }
+        .dashboard-container.sales-mode .sales-panel {
+            min-height: calc(100vh - 160px);
+        }
+        .dashboard-container.sales-mode .sales-panel .table-wrap {
+            max-height: 46vh;
+            overflow: auto;
+        }
+        .dashboard-container.warehouse-mode .overview-only,
+        .dashboard-container.warehouse-mode .sales-panel {
+            display: none;
+        }
+        .dashboard-container.warehouse-mode .view-only-warehouse,
+        .dashboard-container.warehouse-mode .warehouse-panel {
+            display: block;
+        }
+        .warehouse-panel { display: none; }
+        .dashboard-container.warehouse-mode .modules-grid { grid-template-columns: 1fr; }
+        .dashboard-container.finished-mode .overview-only,
+        .dashboard-container.finished-mode .sales-panel,
+        .dashboard-container.finished-mode .warehouse-panel {
+            display: none;
+        }
+        .dashboard-container.finished-mode .view-only-finished,
+        .dashboard-container.finished-mode .finished-panel {
+            display: block;
+        }
+        .finished-panel { display: none; }
+        .dashboard-container.finished-mode .modules-grid { grid-template-columns: 1fr; }
+
+        /* ================= 快捷操作区 & 数据看板 ================= */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+
+        .stat-card {
+            background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            display: flex; align-items: center; gap: 20px; border: 1px solid var(--border-color);
+        }
+        .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+        .bg-blue { background-color: #e0f2fe; color: #0284c7; }
+        .bg-green { background-color: #d1fae5; color: #059669; }
+        .bg-yellow { background-color: #fef3c7; color: #d97706; }
+        
+        .stat-info h4 { color: #64748b; font-size: 0.9rem; margin-bottom: 5px; font-weight: normal; }
+        .stat-info .num { font-size: 1.5rem; font-weight: bold; color: #1e293b; }
+
+        /* ================= 核心功能模块双栏布局 ================= */
+        .modules-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        .module-card {
+            background: var(--white); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid var(--border-color); padding: 20px;
+        }
+        .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .module-header h3 { font-size: 1.1rem; color: #1e293b; display: flex; align-items: center; gap: 10px; }
+
+        /* 按钮样式 */
+        .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.9rem; transition: background 0.3s; font-weight: bold; }
+        .btn-primary { background: var(--primary-color); color: var(--white); }
+        .btn-primary:hover { background: #004494; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); }
+        .btn-outline:hover { background: var(--primary-color); color: var(--white); }
+
+        /* ================= 表格样式 ================= */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        .data-table th { background-color: #f8fafc; color: #64748b; font-weight: normal; }
+        .data-table tbody tr:hover { background-color: #f1f5f9; }
+
+        .wide-panel { grid-column: 1 / -1; }
+        .sales-toolbar, .sales-filters, .employee-form, .warehouse-filters, .warehouse-toolbar, .finished-filters, .finished-toolbar {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+        .sales-toolbar { grid-template-columns: 1fr auto auto; }
+        .sales-filters { grid-template-columns: repeat(5, minmax(140px, 1fr)) auto; }
+        .warehouse-toolbar { grid-template-columns: 1fr auto auto; }
+        .warehouse-filters { grid-template-columns: repeat(3, minmax(180px, 1fr)) auto; }
+        .finished-toolbar { grid-template-columns: 1fr auto auto; }
+        .finished-filters { grid-template-columns: repeat(3, minmax(180px, 1fr)) auto; }
+        .employee-form { grid-template-columns: repeat(5, minmax(140px, 1fr)) auto; }
+        .sales-filters label, .employee-form label, .sales-form label, .warehouse-filters label, .warehouse-form label, .stock-adjust-form label, .finished-filters label, .finished-form label { display: block; margin-bottom: 6px; color: #64748b; font-size: 0.85rem; }
+        .sales-filters input, .sales-filters select, .employee-form input, .employee-form select, .sales-form input, .sales-form select, .sales-form textarea, .warehouse-filters input, .warehouse-filters select, .warehouse-form input, .warehouse-form select, .warehouse-form textarea, .stock-adjust-form input, .stock-adjust-form select, .stock-adjust-form textarea, .finished-filters input, .finished-filters select, .finished-form input, .finished-form select, .finished-form textarea {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--white);
+        }
+        .sales-form textarea { min-height: 76px; resize: vertical; }
+        .warehouse-form textarea, .stock-adjust-form textarea { min-height: 76px; resize: vertical; }
+        .finished-form textarea { min-height: 76px; resize: vertical; }
+        .employee-message { margin-bottom: 14px; color: var(--primary-color); font-weight: bold; min-height: 20px; }
+        .sales-message, .warehouse-message, .finished-message { color: var(--primary-color); font-weight: bold; min-height: 20px; align-self: center; }
+        .table-wrap { overflow-x: auto; }
+        .checkbox-cell { width: 42px; text-align: center; }
+        .action-link { color: var(--primary-color); font-weight: bold; cursor: pointer; }
+        .sales-modal-mask, .warehouse-modal-mask, .stock-adjust-modal-mask, .finished-modal-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.48);
+            padding: 20px;
+        }
+        .sales-modal-mask.active { display: flex; }
+        .warehouse-modal-mask.active, .stock-adjust-modal-mask.active, .finished-modal-mask.active { display: flex; }
+        .sales-modal, .warehouse-modal, .stock-adjust-modal, .finished-modal {
+            width: min(860px, 100%);
+            max-height: 92vh;
+            overflow-y: auto;
+            background: var(--white);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+        }
+        .stock-adjust-modal { width: min(520px, 100%); }
+        .sales-modal-header, .warehouse-modal-header, .stock-adjust-modal-header, .finished-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .sales-modal-header h3, .warehouse-modal-header h3, .stock-adjust-modal-header h3, .finished-modal-header h3 { color: #1e293b; }
+        .sales-form, .warehouse-form, .finished-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .stock-adjust-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
+        .sales-form .full-row, .warehouse-form .full-row, .stock-adjust-form .full-row, .finished-form .full-row { grid-column: 1 / -1; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; }
+
+        /* 状态标签 */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .badge-success { background: #d1fae5; color: #059669; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-danger { background: #fee2e2; color: #ef4444; }
+        .status-action { border: none; cursor: pointer; }
+        .status-action:hover { filter: brightness(0.96); transform: translateY(-1px); }
+
+        /* ================= 响应式 ================= */
+        @media (max-width: 1024px) {
+            .modules-grid { grid-template-columns: 1fr; }
+            .sales-filters, .employee-form, .sales-form, .warehouse-filters, .warehouse-form, .finished-filters, .finished-form { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+            .sales-toolbar, .warehouse-toolbar, .finished-toolbar { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { position: absolute; transform: translateX(-100%); z-index: 100; height: 100%; }
+            .sales-filters, .employee-form, .sales-form, .warehouse-filters, .warehouse-form, .finished-filters, .finished-form { grid-template-columns: 1fr; }
+            /* 实际开发中需添加汉堡菜单按钮来控制侧边栏显隐 */
+        }
+    </style>
+    <link rel="stylesheet" href="./footer.css">
+    <link rel="stylesheet" href="./agent-chat.css">
+</head>
+<body>
+
+    <!-- ================= 左侧导航栏 ================= -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            ♿ 骏龙医疗 ERP
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-workspace-view="overview"><i>📊</i> 工作台概览</li>
+            <li class="nav-item" data-workspace-view="sales-manual"><i>📝</i> 手动轮椅销售单</li>
+            <li class="nav-item" data-workspace-view="sales-electric"><i>🔋</i> 电动轮椅销售单</li>
+            <li class="nav-item" data-workspace-view="warehouse-manual"><i>📦</i> 手动轮椅配件</li>
+            <li class="nav-item" data-workspace-view="warehouse-electric"><i>🔌</i> 电动轮椅配件</li>
+            <li class="nav-item" data-workspace-view="finished-manual"><i>🪑</i> 手动轮椅成品库</li>
+            <li class="nav-item" data-workspace-view="finished-electric"><i>⚡</i> 电动轮椅成品库</li>
+            <li class="nav-item" data-workspace-view="customers"><i>👥</i> 客户与经销商</li>
+            <li class="nav-item" data-workspace-view="settings"><i>⚙️</i> 系统设置</li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="logout-btn"><i>🚪</i> 退出登录</div>
+        </div>
+    </aside>
+
+    <!-- ================= 右侧主体内容 ================= -->
+    <main class="main-content">
+        
+        <!-- 顶部信息栏 -->
+        <header class="top-header">
+            <div class="date-display">
+                <strong>今天是：</strong> <span id="current-date">2026年5月29日 星期五</span>
+            </div>
+            <div class="user-info">
+                <span>欢迎回来，<strong>张工 (销售部)</strong></span>
+                <div class="avatar">张</div>
+            </div>
+        </header>
+
+        <!-- 数据面板容器 -->
+        <div class="dashboard-container view-ready" data-dashboard-container>
+            <h2 class="page-title" data-page-title>工作台</h2>
+
+            <div class="module-card view-only-sales">
+                <div class="module-header">
+                    <h3 data-sales-workspace-title>销售工作区</h3>
+                    <button class="btn btn-primary" data-sales-create-top>+ 立即创建销售单</button>
+                </div>
+                <p style="color:#64748b; line-height:1.7;" data-sales-workspace-desc>这里集中处理销售单录入、修改、查询和导出。左侧菜单可随时回到工作台概览。</p>
+            </div>
+
+            <div class="module-card view-only-warehouse">
+                <div class="module-header">
+                    <h3 data-warehouse-workspace-title>配件仓库工作区</h3>
+                    <button class="btn btn-primary" data-part-create-top>+ 新增配件</button>
+                </div>
+                <p style="color:#64748b; line-height:1.7;" data-warehouse-workspace-desc>这里集中管理配件库存、库位、供应商和低库存预警，可直接做入库/出库调整并导出库存表。</p>
+            </div>
+
+            <div class="module-card view-only-finished">
+                <div class="module-header">
+                    <h3 data-finished-workspace-title>成品库存工作区</h3>
+                    <button class="btn btn-primary" data-finished-create-top>+ 新增成品</button>
+                </div>
+                <p style="color:#64748b; line-height:1.7;" data-finished-workspace-desc>这里集中管理成品型号、库存、批次、库位和低库存预警，可直接做入库/出库调整并导出成品库存表。</p>
+            </div>
+
+            <!-- 顶部快捷数据卡片 -->
+            <div class="grid-cards overview-only">
+                <div class="stat-card">
+                    <div class="stat-icon bg-blue">📝</div>
+                    <div class="stat-info">
+                        <h4>今日新增销售单</h4>
+                        <div class="num">12 单</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-green">💰</div>
+                    <div class="stat-info">
+                        <h4>本月发货金额</h4>
+                        <div class="num">¥ 345,000</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-yellow">⚠️</div>
+                    <div class="stat-info">
+                        <h4>配件库存预警</h4>
+                        <div class="num">5 项</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 核心功能区块：销售单 & 仓库 -->
+            <div class="modules-grid">
+                
+                <!-- 销售单模块 -->
+                <div class="module-card wide-panel sales-panel">
+                    <div class="module-header">
+                        <h3>📝 销售单管理</h3>
+                        <button class="btn btn-primary" data-sales-create>+ 创建新销售单</button>
+                    </div>
+
+                    <form class="sales-filters" data-sales-filter>
+                        <input name="wheelchairType" type="hidden">
+                        <div>
+                            <label>开始日期</label>
+                            <input name="startDate" type="date">
+                        </div>
+                        <div>
+                            <label>结束日期</label>
+                            <input name="endDate" type="date">
+                        </div>
+                        <div>
+                            <label>客户/电话</label>
+                            <input name="customer" type="text" placeholder="输入客户或电话">
+                        </div>
+                        <div>
+                            <label>产品型号</label>
+                            <input name="product" type="text" placeholder="例如 JL-E100">
+                        </div>
+                        <div>
+                            <label>状态</label>
+                            <select name="status">
+                                <option value="">全部状态</option>
+                                <option>待打印</option>
+                                <option>待发货</option>
+                                <option>已发货（待确认）</option>
+                                <option>已完成</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" type="submit">筛选</button>
+                    </form>
+
+                    <div class="sales-toolbar">
+                        <div class="sales-message" data-sales-message></div>
+                        <button class="btn btn-outline" type="button" data-sales-reset>重置筛选</button>
+                        <button class="btn btn-primary" type="button" data-sales-export>导出选中</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-cell"><input type="checkbox" data-sales-check-all></th>
+                                    <th>单号</th>
+                                    <th>日期时间</th>
+                                    <th>客户</th>
+                                    <th>产品型号</th>
+                                    <th>数量</th>
+                                    <th>金额</th>
+                                    <th>状态</th>
+                                    <th>创建人</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-sales-list>
+                                <tr>
+                                    <td colspan="10">正在加载销售单...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="module-card wide-panel warehouse-panel">
+                    <div class="module-header">
+                        <h3>📦 配件仓库管理</h3>
+                        <button class="btn btn-primary" type="button" data-part-create>+ 新增配件</button>
+                    </div>
+
+                    <form class="warehouse-filters" data-parts-filter>
+                        <input name="wheelchairType" type="hidden">
+                        <div>
+                            <label>关键词</label>
+                            <input name="keyword" type="text" placeholder="编号、名称、库位、供应商">
+                        </div>
+                        <div>
+                            <label>分类</label>
+                            <select name="category">
+                                <option value="">全部分类</option>
+                                <option>电池电控</option>
+                                <option>轮组</option>
+                                <option>制动安全</option>
+                                <option>坐垫靠背</option>
+                                <option>车架结构</option>
+                                <option>其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>库存状态</label>
+                            <select name="status">
+                                <option value="">全部状态</option>
+                                <option>缺货</option>
+                                <option>低库存</option>
+                                <option>充足</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" type="submit">筛选</button>
+                    </form>
+
+                    <div class="warehouse-toolbar">
+                        <div class="warehouse-message" data-parts-message></div>
+                        <button class="btn btn-outline" type="button" data-parts-reset>重置筛选</button>
+                        <button class="btn btn-primary" type="button" data-parts-export>导出库存</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>配件编号</th>
+                                    <th>配件名称</th>
+                                    <th>分类</th>
+                                    <th>库存</th>
+                                    <th>安全库存</th>
+                                    <th>状态</th>
+                                    <th>库位</th>
+                                    <th>供应商</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-parts-list>
+                                <tr>
+                                    <td colspan="9">正在加载配件库存...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="module-card wide-panel finished-panel">
+                    <div class="module-header">
+                        <h3>🪑 成品库存管理</h3>
+                        <button class="btn btn-primary" type="button" data-finished-create>+ 新增成品</button>
+                    </div>
+
+                    <form class="finished-filters" data-finished-filter>
+                        <input name="wheelchairType" type="hidden">
+                        <div>
+                            <label>关键词</label>
+                            <input name="keyword" type="text" placeholder="编号、型号、批次、库位">
+                        </div>
+                        <div>
+                            <label>分类</label>
+                            <select name="category">
+                                <option value="">全部分类</option>
+                                <option>手动折叠</option>
+                                <option>护理型</option>
+                                <option>电动折叠</option>
+                                <option>全地形</option>
+                                <option>其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>库存状态</label>
+                            <select name="status">
+                                <option value="">全部状态</option>
+                                <option>缺货</option>
+                                <option>低库存</option>
+                                <option>充足</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" type="submit">筛选</button>
+                    </form>
+
+                    <div class="finished-toolbar">
+                        <div class="finished-message" data-finished-message></div>
+                        <button class="btn btn-outline" type="button" data-finished-reset>重置筛选</button>
+                        <button class="btn btn-primary" type="button" data-finished-export>导出成品库存</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>成品编号</th>
+                                    <th>产品型号</th>
+                                    <th>分类</th>
+                                    <th>库存</th>
+                                    <th>安全库存</th>
+                                    <th>状态</th>
+                                    <th>库位</th>
+                                    <th>批次</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-finished-list>
+                                <tr>
+                                    <td colspan="9">正在加载成品库存...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 右侧小模块：配件仓库预警 -->
+                <div class="module-card overview-only">
+                    <div class="module-header">
+                        <h3>📦 配件仓库 (低库存预警)</h3>
+                        <button class="btn btn-outline">进入仓库系统</button>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>配件名称</th>
+                                <th>当前库存</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>24V 20AH 锂电池</td>
+                                <td><strong style="color:var(--danger);">8 块</strong></td>
+                                <td><span class="badge badge-danger">严重缺货</span></td>
+                            </tr>
+                            <tr>
+                                <td>360度智能摇杆</td>
+                                <td><strong style="color:var(--warning);">15 个</strong></td>
+                                <td><span class="badge badge-warning">需采购</span></td>
+                            </tr>
+                            <tr>
+                                <td>8寸前置万向轮</td>
+                                <td><strong style="color:var(--warning);">24 个</strong></td>
+                                <td><span class="badge badge-warning">需采购</span></td>
+                            </tr>
+                            <tr>
+                                <td>电磁刹车组件</td>
+                                <td><strong style="color:var(--warning);">18 套</strong></td>
+                                <td><span class="badge badge-warning">需采购</span></td>
+                            </tr>
+                            <tr>
+                                <td>蜂窝透气坐垫</td>
+                                <td>150 套</td>
+                                <td><span class="badge badge-success">充足</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="module-card wide-panel overview-only">
+                    <div class="module-header">
+                        <h3>👤 员工账号管理</h3>
+                    </div>
+
+                    <form class="employee-form" data-employee-form>
+                        <div>
+                            <label>账号</label>
+                            <input name="username" type="text" placeholder="例如 zhangsan" required>
+                        </div>
+                        <div>
+                            <label>初始密码</label>
+                            <input name="password" type="password" placeholder="至少6位" required>
+                        </div>
+                        <div>
+                            <label>姓名</label>
+                            <input name="name" type="text" placeholder="员工姓名" required>
+                        </div>
+                        <div>
+                            <label>部门</label>
+                            <input name="department" type="text" placeholder="例如 销售部" required>
+                        </div>
+                        <div>
+                            <label>权限</label>
+                            <select name="permission">
+                                <option value="">普通员工</option>
+                                <option value="employee">员工管理权限</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" type="submit">新增员工</button>
+                    </form>
+
+                    <div class="employee-message" data-employee-message></div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>账号</th>
+                                <th>姓名</th>
+                                <th>部门</th>
+                                <th>角色</th>
+                                <th>权限</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody data-employee-list>
+                            <tr>
+                                <td colspan="6">正在加载员工账号...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <footer class="site-footer site-footer--staff">
+            <div class="site-footer__inner">
+                <span>© 霸州市骏龙医疗器械有限公司 版权所有</span>
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">冀ICP备2026020752号-1</a>
+                <!-- 公安联网备案号通过审核后可在此处追加公网安备链接。 -->
+            </div>
+        </footer>
+    </main>
+
+    <div class="sales-modal-mask" data-sales-modal>
+        <div class="sales-modal">
+            <div class="sales-modal-header">
+                <h3 data-sales-modal-title>创建销售单</h3>
+                <button class="btn btn-outline" type="button" data-sales-close>关闭</button>
+            </div>
+
+            <form class="sales-form" data-sales-form>
+                <input name="id" type="hidden">
+                <input name="wheelchairType" type="hidden">
+                <div>
+                    <label>日期</label>
+                    <input name="orderDate" type="date" required>
+                </div>
+                <div>
+                    <label>时间</label>
+                    <input name="orderTime" type="time" required>
+                </div>
+                <div>
+                    <label>状态</label>
+                    <select name="status">
+                        <option>待打印</option>
+                        <option>待发货</option>
+                        <option>已发货（待确认）</option>
+                        <option>已完成</option>
+                    </select>
+                </div>
+                <div>
+                    <label>客户名称</label>
+                    <input name="customerName" type="text" required>
+                </div>
+                <div>
+                    <label>客户电话</label>
+                    <input name="customerPhone" type="text">
+                </div>
+                <div>
+                    <label>客户类型</label>
+                    <select name="customerType">
+                        <option>个人客户</option>
+                        <option>经销商</option>
+                        <option>医院</option>
+                        <option>康复机构</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div>
+                    <label>产品型号</label>
+                    <input name="productModel" type="text" placeholder="例如 JL-E100 电动折叠" required>
+                </div>
+                <div>
+                    <label>数量</label>
+                    <input name="quantity" type="number" min="1" step="1" required>
+                </div>
+                <div>
+                    <label>单价</label>
+                    <input name="unitPrice" type="number" min="0" step="0.01" required>
+                </div>
+                <div class="full-row">
+                    <label>备注</label>
+                    <textarea name="remark" placeholder="物流、发票、客户要求等"></textarea>
+                </div>
+                <div class="modal-actions full-row">
+                    <button class="btn btn-outline" type="button" data-sales-close>取消</button>
+                    <button class="btn btn-primary" type="submit">保存销售单</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="warehouse-modal-mask" data-part-modal>
+        <div class="warehouse-modal">
+            <div class="warehouse-modal-header">
+                <h3 data-part-modal-title>新增配件</h3>
+                <button class="btn btn-outline" type="button" data-part-close>关闭</button>
+            </div>
+
+            <form class="warehouse-form" data-part-form>
+                <input name="id" type="hidden">
+                <input name="wheelchairType" type="hidden">
+                <div>
+                    <label>配件编号</label>
+                    <input name="partNo" type="text" placeholder="例如 P-BAT-24V20AH" required>
+                </div>
+                <div>
+                    <label>配件名称</label>
+                    <input name="name" type="text" placeholder="例如 24V 20AH 锂电池" required>
+                </div>
+                <div>
+                    <label>分类</label>
+                    <select name="category">
+                        <option>电池电控</option>
+                        <option>轮组</option>
+                        <option>制动安全</option>
+                        <option>坐垫靠背</option>
+                        <option>车架结构</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div>
+                    <label>当前库存</label>
+                    <input name="currentStock" type="number" min="0" step="1" required>
+                </div>
+                <div>
+                    <label>安全库存</label>
+                    <input name="safetyStock" type="number" min="0" step="1" required>
+                </div>
+                <div>
+                    <label>单位</label>
+                    <input name="unit" type="text" value="个" required>
+                </div>
+                <div>
+                    <label>库位</label>
+                    <input name="location" type="text" placeholder="例如 A区-01">
+                </div>
+                <div>
+                    <label>供应商</label>
+                    <input name="supplier" type="text" placeholder="供应商名称">
+                </div>
+                <div class="full-row">
+                    <label>备注</label>
+                    <textarea name="remark" placeholder="适用车型、采购要求等"></textarea>
+                </div>
+                <div class="modal-actions full-row">
+                    <button class="btn btn-outline" type="button" data-part-close>取消</button>
+                    <button class="btn btn-primary" type="submit">保存配件</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="finished-modal-mask" data-finished-modal>
+        <div class="finished-modal">
+            <div class="finished-modal-header">
+                <h3 data-finished-modal-title>新增成品</h3>
+                <button class="btn btn-outline" type="button" data-finished-close>关闭</button>
+            </div>
+
+            <form class="finished-form" data-finished-form>
+                <input name="id" type="hidden">
+                <input name="wheelchairType" type="hidden">
+                <div>
+                    <label>成品编号</label>
+                    <input name="sku" type="text" placeholder="例如 FG-E100" required>
+                </div>
+                <div>
+                    <label>产品型号</label>
+                    <input name="model" type="text" placeholder="例如 JL-E100 电动折叠" required>
+                </div>
+                <div>
+                    <label>分类</label>
+                    <select name="category">
+                        <option>手动折叠</option>
+                        <option>护理型</option>
+                        <option>电动折叠</option>
+                        <option>全地形</option>
+                        <option>其他</option>
+                    </select>
+                </div>
+                <div>
+                    <label>当前库存</label>
+                    <input name="currentStock" type="number" min="0" step="1" required>
+                </div>
+                <div>
+                    <label>安全库存</label>
+                    <input name="safetyStock" type="number" min="0" step="1" required>
+                </div>
+                <div>
+                    <label>单位</label>
+                    <input name="unit" type="text" value="台" required>
+                </div>
+                <div>
+                    <label>库位</label>
+                    <input name="location" type="text" placeholder="例如 成品A区-01">
+                </div>
+                <div>
+                    <label>批次</label>
+                    <input name="batchNo" type="text" placeholder="例如 B202605-E100">
+                </div>
+                <div class="full-row">
+                    <label>备注</label>
+                    <textarea name="remark" placeholder="颜色、配置、特殊说明等"></textarea>
+                </div>
+                <div class="modal-actions full-row">
+                    <button class="btn btn-outline" type="button" data-finished-close>取消</button>
+                    <button class="btn btn-primary" type="submit">保存成品</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="stock-adjust-modal-mask" data-stock-adjust-modal>
+        <div class="stock-adjust-modal">
+            <div class="stock-adjust-modal-header">
+                <h3 data-stock-adjust-title>库存调整</h3>
+                <button class="btn btn-outline" type="button" data-stock-adjust-close>关闭</button>
+            </div>
+
+            <form class="stock-adjust-form" data-stock-adjust-form>
+                <input name="id" type="hidden">
+                <div>
+                    <label>操作类型</label>
+                    <select name="type">
+                        <option value="in">入库</option>
+                        <option value="out">出库</option>
+                    </select>
+                </div>
+                <div>
+                    <label>数量</label>
+                    <input name="quantity" type="number" min="1" step="1" required>
+                </div>
+                <div class="full-row">
+                    <label>备注</label>
+                    <textarea name="remark" placeholder="例如采购入库、生产领料"></textarea>
+                </div>
+                <div class="modal-actions full-row">
+                    <button class="btn btn-outline" type="button" data-stock-adjust-close>取消</button>
+                    <button class="btn btn-primary" type="submit">确认调整</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="agent-chat.js"></script>
+    <script src="backend.js"></script>
+</body>
+</html>

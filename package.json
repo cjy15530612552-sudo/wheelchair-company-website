@@ -1,0 +1,11 @@
+{
+  "name": "junlong-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "霸州市骏龙医疗器械有限公司官网前后端项目",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}
