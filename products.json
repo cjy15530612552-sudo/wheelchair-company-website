@@ -1,0 +1,62 @@
+[
+  {
+    "id": "test-manual-elderly-fold",
+    "name": "测试款轻便折叠手动轮椅",
+    "price": 2680,
+    "category": "手动轮椅",
+    "foldable": true,
+    "electric": false,
+    "lightweight": true,
+    "suitable_for": ["elderly", "daily_use"],
+    "image_url": "assets/products/manual/product-1/dsc-1711.jpg",
+    "description": "轻便可折叠，适合老人日常出行和家庭照护使用。"
+  },
+  {
+    "id": "test-electric-basic",
+    "name": "测试款智能电动轮椅",
+    "price": 4980,
+    "category": "电动轮椅",
+    "foldable": false,
+    "electric": true,
+    "lightweight": false,
+    "suitable_for": ["elderly", "outdoor"],
+    "image_url": "assets/products/electric/product-1/dsc-6078.jpg",
+    "description": "电动驱动，适合长辈中短途代步和户外通行。"
+  },
+  {
+    "id": "test-electric-fold",
+    "name": "测试款可折叠电动轮椅",
+    "price": 5680,
+    "category": "电动轮椅",
+    "foldable": true,
+    "electric": true,
+    "lightweight": false,
+    "suitable_for": ["elderly", "travel"],
+    "image_url": "assets/products/electric/product-2/dsc-5818.jpg",
+    "description": "支持折叠收纳，兼顾电动代步和外出携带需求。"
+  },
+  {
+    "id": "test-lightweight-manual",
+    "name": "测试款超轻手动轮椅",
+    "price": 1880,
+    "category": "手动轮椅",
+    "foldable": true,
+    "electric": false,
+    "lightweight": true,
+    "suitable_for": ["daily_use", "travel"],
+    "image_url": "assets/products/manual/product-3/dsc-2471.jpg",
+    "description": "主打轻量化和便携，适合需要频繁搬运或短途出行的用户。"
+  },
+  {
+    "id": "test-elderly-comfort",
+    "name": "测试款老人舒适轮椅",
+    "price": 3280,
+    "category": "手动轮椅",
+    "foldable": false,
+    "electric": false,
+    "lightweight": false,
+    "suitable_for": ["elderly", "care"],
+    "image_url": "assets/products/manual/product-5/dsc-1634.jpg",
+    "description": "注重乘坐稳定性和舒适性，适合老人居家护理和日常移动。"
+  }
+]
