@@ -84,11 +84,10 @@
             transform: translateX(0);
             transition: opacity 0.28s ease, transform 0.28s ease;
         }
-        .view-only-sales { display: none; }
         .view-only-warehouse { display: none; }
         .view-only-finished { display: none; }
+        .view-only-customers { display: none; }
         .dashboard-container.sales-mode .overview-only { display: none; }
-        .dashboard-container.sales-mode .view-only-sales { display: block; }
         .dashboard-container.sales-mode .modules-grid { grid-template-columns: 1fr; }
         .dashboard-container.sales-mode .sales-panel {
             min-height: calc(100vh - 160px);
@@ -118,6 +117,18 @@
         }
         .finished-panel { display: none; }
         .dashboard-container.finished-mode .modules-grid { grid-template-columns: 1fr; }
+        .dashboard-container.customer-mode .overview-only,
+        .dashboard-container.customer-mode .sales-panel,
+        .dashboard-container.customer-mode .warehouse-panel,
+        .dashboard-container.customer-mode .finished-panel {
+            display: none;
+        }
+        .dashboard-container.customer-mode .view-only-customers,
+        .dashboard-container.customer-mode .customers-panel {
+            display: block;
+        }
+        .customers-panel { display: none; }
+        .dashboard-container.customer-mode .modules-grid { grid-template-columns: 1fr; }
 
         /* ================= 快捷操作区 & 数据看板 ================= */
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
@@ -150,6 +161,8 @@
         .btn-primary:hover { background: #004494; }
         .btn-outline { background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); }
         .btn-outline:hover { background: var(--primary-color); color: var(--white); }
+        .btn-danger { background: var(--danger); color: var(--white); }
+        .btn-danger:hover { background: #dc2626; }
 
         /* ================= 表格样式 ================= */
         .data-table { width: 100%; border-collapse: collapse; }
@@ -158,21 +171,23 @@
         .data-table tbody tr:hover { background-color: #f1f5f9; }
 
         .wide-panel { grid-column: 1 / -1; }
-        .sales-toolbar, .sales-filters, .employee-form, .warehouse-filters, .warehouse-toolbar, .finished-filters, .finished-toolbar {
+        .sales-toolbar, .sales-filters, .employee-form, .warehouse-filters, .warehouse-toolbar, .finished-filters, .finished-toolbar, .customer-directory-toolbar, .customer-directory-filters {
             display: grid;
             gap: 12px;
             margin-bottom: 20px;
             align-items: end;
         }
-        .sales-toolbar { grid-template-columns: 1fr auto auto; }
-        .sales-filters { grid-template-columns: repeat(5, minmax(140px, 1fr)) auto; }
-        .warehouse-toolbar { grid-template-columns: 1fr auto auto; }
+        .sales-toolbar { grid-template-columns: 1fr auto auto auto auto; }
+        .sales-filters { grid-template-columns: repeat(7, minmax(120px, 1fr)) auto; }
+        .warehouse-toolbar { grid-template-columns: 1fr auto auto auto; }
         .warehouse-filters { grid-template-columns: repeat(3, minmax(180px, 1fr)) auto; }
-        .finished-toolbar { grid-template-columns: 1fr auto auto; }
+        .finished-toolbar { grid-template-columns: 1fr auto auto auto; }
         .finished-filters { grid-template-columns: repeat(3, minmax(180px, 1fr)) auto; }
+        .customer-directory-toolbar { grid-template-columns: 1fr auto auto; }
+        .customer-directory-filters { grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) auto; }
         .employee-form { grid-template-columns: repeat(5, minmax(140px, 1fr)) auto; }
-        .sales-filters label, .employee-form label, .sales-form label, .warehouse-filters label, .warehouse-form label, .stock-adjust-form label, .finished-filters label, .finished-form label { display: block; margin-bottom: 6px; color: #64748b; font-size: 0.85rem; }
-        .sales-filters input, .sales-filters select, .employee-form input, .employee-form select, .sales-form input, .sales-form select, .sales-form textarea, .warehouse-filters input, .warehouse-filters select, .warehouse-form input, .warehouse-form select, .warehouse-form textarea, .stock-adjust-form input, .stock-adjust-form select, .stock-adjust-form textarea, .finished-filters input, .finished-filters select, .finished-form input, .finished-form select, .finished-form textarea {
+        .sales-filters label, .employee-form label, .sales-form label, .warehouse-filters label, .warehouse-form label, .stock-adjust-form label, .finished-filters label, .finished-form label, .customer-directory-filters label, .customer-form label { display: block; margin-bottom: 6px; color: #64748b; font-size: 0.85rem; }
+        .sales-filters input, .sales-filters select, .employee-form input, .employee-form select, .sales-form input, .sales-form select, .sales-form textarea, .warehouse-filters input, .warehouse-filters select, .warehouse-form input, .warehouse-form select, .warehouse-form textarea, .stock-adjust-form input, .stock-adjust-form select, .stock-adjust-form textarea, .finished-filters input, .finished-filters select, .finished-form input, .finished-form select, .finished-form textarea, .customer-directory-filters input, .customer-directory-filters select, .customer-form input, .customer-form select, .customer-form textarea {
             width: 100%;
             padding: 9px 10px;
             border: 1px solid var(--border-color);
@@ -180,14 +195,68 @@
             background: var(--white);
         }
         .sales-form textarea { min-height: 76px; resize: vertical; }
+        .sales-smart-recognition { border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; background: #f8fafc; }
+        .sales-smart-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
         .warehouse-form textarea, .stock-adjust-form textarea { min-height: 76px; resize: vertical; }
-        .finished-form textarea { min-height: 76px; resize: vertical; }
+        .finished-form textarea, .customer-form textarea { min-height: 76px; resize: vertical; }
         .employee-message { margin-bottom: 14px; color: var(--primary-color); font-weight: bold; min-height: 20px; }
-        .sales-message, .warehouse-message, .finished-message { color: var(--primary-color); font-weight: bold; min-height: 20px; align-self: center; }
+        .sales-message, .warehouse-message, .finished-message, .finished-model-message, .customer-directory-message { color: var(--primary-color); font-weight: bold; min-height: 20px; align-self: center; }
         .table-wrap { overflow-x: auto; }
+        .finished-model-toolbar { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin: 14px 0 10px; }
+        .finished-model-table { margin-top: 6px; }
+        .sales-remark-cell { min-width: 180px; }
         .checkbox-cell { width: 42px; text-align: center; }
         .action-link { color: var(--primary-color); font-weight: bold; cursor: pointer; }
-        .sales-modal-mask, .warehouse-modal-mask, .stock-adjust-modal-mask, .finished-modal-mask {
+        .danger-link { color: var(--danger); margin-left: 12px; }
+        .customer-directory-note { color: #64748b; line-height: 1.7; }
+        .customer-combo { position: relative; }
+        .customer-combo input { padding-right: 44px; }
+        .customer-combo__toggle {
+            position: absolute;
+            right: 1px;
+            top: 1px;
+            bottom: 1px;
+            width: 40px;
+            border: 0;
+            border-left: 1px solid var(--border-color);
+            border-radius: 0 4px 4px 0;
+            background: var(--white);
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #111827;
+        }
+        .customer-combo__toggle:hover { background: #f8fafc; }
+        .customer-combo__menu {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            z-index: 10000;
+            display: none;
+            max-height: 230px;
+            overflow-y: auto;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--white);
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.18);
+        }
+        .customer-combo__menu.active { display: block; }
+        .customer-combo__option {
+            width: 100%;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            padding: 9px 10px;
+            text-align: left;
+            cursor: pointer;
+            color: #1e293b;
+        }
+        .customer-combo__option:hover { background: #f1f5f9; }
+        .customer-combo__option strong { display: block; margin-bottom: 3px; }
+        .customer-combo__option span { color: #64748b; font-size: 0.84rem; }
+        .customer-combo__empty { padding: 10px; color: #64748b; font-size: 0.9rem; }
+        .sales-modal-mask, .warehouse-modal-mask, .stock-adjust-modal-mask, .finished-modal-mask, .customer-modal-mask {
             position: fixed;
             inset: 0;
             z-index: 9998;
@@ -198,8 +267,8 @@
             padding: 20px;
         }
         .sales-modal-mask.active { display: flex; }
-        .warehouse-modal-mask.active, .stock-adjust-modal-mask.active, .finished-modal-mask.active { display: flex; }
-        .sales-modal, .warehouse-modal, .stock-adjust-modal, .finished-modal {
+        .warehouse-modal-mask.active, .stock-adjust-modal-mask.active, .finished-modal-mask.active, .customer-modal-mask.active { display: flex; }
+        .sales-modal, .warehouse-modal, .stock-adjust-modal, .finished-modal, .customer-modal {
             width: min(860px, 100%);
             max-height: 92vh;
             overflow-y: auto;
@@ -209,11 +278,12 @@
             box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
         }
         .stock-adjust-modal { width: min(520px, 100%); }
-        .sales-modal-header, .warehouse-modal-header, .stock-adjust-modal-header, .finished-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .sales-modal-header h3, .warehouse-modal-header h3, .stock-adjust-modal-header h3, .finished-modal-header h3 { color: #1e293b; }
-        .sales-form, .warehouse-form, .finished-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .sales-modal-header, .warehouse-modal-header, .stock-adjust-modal-header, .finished-modal-header, .customer-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .sales-modal-header h3, .warehouse-modal-header h3, .stock-adjust-modal-header h3, .finished-modal-header h3, .customer-modal-header h3 { color: #1e293b; }
+        .sales-form, .warehouse-form, .finished-form, .customer-form { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .finished-modal-mask.simple-model-mode [data-finished-detail-field] { display: none; }
         .stock-adjust-form { display: grid; grid-template-columns: 1fr; gap: 14px; }
-        .sales-form .full-row, .warehouse-form .full-row, .stock-adjust-form .full-row, .finished-form .full-row { grid-column: 1 / -1; }
+        .sales-form .full-row, .warehouse-form .full-row, .stock-adjust-form .full-row, .finished-form .full-row, .customer-form .full-row { grid-column: 1 / -1; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; }
 
         /* 状态标签 */
@@ -227,12 +297,12 @@
         /* ================= 响应式 ================= */
         @media (max-width: 1024px) {
             .modules-grid { grid-template-columns: 1fr; }
-            .sales-filters, .employee-form, .sales-form, .warehouse-filters, .warehouse-form, .finished-filters, .finished-form { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
-            .sales-toolbar, .warehouse-toolbar, .finished-toolbar { grid-template-columns: 1fr; }
+            .sales-filters, .employee-form, .sales-form, .warehouse-filters, .warehouse-form, .finished-filters, .finished-form, .customer-directory-filters, .customer-form { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+            .sales-toolbar, .warehouse-toolbar, .finished-toolbar, .customer-directory-toolbar { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
             .sidebar { position: absolute; transform: translateX(-100%); z-index: 100; height: 100%; }
-            .sales-filters, .employee-form, .sales-form, .warehouse-filters, .warehouse-form, .finished-filters, .finished-form { grid-template-columns: 1fr; }
+            .sales-filters, .employee-form, .sales-form, .warehouse-filters, .warehouse-form, .finished-filters, .finished-form, .customer-directory-filters, .customer-form { grid-template-columns: 1fr; }
             /* 实际开发中需添加汉堡菜单按钮来控制侧边栏显隐 */
         }
     </style>
@@ -252,9 +322,9 @@
             <li class="nav-item" data-workspace-view="sales-electric"><i>🔋</i> 电动轮椅销售单</li>
             <li class="nav-item" data-workspace-view="warehouse-manual"><i>📦</i> 手动轮椅配件</li>
             <li class="nav-item" data-workspace-view="warehouse-electric"><i>🔌</i> 电动轮椅配件</li>
-            <li class="nav-item" data-workspace-view="finished-manual"><i>🪑</i> 手动轮椅成品库</li>
-            <li class="nav-item" data-workspace-view="finished-electric"><i>⚡</i> 电动轮椅成品库</li>
-            <li class="nav-item" data-workspace-view="customers"><i>👥</i> 客户与经销商</li>
+            <li class="nav-item" data-workspace-view="finished-manual"><i>🪑</i> 手动轮椅成品型号</li>
+            <li class="nav-item" data-workspace-view="finished-electric"><i>⚡</i> 电动轮椅成品型号</li>
+            <li class="nav-item" data-workspace-view="customers"><i>👥</i> 客户与收货方</li>
             <li class="nav-item" data-workspace-view="settings"><i>⚙️</i> 系统设置</li>
         </ul>
         <div class="sidebar-footer">
@@ -280,14 +350,6 @@
         <div class="dashboard-container view-ready" data-dashboard-container>
             <h2 class="page-title" data-page-title>工作台</h2>
 
-            <div class="module-card view-only-sales">
-                <div class="module-header">
-                    <h3 data-sales-workspace-title>销售工作区</h3>
-                    <button class="btn btn-primary" data-sales-create-top>+ 立即创建销售单</button>
-                </div>
-                <p style="color:#64748b; line-height:1.7;" data-sales-workspace-desc>这里集中处理销售单录入、修改、查询和导出。左侧菜单可随时回到工作台概览。</p>
-            </div>
-
             <div class="module-card view-only-warehouse">
                 <div class="module-header">
                     <h3 data-warehouse-workspace-title>配件仓库工作区</h3>
@@ -298,10 +360,38 @@
 
             <div class="module-card view-only-finished">
                 <div class="module-header">
-                    <h3 data-finished-workspace-title>成品库存工作区</h3>
+                    <h3 data-finished-workspace-title>成品型号工作区</h3>
                     <button class="btn btn-primary" data-finished-create-top>+ 新增成品</button>
                 </div>
-                <p style="color:#64748b; line-height:1.7;" data-finished-workspace-desc>这里集中管理成品型号、库存、批次、库位和低库存预警，可直接做入库/出库调整并导出成品库存表。</p>
+                <p style="color:#64748b; line-height:1.7;" data-finished-workspace-desc>这里集中维护成品型号资料，方便销售、库存和生产环节统一选择型号。</p>
+                <div class="finished-model-toolbar">
+                    <div class="finished-model-message" data-finished-model-message></div>
+                    <button class="btn btn-danger" type="button" data-finished-model-delete-selected>删除勾选</button>
+                </div>
+                <div class="table-wrap finished-model-table">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell"><input type="checkbox" data-finished-model-check-all></th>
+                                <th>产品型号</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody data-finished-model-list>
+                            <tr>
+                                <td colspan="3">正在加载成品型号...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="module-card view-only-customers">
+                <div class="module-header">
+                    <h3>👥 客户与收货方管理</h3>
+                    <button class="btn btn-primary" type="button" data-directory-create="customer">+ 新增客户</button>
+                </div>
+                <p class="customer-directory-note">集中维护客户、经销商、供应方资料，方便销售单、采购安排和售后沟通时快速查找联系人、电话、地址与合作状态。</p>
             </div>
 
             <!-- 顶部快捷数据卡片 -->
@@ -354,8 +444,21 @@
                             <input name="customer" type="text" placeholder="输入客户或电话">
                         </div>
                         <div>
+                            <label>客户类型</label>
+                            <select name="customerType">
+                                <option value="">全部类型</option>
+                                <option>客户</option>
+                                <option>网站客户</option>
+                                <option>经销商</option>
+                            </select>
+                        </div>
+                        <div>
                             <label>产品型号</label>
                             <input name="product" type="text" placeholder="例如 JL-E100">
+                        </div>
+                        <div>
+                            <label>备注</label>
+                            <input name="remark" type="text" placeholder="例如 电机">
                         </div>
                         <div>
                             <label>状态</label>
@@ -372,6 +475,8 @@
 
                     <div class="sales-toolbar">
                         <div class="sales-message" data-sales-message></div>
+                        <button class="btn btn-danger" type="button" data-sales-delete-selected>删除勾选</button>
+                        <button class="btn btn-outline" type="button" data-sales-edit-selected>修改勾选</button>
                         <button class="btn btn-outline" type="button" data-sales-reset>重置筛选</button>
                         <button class="btn btn-primary" type="button" data-sales-export>导出选中</button>
                     </div>
@@ -384,12 +489,12 @@
                                     <th>单号</th>
                                     <th>日期时间</th>
                                     <th>客户</th>
+                                    <th>客户类型</th>
                                     <th>产品型号</th>
                                     <th>数量</th>
                                     <th>金额</th>
                                     <th>状态</th>
-                                    <th>创建人</th>
-                                    <th>操作</th>
+                                    <th class="sales-remark-cell">备注</th>
                                 </tr>
                             </thead>
                             <tbody data-sales-list>
@@ -439,6 +544,7 @@
 
                     <div class="warehouse-toolbar">
                         <div class="warehouse-message" data-parts-message></div>
+                        <button class="btn btn-danger" type="button" data-parts-delete-selected>删除勾选</button>
                         <button class="btn btn-outline" type="button" data-parts-reset>重置筛选</button>
                         <button class="btn btn-primary" type="button" data-parts-export>导出库存</button>
                     </div>
@@ -447,6 +553,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
+                                    <th class="checkbox-cell"><input type="checkbox" data-parts-check-all></th>
                                     <th>配件编号</th>
                                     <th>配件名称</th>
                                     <th>分类</th>
@@ -460,7 +567,7 @@
                             </thead>
                             <tbody data-parts-list>
                                 <tr>
-                                    <td colspan="9">正在加载配件库存...</td>
+                                    <td colspan="10">正在加载配件库存...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -504,6 +611,7 @@
 
                     <div class="finished-toolbar">
                         <div class="finished-message" data-finished-message></div>
+                        <button class="btn btn-danger" type="button" data-finished-delete-selected>删除勾选</button>
                         <button class="btn btn-outline" type="button" data-finished-reset>重置筛选</button>
                         <button class="btn btn-primary" type="button" data-finished-export>导出成品库存</button>
                     </div>
@@ -512,6 +620,7 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
+                                    <th class="checkbox-cell"><input type="checkbox" data-finished-check-all></th>
                                     <th>成品编号</th>
                                     <th>产品型号</th>
                                     <th>分类</th>
@@ -525,7 +634,163 @@
                             </thead>
                             <tbody data-finished-list>
                                 <tr>
-                                    <td colspan="9">正在加载成品库存...</td>
+                                    <td colspan="10">正在加载成品库存...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="module-card wide-panel customers-panel" data-directory-section="customer">
+                    <div class="module-header">
+                        <h3>👤 客户部分</h3>
+                        <button class="btn btn-primary" type="button" data-directory-create="customer">+ 新增客户</button>
+                    </div>
+
+                    <form class="customer-directory-filters" data-directory-filter="customer">
+                        <div>
+                            <label>关键词</label>
+                            <input name="keyword" type="text" placeholder="客户名称、联系人、电话、地址">
+                        </div>
+                        <div>
+                            <label>状态</label>
+                            <select name="status">
+                                <option value="">全部状态</option>
+                                <option>启用</option>
+                                <option>停用</option>
+                                <option>待跟进</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" type="submit">筛选</button>
+                    </form>
+
+                    <div class="customer-directory-toolbar">
+                        <div class="customer-directory-message" data-directory-message="customer"></div>
+                        <button class="btn btn-outline" type="button" data-directory-reset="customer">重置筛选</button>
+                        <button class="btn btn-primary" type="button" data-directory-create="customer">新增客户</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>客户名称</th>
+                                    <th>联系人</th>
+                                    <th>联系电话</th>
+                                    <th>客户类型</th>
+                                    <th>常用地址</th>
+                                    <th>状态</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-directory-list="customer">
+                                <tr>
+                                    <td colspan="8">正在加载客户资料...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="module-card wide-panel customers-panel" data-directory-section="dealer">
+                    <div class="module-header">
+                        <h3>🤝 经销商部分</h3>
+                        <button class="btn btn-primary" type="button" data-directory-create="dealer">+ 新增经销商</button>
+                    </div>
+
+                    <form class="customer-directory-filters" data-directory-filter="dealer">
+                        <div>
+                            <label>关键词</label>
+                            <input name="keyword" type="text" placeholder="经销商名称、联系人、电话、区域">
+                        </div>
+                        <div>
+                            <label>状态</label>
+                            <select name="status">
+                                <option value="">全部状态</option>
+                                <option>启用</option>
+                                <option>停用</option>
+                                <option>待跟进</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" type="submit">筛选</button>
+                    </form>
+
+                    <div class="customer-directory-toolbar">
+                        <div class="customer-directory-message" data-directory-message="dealer"></div>
+                        <button class="btn btn-outline" type="button" data-directory-reset="dealer">重置筛选</button>
+                        <button class="btn btn-primary" type="button" data-directory-create="dealer">新增经销商</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>经销商名称</th>
+                                    <th>联系人</th>
+                                    <th>联系电话</th>
+                                    <th>覆盖区域</th>
+                                    <th>结算方式</th>
+                                    <th>状态</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-directory-list="dealer">
+                                <tr>
+                                    <td colspan="8">正在加载经销商资料...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="module-card wide-panel customers-panel" data-directory-section="sender">
+                    <div class="module-header">
+                        <h3>🏭 供应方部分</h3>
+                        <button class="btn btn-primary" type="button" data-directory-create="sender">+ 新增供应方</button>
+                    </div>
+
+                    <form class="customer-directory-filters" data-directory-filter="sender">
+                        <div>
+                            <label>关键词</label>
+                            <input name="keyword" type="text" placeholder="供应方名称、联系人、电话、供应范围">
+                        </div>
+                        <div>
+                            <label>状态</label>
+                            <select name="status">
+                                <option value="">全部状态</option>
+                                <option>启用</option>
+                                <option>停用</option>
+                                <option>待跟进</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline" type="submit">筛选</button>
+                    </form>
+
+                    <div class="customer-directory-toolbar">
+                        <div class="customer-directory-message" data-directory-message="sender"></div>
+                        <button class="btn btn-outline" type="button" data-directory-reset="sender">重置筛选</button>
+                        <button class="btn btn-primary" type="button" data-directory-create="sender">新增供应方</button>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>供应方名称</th>
+                                    <th>联系人</th>
+                                    <th>联系电话</th>
+                                    <th>服务区域</th>
+                                    <th>常用地址</th>
+                                    <th>状态</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody data-directory-list="sender">
+                                <tr>
+                                    <td colspan="8">正在加载供应方资料...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -669,26 +934,37 @@
                     </select>
                 </div>
                 <div>
-                    <label>客户名称</label>
-                    <input name="customerName" type="text" required>
-                </div>
-                <div>
-                    <label>客户电话</label>
-                    <input name="customerPhone" type="text">
-                </div>
-                <div>
                     <label>客户类型</label>
                     <select name="customerType">
-                        <option>个人客户</option>
+                        <option>客户</option>
+                        <option>网站客户</option>
                         <option>经销商</option>
-                        <option>医院</option>
-                        <option>康复机构</option>
-                        <option>其他</option>
                     </select>
                 </div>
                 <div>
+                    <label>客户名称</label>
+                    <div class="customer-combo" data-sales-customer-combo>
+                        <input name="customerName" type="text" placeholder="可输入临时客户，或点箭头选择" autocomplete="off" required>
+                        <button class="customer-combo__toggle" type="button" data-sales-customer-toggle aria-label="选择已有客户" aria-expanded="false">▼</button>
+                        <div class="customer-combo__menu" data-sales-customer-menu></div>
+                    </div>
+                </div>
+                <div>
+                    <label>客户电话</label>
+                    <input name="customerPhone" type="text" placeholder="选择已有客户后自动填入，也可手动填写">
+                </div>
+                <div class="full-row sales-smart-recognition" data-sales-smart-recognition hidden>
+                    <label>智能识别客户信息</label>
+                    <textarea name="smartCustomerText" data-sales-smart-text placeholder="请粘贴网站客户信息，系统将自动识别客户名称和电话"></textarea>
+                    <div class="sales-smart-actions">
+                        <button class="btn btn-outline" type="button" data-sales-smart-recognize>自动识别</button>
+                    </div>
+                </div>
+                <div>
                     <label>产品型号</label>
-                    <input name="productModel" type="text" placeholder="例如 JL-E100 电动折叠" required>
+                    <select name="productModel" required>
+                        <option value="">请选择产品型号</option>
+                    </select>
                 </div>
                 <div>
                     <label>数量</label>
@@ -757,7 +1033,11 @@
                 </div>
                 <div>
                     <label>供应商</label>
-                    <input name="supplier" type="text" placeholder="供应商名称">
+                    <div class="customer-combo" data-part-supplier-combo>
+                        <input name="supplier" type="text" placeholder="可输入临时供应商，或点箭头选择" autocomplete="off">
+                        <button class="customer-combo__toggle" type="button" data-part-supplier-toggle aria-label="选择已有供应方" aria-expanded="false">▼</button>
+                        <div class="customer-combo__menu" data-part-supplier-menu></div>
+                    </div>
                 </div>
                 <div class="full-row">
                     <label>备注</label>
@@ -781,7 +1061,7 @@
             <form class="finished-form" data-finished-form>
                 <input name="id" type="hidden">
                 <input name="wheelchairType" type="hidden">
-                <div>
+                <div data-finished-detail-field>
                     <label>成品编号</label>
                     <input name="sku" type="text" placeholder="例如 FG-E100" required>
                 </div>
@@ -789,7 +1069,7 @@
                     <label>产品型号</label>
                     <input name="model" type="text" placeholder="例如 JL-E100 电动折叠" required>
                 </div>
-                <div>
+                <div data-finished-detail-field>
                     <label>分类</label>
                     <select name="category">
                         <option>手动折叠</option>
@@ -799,27 +1079,27 @@
                         <option>其他</option>
                     </select>
                 </div>
-                <div>
+                <div data-finished-detail-field>
                     <label>当前库存</label>
                     <input name="currentStock" type="number" min="0" step="1" required>
                 </div>
-                <div>
+                <div data-finished-detail-field>
                     <label>安全库存</label>
                     <input name="safetyStock" type="number" min="0" step="1" required>
                 </div>
-                <div>
+                <div data-finished-detail-field>
                     <label>单位</label>
                     <input name="unit" type="text" value="台" required>
                 </div>
-                <div>
+                <div data-finished-detail-field>
                     <label>库位</label>
                     <input name="location" type="text" placeholder="例如 成品A区-01">
                 </div>
-                <div>
+                <div data-finished-detail-field>
                     <label>批次</label>
                     <input name="batchNo" type="text" placeholder="例如 B202605-E100">
                 </div>
-                <div class="full-row">
+                <div class="full-row" data-finished-detail-field>
                     <label>备注</label>
                     <textarea name="remark" placeholder="颜色、配置、特殊说明等"></textarea>
                 </div>
@@ -858,6 +1138,56 @@
                 <div class="modal-actions full-row">
                     <button class="btn btn-outline" type="button" data-stock-adjust-close>取消</button>
                     <button class="btn btn-primary" type="submit">确认调整</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="customer-modal-mask" data-directory-modal>
+        <div class="customer-modal">
+            <div class="customer-modal-header">
+                <h3 data-directory-modal-title>新增客户</h3>
+                <button class="btn btn-outline" type="button" data-directory-close>关闭</button>
+            </div>
+
+            <form class="customer-form" data-directory-form>
+                <input name="id" type="hidden">
+                <input name="kind" type="hidden">
+                <div>
+                    <label data-directory-name-label>名称</label>
+                    <input name="name" type="text" required>
+                </div>
+                <div>
+                    <label>联系人</label>
+                    <input name="contact" type="text" required>
+                </div>
+                <div>
+                    <label>联系电话</label>
+                    <input name="phone" type="text" required>
+                </div>
+                <div>
+                    <label data-directory-label-label>分类/区域</label>
+                    <input name="label" type="text">
+                </div>
+                <div>
+                    <label data-directory-address-label>地址/结算方式</label>
+                    <input name="address" type="text">
+                </div>
+                <div>
+                    <label>状态</label>
+                    <select name="status">
+                        <option>启用</option>
+                        <option>停用</option>
+                        <option>待跟进</option>
+                    </select>
+                </div>
+                <div class="full-row">
+                    <label>备注</label>
+                    <textarea name="remark" placeholder="记录合作要求、发货偏好、特殊说明等"></textarea>
+                </div>
+                <div class="modal-actions full-row">
+                    <button class="btn btn-outline" type="button" data-directory-close>取消</button>
+                    <button class="btn btn-primary" type="submit">保存资料</button>
                 </div>
             </form>
         </div>

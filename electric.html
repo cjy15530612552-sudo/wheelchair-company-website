@@ -418,7 +418,10 @@
     }
 
     .image-only .model-visual img.cover-lift {
-      object-position: center 44%;
+      object-fit: cover;
+      object-position: center bottom;
+      transform: scale(1.06);
+      transform-origin: center bottom;
     }
 
     .image-only .model-visual img.cover-third {
@@ -439,6 +442,16 @@
 
     .image-only .model-visual img.cover-seventh {
       object-position: 42% center;
+    }
+
+    .image-only .model-visual img.cover-eighth {
+      object-fit: cover;
+      object-position: center bottom;
+    }
+
+    .image-only .model-visual img.cover-ninth {
+      object-fit: cover;
+      object-position: center bottom;
     }
 
     .model-visual::before {
@@ -614,6 +627,12 @@
       background: #fff;
     }
 
+    .viewer-nav:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .viewer-stage {
       position: relative;
       display: grid;
@@ -635,6 +654,30 @@
       pointer-events: none;
       border-radius: 12px;
       box-shadow: 0 14px 34px rgba(22, 66, 110, 0.12);
+    }
+
+    .viewer-stage.is-placeholder {
+      border-top: 1px solid #dbeaf9;
+      border-bottom: 1px solid #dbeaf9;
+      background: linear-gradient(145deg, #f8fbff, #eef6ff);
+      cursor: default;
+    }
+
+    .viewer-stage.is-placeholder::before {
+      content: "详细观察图片待补充";
+      display: grid;
+      place-items: center;
+      width: min(520px, 82%);
+      min-height: 260px;
+      border: 1px dashed #b7d5f2;
+      border-radius: 14px;
+      color: #5f7892;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .viewer-stage.is-placeholder img {
+      display: none;
     }
 
     .viewer-controls {
@@ -1531,6 +1574,28 @@
               <button class="btn ghost" type="button" data-options-open="product7">配置选配</button>
             </div>
           </article>
+
+          <article class="model-card image-only" data-category="portable">
+            <div class="model-visual has-image">
+              <img class="cover-eighth" src="./assets/products/electric/product-8/dsc-8449.jpg" alt="铝合金银电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product8">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product8">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product8">配置选配</button>
+            </div>
+          </article>
+
+          <article class="model-card image-only" data-category="portable">
+            <div class="model-visual has-image">
+              <img class="cover-ninth" src="./assets/products/electric/product-9/dsc-8517.jpg" alt="铝合金绿电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product9">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product9">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product9">配置选配</button>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -2065,6 +2130,28 @@
             "DSC_4878.JPG", "DSC_4880.JPG", "DSC_4881.JPG", "DSC_4883.JPG", "DSC_4884.JPG",
             "DSC_4885.JPG", "DSC_4886.JPG", "DSC_4887.JPG", "DSC_4889.JPG"
           ].map((name) => `./assets/products/electric/product-7/${galleryImageName(name)}`)
+        },
+        product8: {
+          title: "铝合金银电动轮椅详细观察",
+          start: 4,
+          frames: [
+            "DSC_8444.JPG", "DSC_8445.JPG", "DSC_8446.JPG", "DSC_8448.JPG", "DSC_8449.JPG",
+            "DSC_8451.JPG", "DSC_8452.JPG", "DSC_8453.JPG", "DSC_8454.JPG", "DSC_8456.JPG",
+            "DSC_8457.JPG", "DSC_8458.JPG", "DSC_8459.JPG", "DSC_8460.JPG", "DSC_8461.JPG",
+            "DSC_8464.JPG", "DSC_8465.JPG", "DSC_8466.JPG", "DSC_8467.JPG", "DSC_8468.JPG",
+            "DSC_8469.JPG", "DSC_8470.JPG", "DSC_8471.JPG", "DSC_8472.JPG", "DSC_8473.JPG",
+            "DSC_8475.JPG", "DSC_8476.JPG", "DSC_8477.JPG", "DSC_8479.JPG", "DSC_8480.JPG",
+            "DSC_8481.JPG", "DSC_8483.JPG", "DSC_8484.JPG", "DSC_8485.JPG", "DSC_8487.JPG",
+            "DSC_8488.JPG", "DSC_8489.JPG", "DSC_8490.JPG", "DSC_8491.JPG", "DSC_8492.JPG",
+            "DSC_8493.JPG", "DSC_8494.JPG", "DSC_8495.JPG", "DSC_8496.JPG", "DSC_8497.JPG",
+            "DSC_8498.JPG", "DSC_8499.JPG"
+          ].map((name) => `./assets/products/electric/product-8/${galleryImageName(name)}`)
+        },
+        product9: {
+          title: "铝合金绿电动轮椅详细观察",
+          start: 0,
+          frames: [],
+          placeholder: "详细观察图片待补充"
         }
       };
 
@@ -2152,6 +2239,32 @@
             ["折叠尺寸", "840*430*770mm", "毛重", "47kg"],
             ["包装尺寸", "840*450*800mm", "车架材质", "碳钢喷塑"]
           ]
+        },
+        product8: {
+          name: "铝合金银电动轮椅",
+          feature: "铝合金银色车架，具体参数可在管理员登录后补充。",
+          rows: [
+            ["展开尺寸", "待确认", "载重", "待确认"],
+            ["座宽", "待确认", "前轮/后轮", "待确认"],
+            ["座深", "待确认", "扶手离地", "待确认"],
+            ["座高", "待确认", "扶手离座", "待确认"],
+            ["靠背高", "待确认", "净重", "待确认"],
+            ["折叠尺寸", "待确认", "毛重", "待确认"],
+            ["包装尺寸", "待确认", "车架材质", "铝合金"]
+          ]
+        },
+        product9: {
+          name: "铝合金绿电动轮椅",
+          feature: "铝合金绿色车架，具体参数可在管理员登录后补充。",
+          rows: [
+            ["展开尺寸", "待确认", "载重", "待确认"],
+            ["座宽", "待确认", "前轮/后轮", "待确认"],
+            ["座深", "待确认", "扶手离地", "待确认"],
+            ["座高", "待确认", "扶手离座", "待确认"],
+            ["靠背高", "待确认", "净重", "待确认"],
+            ["折叠尺寸", "待确认", "毛重", "待确认"],
+            ["包装尺寸", "待确认", "车架材质", "铝合金"]
+          ]
         }
       };
 
@@ -2162,9 +2275,9 @@
       const OPTION_SHARED_ITEMS_SYNC_KEY = "junlongElectricNonBatteryOptionsSyncedFromProduct1And2";
       const OPTION_PRODUCT3_BATTERY_SYNC_KEY = "junlongElectricProduct3BatteryOptionsCopied";
       const OPTION_EMPTY_BATTERY_SYNC_KEY = "junlongElectricEmptyBatteryOptionsFilled";
-      const OPTION_PRODUCT_KEYS = ["product1", "product2", "product3", "product4", "product5", "product6", "product7"];
+      const OPTION_PRODUCT_KEYS = ["product1", "product2", "product3", "product4", "product5", "product6", "product7", "product8", "product9"];
       const OPTION_SHARED_SOURCE_KEYS = ["product1", "product2"];
-      const OPTION_SHARED_TARGET_KEYS = ["product3", "product4", "product5", "product6", "product7"];
+      const OPTION_SHARED_TARGET_KEYS = ["product3", "product4", "product5", "product6", "product7", "product8", "product9"];
       function createEmptyElectricOptionTemplate() {
         return createElectricOptionTemplate(false);
       }
@@ -2205,7 +2318,9 @@
         product4: createElectricOptionTemplate(true, true),
         product5: createElectricOptionTemplate(true, true),
         product6: createElectricOptionTemplate(true, true),
-        product7: createElectricOptionTemplate(true, true)
+        product7: createElectricOptionTemplate(true, true),
+        product8: createElectricOptionTemplate(true, true),
+        product9: createElectricOptionTemplate(true, true)
       };
 
       const viewer = document.getElementById("wheelchairViewer");
@@ -2781,9 +2896,27 @@
       }
 
       function setFrame(index) {
-        currentFrame = (index + activeGallery.frames.length) % activeGallery.frames.length;
-        viewerImage.src = activeGallery.frames[currentFrame];
-        viewerProgress.textContent = `${currentFrame + 1} / ${activeGallery.frames.length}`;
+        const frames = activeGallery.frames || [];
+
+        if (!frames.length) {
+          currentFrame = 0;
+          viewerStage.classList.add("is-placeholder");
+          viewerStage.setAttribute("aria-label", activeGallery.placeholder || "详细观察图片待补充");
+          viewerImage.removeAttribute("src");
+          viewerImage.alt = activeGallery.placeholder || "详细观察图片待补充";
+          viewerProgress.textContent = "待补充";
+          prevFrame.disabled = true;
+          nextFrame.disabled = true;
+          return;
+        }
+
+        viewerStage.classList.remove("is-placeholder");
+        viewerStage.removeAttribute("aria-label");
+        prevFrame.disabled = false;
+        nextFrame.disabled = false;
+        currentFrame = (index + frames.length) % frames.length;
+        viewerImage.src = frames[currentFrame];
+        viewerProgress.textContent = `${currentFrame + 1} / ${frames.length}`;
       }
 
       function toggleViewer(open, galleryKey = "product1") {

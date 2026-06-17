@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -130,19 +131,23 @@ def extract_json_object(text: str) -> dict[str, Any]:
 
 def parse_user_requirement_with_llm(message: str) -> Requirement | None:
     try:
-        from dotenv import dotenv_values
+        from dotenv import load_dotenv
         from openai import OpenAI
     except ImportError as error:
         raise RuntimeError("openai or python-dotenv is not installed.") from error
 
-    env_values = dotenv_values(DOTENV_PATH) if DOTENV_PATH.exists() else {}
-    api_key = env_values.get("DASHSCOPE_API_KEY")
+    load_dotenv(DOTENV_PATH)
+
+    api_key = os.getenv("DASHSCOPE_API_KEY")
     if not api_key:
-        raise RuntimeError("DASHSCOPE_API_KEY is missing in project .env.")
+        raise RuntimeError("DASHSCOPE_API_KEY is missing in project .env or environment.")
+
+    base_url = os.getenv("QWEN_BASE_URL") or "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    model = os.getenv("QWEN_MODEL") or "qwen-plus"
 
     client = OpenAI(
         api_key=api_key,
-        base_url=env_values.get("QWEN_BASE_URL") or "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        base_url=base_url,
     )
 
     system_prompt = """
@@ -172,7 +177,7 @@ def parse_user_requirement_with_llm(message: str) -> Requirement | None:
 """.strip()
 
     response = client.chat.completions.create(
-        model=env_values.get("QWEN_MODEL") or "qwen-plus",
+        model=model,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": message},

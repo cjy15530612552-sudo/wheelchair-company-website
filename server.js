@@ -4,11 +4,49 @@ const http = require("http");
 const path = require("path");
 
 const rootDir = __dirname;
+
+function loadEnvFile(filePath) {
+    if (!fs.existsSync(filePath)) {
+        return;
+    }
+
+    const lines = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, "").split(/\r?\n/);
+
+    lines.forEach((line) => {
+        const trimmed = line.trim();
+
+        if (!trimmed || trimmed.startsWith("#")) {
+            return;
+        }
+
+        const equalIndex = trimmed.indexOf("=");
+
+        if (equalIndex <= 0) {
+            return;
+        }
+
+        const key = trimmed.slice(0, equalIndex).trim();
+        let value = trimmed.slice(equalIndex + 1).trim();
+
+        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.slice(1, -1);
+        }
+
+        if (!process.env[key]) {
+            process.env[key] = value;
+        }
+    });
+}
+
+loadEnvFile(path.join(rootDir, ".env"));
+
 const dataDir = path.join(rootDir, "data");
 const employeesFile = path.join(dataDir, "employees.json");
 const salesOrdersFile = path.join(dataDir, "sales-orders.json");
 const partsInventoryFile = path.join(dataDir, "parts-inventory.json");
 const finishedGoodsFile = path.join(dataDir, "finished-goods.json");
+const finishedModelsFile = path.join(dataDir, "finished-models.json");
+const customerDirectoryFile = path.join(dataDir, "customer-directory.json");
 const port = Number(process.env.PORT || 3000);
 
 const sessions = new Map();
@@ -26,6 +64,16 @@ const contentTypes = {
     ".ico": "image/x-icon"
 };
 
+function requiredEnv(name) {
+    const value = String(process.env[name] || "").trim();
+
+    if (!value) {
+        throw new Error(`请在 .env 中配置 ${name}，用于初始化员工账号密码。`);
+    }
+
+    return value;
+}
+
 function ensureDataStore() {
     if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
@@ -41,7 +89,7 @@ function ensureDataStore() {
                 role: "系统管理员",
                 permissions: ["employee"],
                 active: true,
-                passwordHash: hashPassword("123456"),
+                passwordHash: hashPassword(requiredEnv("ADMIN_INITIAL_PASSWORD")),
                 createdAt: new Date().toISOString()
             },
             {
@@ -52,7 +100,7 @@ function ensureDataStore() {
                 role: "客户",
                 permissions: [],
                 active: true,
-                passwordHash: hashPassword("123456"),
+                passwordHash: hashPassword(requiredEnv("CUSTOMER_INITIAL_PASSWORD")),
                 createdAt: new Date().toISOString()
             },
             {
@@ -63,7 +111,7 @@ function ensureDataStore() {
                 role: "普通员工",
                 permissions: [],
                 active: true,
-                passwordHash: hashPassword("staff123"),
+                passwordHash: hashPassword(requiredEnv("STAFF_INITIAL_PASSWORD")),
                 createdAt: new Date().toISOString()
             }
         ];
@@ -81,6 +129,14 @@ function ensureDataStore() {
 
     if (!fs.existsSync(finishedGoodsFile)) {
         writeFinishedGoods(seedFinishedGoods());
+    }
+
+    if (!fs.existsSync(finishedModelsFile)) {
+        writeFinishedModels(seedFinishedModels());
+    }
+
+    if (!fs.existsSync(customerDirectoryFile)) {
+        writeCustomerDirectory(seedCustomerDirectory());
     }
 }
 
@@ -116,6 +172,100 @@ function writeEmployees(employees) {
 
 function readJsonFile(filePath) {
     return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
+}
+
+function seedCustomerDirectory() {
+    const now = new Date().toISOString();
+
+    return [
+        {
+            id: crypto.randomUUID(),
+            kind: "customer",
+            name: "上海长海医院",
+            contact: "采购科",
+            phone: "021-55556666",
+            label: "医院客户",
+            address: "上海市杨浦区长海路",
+            status: "启用",
+            remark: "优先安排发票和批量配送",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            kind: "customer",
+            name: "王女士",
+            contact: "王女士",
+            phone: "13800008888",
+            label: "个人客户",
+            address: "北京市朝阳区",
+            status: "待跟进",
+            remark: "关注电动轮椅续航",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            kind: "dealer",
+            name: "北京瑞康医疗器械店",
+            contact: "刘经理",
+            phone: "010-88886666",
+            label: "华北区域",
+            address: "月结30天",
+            status: "启用",
+            remark: "重点经销商",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            kind: "dealer",
+            name: "宁波康复用品中心",
+            contact: "陈经理",
+            phone: "0574-66228888",
+            label: "浙江区域",
+            address: "现结",
+            status: "启用",
+            remark: "常订手动折叠款",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            kind: "sender",
+            name: "常州电池供应商",
+            contact: "周经理",
+            phone: "0519-66228888",
+            label: "电池配件",
+            address: "月结30天",
+            status: "启用",
+            remark: "常供24V锂电池",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            kind: "sender",
+            name: "宁波五金配件供应商",
+            contact: "张经理",
+            phone: "0574-88996666",
+            label: "五金件",
+            address: "现结",
+            status: "启用",
+            remark: "常供轮组和车架配件",
+            createdAt: now,
+            updatedAt: now
+        }
+    ];
+}
+
+function readCustomerDirectory() {
+    ensureDataStore();
+    return readJsonFile(customerDirectoryFile);
+}
+
+function writeCustomerDirectory(items) {
+    fs.writeFileSync(customerDirectoryFile, JSON.stringify(items, null, 2), "utf8");
 }
 
 function seedSalesOrders() {
@@ -323,6 +473,41 @@ function seedFinishedGoods() {
     ];
 }
 
+function seedFinishedModels() {
+    const now = new Date().toISOString();
+
+    return [
+        {
+            id: crypto.randomUUID(),
+            model: "JL-E100 电动折叠",
+            wheelchairType: "electric",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            model: "JL-E200 全地形越野",
+            wheelchairType: "electric",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            model: "JL-M100 超轻折叠",
+            wheelchairType: "manual",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            model: "JL-M300 全躺护理",
+            wheelchairType: "manual",
+            createdAt: now,
+            updatedAt: now
+        }
+    ];
+}
+
 function readFinishedGoods() {
     ensureDataStore();
     return readJsonFile(finishedGoodsFile);
@@ -330,6 +515,15 @@ function readFinishedGoods() {
 
 function writeFinishedGoods(goods) {
     fs.writeFileSync(finishedGoodsFile, JSON.stringify(goods, null, 2), "utf8");
+}
+
+function readFinishedModels() {
+    ensureDataStore();
+    return readJsonFile(finishedModelsFile);
+}
+
+function writeFinishedModels(models) {
+    fs.writeFileSync(finishedModelsFile, JSON.stringify(models, null, 2), "utf8");
 }
 
 function publicEmployee(employee) {
@@ -492,7 +686,9 @@ function normalizeSalesOrder(body, user, existingOrder) {
     const orderTime = String(body.orderTime || "").trim();
     const customerName = String(body.customerName || "").trim();
     const customerPhone = String(body.customerPhone || "").trim();
-    const customerType = String(body.customerType || "个人客户").trim();
+    const rawCustomerType = String(body.customerType || "客户").trim();
+    const allowedCustomerTypes = new Set(["客户", "网站客户", "经销商"]);
+    const customerType = allowedCustomerTypes.has(rawCustomerType) ? rawCustomerType : "客户";
     const productModel = String(body.productModel || "").trim();
     const wheelchairType = normalizeWheelchairType(body.wheelchairType, productModel);
     const quantity = Number(body.quantity || 0);
@@ -540,7 +736,9 @@ function filterSalesOrders(orders, query) {
     const startDate = query.get("startDate");
     const endDate = query.get("endDate");
     const customer = String(query.get("customer") || "").trim().toLowerCase();
+    const customerType = String(query.get("customerType") || "").trim();
     const product = String(query.get("product") || "").trim().toLowerCase();
+    const remark = String(query.get("remark") || "").trim().toLowerCase();
     const wheelchairType = String(query.get("wheelchairType") || "").trim();
     const status = normalizeSalesStatus(query.get("status") || "");
     const ids = String(query.get("ids") || "").split(",").map((id) => id.trim()).filter(Boolean);
@@ -574,7 +772,15 @@ function filterSalesOrders(orders, query) {
             }
         }
 
+        if (customerType && order.customerType !== customerType) {
+            return false;
+        }
+
         if (product && !String(order.productModel || "").toLowerCase().includes(product)) {
+            return false;
+        }
+
+        if (remark && !String(order.remark || "").toLowerCase().includes(remark)) {
             return false;
         }
 
@@ -592,6 +798,74 @@ function filterSalesOrders(orders, query) {
         status: normalizeSalesStatus(order.status),
         wheelchairType: normalizeWheelchairType(order.wheelchairType, order.productModel)
     })).sort((a, b) => `${b.orderDate} ${b.orderTime}`.localeCompare(`${a.orderDate} ${a.orderTime}`));
+}
+
+function normalizeCustomerDirectoryItem(body, existingItem) {
+    const allowedKinds = new Set(["customer", "dealer", "sender"]);
+    const allowedStatuses = new Set(["启用", "停用", "待跟进"]);
+    const kind = String(body.kind || (existingItem && existingItem.kind) || "customer").trim();
+    const name = String(body.name || "").trim();
+    const contact = String(body.contact || "").trim();
+    const phone = String(body.phone || "").trim();
+    const label = String(body.label || "").trim();
+    const address = String(body.address || "").trim();
+    const rawStatus = String(body.status || "启用").trim();
+    const remark = String(body.remark || "").trim();
+    const now = new Date().toISOString();
+
+    if (!allowedKinds.has(kind)) {
+        throw new Error("资料类型不正确");
+    }
+
+    if (!name || !contact || !phone) {
+        throw new Error("请填写名称、联系人和联系电话");
+    }
+
+    return {
+        id: existingItem ? existingItem.id : crypto.randomUUID(),
+        kind,
+        name,
+        contact,
+        phone,
+        label,
+        address,
+        status: allowedStatuses.has(rawStatus) ? rawStatus : "启用",
+        remark,
+        createdAt: existingItem ? existingItem.createdAt : now,
+        updatedAt: now
+    };
+}
+
+function filterCustomerDirectory(items, query) {
+    const kind = String(query.get("kind") || "").trim();
+    const keyword = String(query.get("keyword") || "").trim().toLowerCase();
+    const status = String(query.get("status") || "").trim();
+
+    return items.filter((item) => {
+        if (kind && item.kind !== kind) {
+            return false;
+        }
+
+        if (status && item.status !== status) {
+            return false;
+        }
+
+        if (!keyword) {
+            return true;
+        }
+
+        const haystack = [
+            item.name,
+            item.contact,
+            item.phone,
+            item.label,
+            item.address,
+            item.status,
+            item.remark
+        ].join(" ").toLowerCase();
+
+        return haystack.includes(keyword);
+    }).sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
 }
 
 function csvCell(value) {
@@ -742,10 +1016,15 @@ function sendPartsCsv(res, parts) {
     res.end(csv);
 }
 
+function generateFinishedSku(wheelchairType) {
+    const prefix = wheelchairType === "electric" ? "FG-E" : "FG-M";
+    return `${prefix}-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().slice(0, 4).toUpperCase()}`;
+}
+
 function normalizeFinishedGood(body, existingItem) {
-    const sku = String(body.sku || "").trim();
     const model = String(body.model || "").trim();
     const wheelchairType = normalizeWheelchairType(body.wheelchairType, model);
+    const sku = String(body.sku || "").trim() || (existingItem ? existingItem.sku : generateFinishedSku(wheelchairType));
     const category = String(body.category || "其他").trim();
     const currentStock = Number(body.currentStock || 0);
     const safetyStock = Number(body.safetyStock || 0);
@@ -754,8 +1033,8 @@ function normalizeFinishedGood(body, existingItem) {
     const batchNo = String(body.batchNo || "").trim();
     const remark = String(body.remark || "").trim();
 
-    if (!sku || !model) {
-        throw new Error("请填写成品编号和产品型号");
+    if (!model) {
+        throw new Error("请填写成品型号");
     }
 
     if (!Number.isFinite(currentStock) || currentStock < 0) {
@@ -782,6 +1061,24 @@ function normalizeFinishedGood(body, existingItem) {
     };
 }
 
+function normalizeFinishedModel(body, existingItem) {
+    const model = String(body.model || "").trim();
+    const wheelchairType = normalizeWheelchairType(body.wheelchairType, model);
+    const now = new Date().toISOString();
+
+    if (!model) {
+        throw new Error("请填写成品型号");
+    }
+
+    return {
+        id: existingItem ? existingItem.id : crypto.randomUUID(),
+        model,
+        wheelchairType,
+        createdAt: existingItem ? existingItem.createdAt : now,
+        updatedAt: now
+    };
+}
+
 function stockStatus(item) {
     if (item.currentStock <= 0) {
         return "缺货";
@@ -792,6 +1089,28 @@ function stockStatus(item) {
     }
 
     return "充足";
+}
+
+function filterFinishedModels(models, query) {
+    const wheelchairType = String(query.get("wheelchairType") || "").trim();
+    const keyword = String(query.get("keyword") || "").trim().toLowerCase();
+
+    return models.filter((item) => {
+        const itemWheelchairType = normalizeWheelchairType(item.wheelchairType, item.model);
+
+        if (wheelchairType && itemWheelchairType !== wheelchairType) {
+            return false;
+        }
+
+        if (keyword && !String(item.model || "").toLowerCase().includes(keyword)) {
+            return false;
+        }
+
+        return true;
+    }).map((item) => ({
+        ...item,
+        wheelchairType: normalizeWheelchairType(item.wheelchairType, item.model)
+    })).sort((a, b) => a.model.localeCompare(b.model, "zh-CN"));
 }
 
 function filterFinishedGoods(goods, query) {
@@ -966,6 +1285,92 @@ async function handleApi(req, res, url) {
         return;
     }
 
+    if (url.pathname === "/api/customer-directory" && req.method === "GET") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        const items = filterCustomerDirectory(readCustomerDirectory(), url.searchParams);
+        sendJson(res, 200, { items });
+        return;
+    }
+
+    if (url.pathname === "/api/customer-directory" && req.method === "POST") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const items = readCustomerDirectory();
+            const item = normalizeCustomerDirectoryItem(body);
+
+            items.push(item);
+            writeCustomerDirectory(items);
+            sendJson(res, 201, { message: "资料已创建", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "资料创建失败" });
+        }
+
+        return;
+    }
+
+    const customerDirectoryMatch = url.pathname.match(/^\/api\/customer-directory\/([^/]+)$/);
+
+    if (customerDirectoryMatch && req.method === "PUT") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const itemId = decodeURIComponent(customerDirectoryMatch[1]);
+            const body = await readBody(req);
+            const items = readCustomerDirectory();
+            const index = items.findIndex((item) => item.id === itemId);
+
+            if (index < 0) {
+                sendJson(res, 404, { message: "资料不存在" });
+                return;
+            }
+
+            const item = normalizeCustomerDirectoryItem(body, items[index]);
+            items[index] = item;
+            writeCustomerDirectory(items);
+            sendJson(res, 200, { message: "资料已修改", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "资料修改失败" });
+        }
+
+        return;
+    }
+
+    if (customerDirectoryMatch && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        const itemId = decodeURIComponent(customerDirectoryMatch[1]);
+        const items = readCustomerDirectory();
+        const nextItems = items.filter((item) => item.id !== itemId);
+
+        if (nextItems.length === items.length) {
+            sendJson(res, 404, { message: "资料不存在" });
+            return;
+        }
+
+        writeCustomerDirectory(nextItems);
+        sendJson(res, 200, { message: "资料已删除" });
+        return;
+    }
+
     if (url.pathname === "/api/sales-orders" && req.method === "GET") {
         const user = requireEmployeeAccess(req, res);
 
@@ -995,6 +1400,41 @@ async function handleApi(req, res, url) {
             sendJson(res, 201, { message: "销售单已创建", order });
         } catch (error) {
             sendJson(res, 400, { message: error.message || "销售单创建失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/sales-orders" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id).trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先勾选需要删除的销售单" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+            const orders = readSalesOrders();
+            const nextOrders = orders.filter((order) => !idSet.has(order.id));
+            const deletedCount = orders.length - nextOrders.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的销售单" });
+                return;
+            }
+
+            writeSalesOrders(nextOrders);
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 条销售单`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "销售单删除失败" });
         }
 
         return;
@@ -1077,6 +1517,41 @@ async function handleApi(req, res, url) {
             sendJson(res, 201, { message: "配件已创建", part: { ...part, status: partStockStatus(part) } });
         } catch (error) {
             sendJson(res, 400, { message: error.message || "配件创建失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/parts" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id).trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先勾选需要删除的配件" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+            const parts = readPartsInventory();
+            const nextParts = parts.filter((part) => !idSet.has(part.id));
+            const deletedCount = parts.length - nextParts.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的配件" });
+                return;
+            }
+
+            writePartsInventory(nextParts);
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 条配件`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "配件删除失败" });
         }
 
         return;
@@ -1182,6 +1657,125 @@ async function handleApi(req, res, url) {
         return;
     }
 
+    if (url.pathname === "/api/finished-models" && req.method === "GET") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        const models = filterFinishedModels(readFinishedModels(), url.searchParams);
+        sendJson(res, 200, { models });
+        return;
+    }
+
+    if (url.pathname === "/api/finished-models" && req.method === "POST") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const item = normalizeFinishedModel(body);
+            const models = readFinishedModels();
+            const duplicated = models.some((entry) => {
+                const entryType = normalizeWheelchairType(entry.wheelchairType, entry.model);
+                return entryType === item.wheelchairType && String(entry.model || "").trim() === item.model;
+            });
+
+            if (duplicated) {
+                sendJson(res, 409, { message: "成品型号已存在" });
+                return;
+            }
+
+            models.push(item);
+            writeFinishedModels(models);
+            sendJson(res, 201, { message: "成品型号已创建", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "成品型号创建失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/finished-models" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id).trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先选择需要删除的成品型号" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+            const models = readFinishedModels();
+            const nextModels = models.filter((item) => !idSet.has(item.id));
+            const deletedCount = models.length - nextModels.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的成品型号" });
+                return;
+            }
+
+            writeFinishedModels(nextModels);
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 个成品型号`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "成品型号删除失败" });
+        }
+
+        return;
+    }
+
+    const finishedModelMatch = url.pathname.match(/^\/api\/finished-models\/([^/]+)$/);
+
+    if (finishedModelMatch && req.method === "PUT") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const itemId = decodeURIComponent(finishedModelMatch[1]);
+            const body = await readBody(req);
+            const models = readFinishedModels();
+            const index = models.findIndex((item) => item.id === itemId);
+
+            if (index < 0) {
+                sendJson(res, 404, { message: "成品型号不存在" });
+                return;
+            }
+
+            const item = normalizeFinishedModel(body, models[index]);
+            const duplicated = models.some((entry) => {
+                const entryType = normalizeWheelchairType(entry.wheelchairType, entry.model);
+                return entry.id !== itemId && entryType === item.wheelchairType && String(entry.model || "").trim() === item.model;
+            });
+
+            if (duplicated) {
+                sendJson(res, 409, { message: "成品型号已存在" });
+                return;
+            }
+
+            models[index] = item;
+            writeFinishedModels(models);
+            sendJson(res, 200, { message: "成品型号已修改", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "成品型号修改失败" });
+        }
+
+        return;
+    }
+
     if (url.pathname === "/api/finished-goods" && req.method === "GET") {
         const user = requireEmployeeAccess(req, res);
 
@@ -1205,7 +1799,9 @@ async function handleApi(req, res, url) {
             const body = await readBody(req);
             const goods = readFinishedGoods();
 
-            if (goods.some((item) => item.sku === String(body.sku || "").trim())) {
+            const requestedSku = String(body.sku || "").trim();
+
+            if (requestedSku && goods.some((item) => item.sku === requestedSku)) {
                 sendJson(res, 409, { message: "成品编号已存在" });
                 return;
             }
@@ -1216,6 +1812,41 @@ async function handleApi(req, res, url) {
             sendJson(res, 201, { message: "成品已创建", item: { ...item, status: stockStatus(item) } });
         } catch (error) {
             sendJson(res, 400, { message: error.message || "成品创建失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/finished-goods" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id).trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先勾选需要删除的成品" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+            const goods = readFinishedGoods();
+            const nextGoods = goods.filter((item) => !idSet.has(item.id));
+            const deletedCount = goods.length - nextGoods.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的成品" });
+                return;
+            }
+
+            writeFinishedGoods(nextGoods);
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 条成品`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "成品删除失败" });
         }
 
         return;
@@ -1241,7 +1872,9 @@ async function handleApi(req, res, url) {
                 return;
             }
 
-            if (goods.some((item) => item.id !== itemId && item.sku === String(body.sku || "").trim())) {
+            const requestedSku = String(body.sku || "").trim();
+
+            if (requestedSku && goods.some((item) => item.id !== itemId && item.sku === requestedSku)) {
                 sendJson(res, 409, { message: "成品编号已存在" });
                 return;
             }
