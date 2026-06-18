@@ -1,0 +1,16 @@
+[Unit]
+Description=Wheelchair Website FastAPI Backend
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/wheelchair
+EnvironmentFile=/var/www/wheelchair/.env
+ExecStart=/var/www/wheelchair/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000 --workers 1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

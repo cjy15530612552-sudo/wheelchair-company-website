@@ -205,6 +205,7 @@
   </style>
   <link rel="stylesheet" href="./footer.css" />
   <link rel="stylesheet" href="./agent-chat.css" />
+  <link rel="icon" href="./assets/home/xinfangyuan-mark.png" type="image/png" />
 </head>
 <body>
   <main class="login-shell">
@@ -263,7 +264,6 @@
         factory: "factory.html",
         home: "index.html#home"
       };
-      const serverOrigin = "http://localhost:3000";
       const allowedPages = ["index.html", "manual.html", "electric.html", "factory.html", "staff.html"];
       const params = new URLSearchParams(window.location.search);
       const nextTarget = safeNext(params.get("next"));
@@ -277,7 +277,8 @@
       const logoutButton = document.querySelector("[data-logout-button]");
 
       if (window.location.protocol === "file:") {
-        window.location.replace(`${serverOrigin}/login.html?next=${encodeURIComponent(nextTarget.replace(/^\//, "") || "index.html")}`);
+        errorNode.textContent = "请通过正式网站域名或后端服务访问登录页，不要直接打开本地HTML文件。";
+        submitButton.disabled = true;
         return;
       }
 
@@ -293,8 +294,8 @@
         }
 
         try {
-          const baseUrl = window.location.protocol === "file:" ? `${serverOrigin}/login.html` : window.location.href;
-          const allowedOrigin = window.location.protocol === "file:" ? serverOrigin : window.location.origin;
+          const baseUrl = window.location.href;
+          const allowedOrigin = window.location.origin;
           const url = new URL(target, baseUrl);
           const pageName = decodeURIComponent(url.pathname.split("/").pop() || "index.html");
 
@@ -310,7 +311,7 @@
 
       async function apiFetch(url, options = {}) {
         if (window.location.protocol === "file:") {
-          throw new Error("请先运行 node server.js，然后访问 http://localhost:3000/login.html。");
+          throw new Error("请通过正式网站域名或后端服务访问登录页。");
         }
 
         let response;

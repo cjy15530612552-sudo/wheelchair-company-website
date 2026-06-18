@@ -1,5 +1,5 @@
 // Unified interaction entry for the website.
-// Authentication is handled by server.js through /api/* endpoints.
+// Authentication is handled by the backend service through /api/* endpoints.
 (function () {
     "use strict";
 
@@ -28,7 +28,7 @@
 
     async function apiFetch(url, options) {
         if (window.location.protocol === "file:") {
-            throw new Error("登录系统需要通过后端服务器打开，请访问 http://localhost:3000/index.html，不要直接打开本地HTML文件。");
+            throw new Error("登录系统需要通过正式网站域名或后端服务访问，不要直接打开本地HTML文件。");
         }
 
         let response;
@@ -43,7 +43,7 @@
                 ...options
             });
         } catch (error) {
-            throw new Error("无法连接登录服务器，请先运行 node server.js，然后访问 http://localhost:3000/index.html。");
+            throw new Error("无法连接登录服务器，请确认后端服务正在运行。");
         }
 
         const data = await response.json().catch(() => ({}));

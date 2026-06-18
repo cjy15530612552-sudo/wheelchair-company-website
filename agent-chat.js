@@ -4,7 +4,7 @@
   const WELCOME_TEXT = "你好，我是智能产品顾问，请告诉我你想找什么类型的轮椅。";
   const TIP_TEXT = "和我聊天，您可以在这里找到符合您需求的产品";
   const TIP_STORAGE_KEY = "chatTipClosed";
-  const CHAT_API_URL = "http://localhost:8000/chat";
+  const CHAT_API_URL = "/api/chat";
   const CHAT_ERROR_TEXT = "连接后端失败，请检查后端是否正在运行。";
 
   function isTipClosed() {

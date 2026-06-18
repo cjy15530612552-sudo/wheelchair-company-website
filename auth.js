@@ -74,10 +74,6 @@
   function loginUrl(next = currentPageTarget()) {
     const loginPath = `login.html?next=${encodeURIComponent(next || "index.html")}`;
 
-    if (window.location.protocol === "file:") {
-      return `http://localhost:3000/${loginPath}`;
-    }
-
     return loginPath;
   }
 
