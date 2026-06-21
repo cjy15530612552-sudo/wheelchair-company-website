@@ -466,6 +466,11 @@
       object-position: center bottom;
     }
 
+    .image-only .model-visual img.cover-twelfth {
+      object-fit: cover;
+      object-position: center bottom;
+    }
+
     .model-visual::before {
       content: "";
       width: 92px;
@@ -1857,6 +1862,17 @@
               <button class="btn ghost" type="button" data-options-open="product11">配置选配</button>
             </div>
           </article>
+
+          <article class="model-card image-only" data-category="care">
+            <div class="model-visual has-image">
+              <img class="cover-twelfth" src="./assets/products/electric/product-12/jl100w-02b-04.jpg" alt="JL100W-02B-04 电动轮椅" />
+            </div>
+            <div class="model-actions">
+              <button class="btn primary" type="button" data-params-open="product12">相关参数</button>
+              <button class="btn ghost" type="button" data-viewer-open="product12">详细观察</button>
+              <button class="btn ghost" type="button" data-options-open="product12">配置选配</button>
+            </div>
+          </article>
         </div>
         <div class="product-pager product-pager--bottom" data-products-next-pager>
           <button class="product-more-button" type="button" data-products-next>
@@ -2756,6 +2772,12 @@
           start: 0,
           frames: [],
           placeholder: "详细观察图片待补充"
+        },
+        product12: {
+          title: "JL100W-02B-04 详细观察",
+          start: 0,
+          frames: [],
+          placeholder: "详细观察图片待补充"
         }
       };
 
@@ -2895,6 +2917,18 @@
             ["折叠尺寸", "730*375*760mm", "毛重", "47kg"],
             ["包装尺寸", "830*430*780mm", "车架材质", "碳钢喷塑"]
           ]
+        },
+        product12: {
+          name: "JL100W-02B-04",
+          rows: [
+            ["展开尺寸", "1170*650*1280mm", "载重", "100kg"],
+            ["座宽", "460mm", "前轮/后轮", "10寸/16寸"],
+            ["座深", "450mm", "扶手离地", "730mm"],
+            ["座高", "530mm", "扶手离座", "190mm"],
+            ["靠背高", "620mm", "净重", "49kg"],
+            ["折叠尺寸", "840*430*730mm", "毛重", "53kg"],
+            ["包装尺寸", "840*450*800mm", "车架材质", "碳钢喷塑"]
+          ]
         }
       };
 
@@ -2905,9 +2939,9 @@
       const OPTION_SHARED_ITEMS_SYNC_KEY = "junlongElectricNonBatteryOptionsSyncedFromProduct1And2";
       const OPTION_PRODUCT3_BATTERY_SYNC_KEY = "junlongElectricProduct3BatteryOptionsCopied";
       const OPTION_EMPTY_BATTERY_SYNC_KEY = "junlongElectricEmptyBatteryOptionsFilled";
-      const OPTION_PRODUCT_KEYS = ["product1", "product2", "product3", "product4", "product5", "product6", "product7", "product8", "product9", "product10", "product11"];
+      const OPTION_PRODUCT_KEYS = ["product1", "product2", "product3", "product4", "product5", "product6", "product7", "product8", "product9", "product10", "product11", "product12"];
       const OPTION_SHARED_SOURCE_KEYS = ["product1", "product2"];
-      const OPTION_SHARED_TARGET_KEYS = ["product3", "product4", "product5", "product6", "product7", "product8", "product9", "product10", "product11"];
+      const OPTION_SHARED_TARGET_KEYS = ["product3", "product4", "product5", "product6", "product7", "product8", "product9", "product10", "product11", "product12"];
       function createEmptyElectricOptionTemplate() {
         return createElectricOptionTemplate(false);
       }
@@ -2952,7 +2986,8 @@
         product8: createElectricOptionTemplate(true, true),
         product9: createElectricOptionTemplate(true, true),
         product10: createElectricOptionTemplate(true, true),
-        product11: createElectricOptionTemplate(true, true)
+        product11: createElectricOptionTemplate(true, true),
+        product12: createElectricOptionTemplate(true, true)
       };
 
       const viewer = document.getElementById("wheelchairViewer");
