@@ -3156,10 +3156,9 @@
 
       function shouldRestoreBatteryItems(category) {
         const items = Array.isArray(category.items) ? category.items : [];
-        if (!items.length) return true;
         const names = items.map((item) => String(item.name || "").trim());
         if (names.includes("标准锂电池") || names.includes("长续航锂电池")) return true;
-        return createBatteryOptionsTemplate().some((item) => !names.includes(item.name));
+        return false;
       }
 
       function findCategory(categories, categoryName) {
@@ -3175,6 +3174,7 @@
 
           categoryTemplate.forEach((templateCategory) => {
             if (findCategory(productOptions, templateCategory.name)) return;
+            if (isBatteryCategory(templateCategory)) return;
             productOptions.push(cloneOptionCategory(templateCategory, true));
             changed = true;
           });
