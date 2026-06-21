@@ -555,6 +555,55 @@
       white-space: nowrap;
     }
 
+    .product-pager {
+      display: flex;
+      justify-content: center;
+      margin: 24px 0 0;
+    }
+
+    .product-pager--top {
+      margin: 0 0 22px;
+    }
+
+    .product-pager--bottom {
+      margin-top: 26px;
+    }
+
+    .product-more-button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid #b7d6f5;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--primary);
+      font: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 0 22px;
+      cursor: pointer;
+      box-shadow: 0 14px 34px rgba(22, 66, 110, 0.1);
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .product-more-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .product-more-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .product-more-arrow {
+      font-size: 20px;
+      line-height: 1;
+    }
+
     .viewer-modal {
       position: fixed;
       inset: 0;
@@ -1254,6 +1303,176 @@
       border-bottom: 0;
     }
 
+    .compare-head-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .compare-admin-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .compare-admin-button {
+      min-height: 38px;
+      border-radius: 8px;
+      border: 1px solid #b7d6f5;
+      background: #fff;
+      color: var(--primary);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 0 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .compare-admin-button.primary {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(11, 102, 195, 0.2);
+    }
+
+    .compare-admin-button.danger {
+      border-color: #f3b7b7;
+      color: #b92b2b;
+    }
+
+    .compare-admin-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .compare-contact-button {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      border: 1px solid var(--primary);
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      padding: 0 16px;
+      box-shadow: 0 10px 24px rgba(11, 102, 195, 0.2);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .compare-contact-button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .compare-admin-message {
+      min-height: 22px;
+      margin: 12px 0 10px;
+      color: #526d87;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .compare-admin-message.error {
+      color: #c54040;
+    }
+
+    .compare-admin-message.success {
+      color: #0b7a4b;
+    }
+
+    .compare-select {
+      width: 46px;
+      text-align: center !important;
+    }
+
+    .compare-select input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .compare-empty {
+      text-align: center;
+      color: #6a7f95;
+      font-weight: 700;
+    }
+
+    .compare-panel {
+      width: min(620px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid #dbeaf9;
+      box-shadow: 0 24px 70px rgba(9, 38, 68, 0.22);
+    }
+
+    .compare-edit-form {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .compare-edit-field {
+      display: grid;
+      gap: 6px;
+      color: #102d50;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .compare-edit-field input,
+    .compare-edit-field textarea {
+      width: 100%;
+      border: 1px solid #c9ddf1;
+      border-radius: 8px;
+      background: #fff;
+      color: #102d50;
+      font: inherit;
+      font-size: 15px;
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    .compare-edit-field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .compare-edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .compare-edit-actions button {
+      min-height: 38px;
+      border: 1px solid #c9ddf1;
+      border-radius: 8px;
+      background: #fff;
+      color: #102d50;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 0 16px;
+      cursor: pointer;
+    }
+
+    .compare-edit-actions button[type="submit"] {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
     .final-cta {
       margin-top: 18px;
       min-height: 220px;
@@ -1467,12 +1686,19 @@
         <div class="section-head">
           <div>
             <span class="kicker">型号选择</span>
-            <h2>按护理和出行场景选择手动轮椅</h2>
+            <h2>按照您的需求选择产品</h2>
             <p>先按轻便折叠、减震舒适、铝合金轮毂三类进行初选，再根据承重、座宽、轮组、坐垫和护理推行需求确认配置。</p>
           </div>
         </div>
 
         <div class="filter-bar" aria-label="产品筛选"></div>
+
+        <div class="product-pager product-pager--top" data-products-prev-pager>
+          <button class="product-more-button" type="button" data-products-prev>
+            <span class="product-more-arrow" aria-hidden="true">↑</span>
+            <span>向上查看更多产品</span>
+          </button>
+        </div>
 
         <div class="models-grid">
           <article class="model-card image-only" data-category="portable">
@@ -1574,6 +1800,13 @@
             </div>
           </article>
         </div>
+
+        <div class="product-pager product-pager--bottom" data-products-next-pager>
+          <button class="product-more-button" type="button" data-products-next>
+            <span class="product-more-arrow" aria-hidden="true">↓</span>
+            <span>向下查看更多产品</span>
+          </button>
+        </div>
       </section>
 
       <section class="section" id="compare">
@@ -1582,11 +1815,23 @@
             <span class="kicker">参数对比</span>
             <h2>快速判断适合哪一款</h2>
           </div>
+          <div class="compare-head-actions">
+            <a class="compare-contact-button" href="index.html#contact">联系我们</a>
+            <div class="compare-admin-toolbar auth-only" data-compare-toolbar>
+              <button class="compare-admin-button primary" type="button" data-compare-add>添加</button>
+              <button class="compare-admin-button danger" type="button" data-compare-delete>删除勾选</button>
+              <button class="compare-admin-button" type="button" data-compare-edit>修改勾选</button>
+            </div>
+          </div>
         </div>
 
+        <p class="compare-admin-message auth-only" data-compare-message aria-live="polite"></p>
         <table class="compare">
           <thead>
             <tr>
+              <th class="compare-select auth-only">
+                <input type="checkbox" data-compare-select-all aria-label="全选对比项" />
+              </th>
               <th>型号</th>
               <th>定位</th>
               <th>适用重点</th>
@@ -1594,7 +1839,7 @@
               <th>重点配置</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-compare-body>
             <tr>
               <td>JL-M6001</td>
               <td>轻便折叠款</td>
@@ -1660,19 +1905,6 @@
             </tr>
           </tbody>
         </table>
-      </section>
-
-      <section class="final-cta" aria-label="手动轮椅咨询">
-        <div>
-          <h2>需要按护理场景选型？</h2>
-          <p>
-            可根据身高体重、护理人员推行习惯、是否需要折叠收纳、乘坐时长和机构采购需求，进一步确认轮组、坐垫、扶手和脚踏配置。
-          </p>
-        </div>
-        <div class="cta">
-          <a class="btn primary" href="index.html#contact">联系选型</a>
-          <a class="btn ghost" href="index.html#products">返回产品中心</a>
-        </div>
       </section>
     </main>
     <footer class="site-footer">
@@ -1832,21 +2064,88 @@
     </div>
   </div>
 
+  <div class="viewer-modal" id="compareModal" aria-hidden="true">
+    <div class="compare-panel" role="dialog" aria-modal="true" aria-labelledby="compareModalTitle">
+      <div class="viewer-head">
+        <div class="viewer-title" id="compareModalTitle">添加对比项</div>
+        <button class="viewer-close" type="button" data-compare-close aria-label="关闭">×</button>
+      </div>
+      <form class="compare-edit-form" data-compare-form>
+        <label class="compare-edit-field">
+          型号
+          <input name="model" type="text" autocomplete="off" required />
+        </label>
+        <label class="compare-edit-field">
+          定位
+          <input name="position" type="text" autocomplete="off" />
+        </label>
+        <label class="compare-edit-field">
+          适用重点
+          <input name="focus" type="text" autocomplete="off" />
+        </label>
+        <label class="compare-edit-field">
+          推荐用户
+          <textarea name="users"></textarea>
+        </label>
+        <label class="compare-edit-field">
+          重点配置
+          <textarea name="configuration"></textarea>
+        </label>
+        <div class="compare-edit-actions">
+          <button type="button" data-compare-cancel>取消</button>
+          <button type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="./agent-chat.js"></script>
   <script src="./auth.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const filterBar = document.querySelector(".filter-bar");
       const cards = Array.from(document.querySelectorAll(".model-card"));
+      const modelsGrid = document.querySelector(".models-grid");
+      const productPrevPager = document.querySelector("[data-products-prev-pager]");
+      const productNextPager = document.querySelector("[data-products-next-pager]");
+      const productsPrevButton = document.querySelector("[data-products-prev]");
+      const productsNextButton = document.querySelector("[data-products-next]");
+      const compareBody = document.querySelector("[data-compare-body]");
+      const compareSelectAll = document.querySelector("[data-compare-select-all]");
+      const compareAddButton = document.querySelector("[data-compare-add]");
+      const compareDeleteButton = document.querySelector("[data-compare-delete]");
+      const compareEditButton = document.querySelector("[data-compare-edit]");
+      const compareMessage = document.querySelector("[data-compare-message]");
+      const compareModal = document.getElementById("compareModal");
+      const compareModalTitle = document.getElementById("compareModalTitle");
+      const compareForm = document.querySelector("[data-compare-form]");
+      const compareClose = document.querySelector("[data-compare-close]");
+      const compareCancel = document.querySelector("[data-compare-cancel]");
       const FILTERS_KEY = "junlongManualFilters";
       const CARD_CATEGORIES_KEY = "junlongManualCardCategories";
+      const COMPARE_API_URL = "/api/manual-comparison";
+      const PRODUCT_PAGE_SIZE = 6;
       const defaultFilters = [
         { key: "all", label: "全部", locked: true },
         { key: "portable", label: "轻便折叠" },
         { key: "comfort", label: "减震舒适" },
         { key: "alloy", label: "铝合金轮毂" }
       ];
+      const defaultCompareRows = [
+        { id: "default-manual-m6001", model: "JL-M6001", position: "轻便折叠款", focus: "护理推行", users: "家庭出行、短途转运、便携收纳", configuration: "折叠车架、快拆脚踏" },
+        { id: "default-manual-m6005r", model: "JL-M6005R", position: "后减震舒适款", focus: "舒适乘坐", users: "较长时间乘坐、机构护理、康复转运", configuration: "后减震、贴轮毂轮组" },
+        { id: "default-manual-m6005a", model: "JL-M6005A", position: "铝合金轮毂款", focus: "稳固耐用", users: "医院、养老机构、频繁推行场景", configuration: "铝合金轮毂、减震配置" },
+        { id: "default-manual-st07", model: "JL01GA-ST07", position: "轻便护理款", focus: "便携推行", users: "家庭护理、短途转运、日常外出", configuration: "折叠车架、轻量配置" },
+        { id: "default-manual-st03b", model: "JL01GB-ST03", position: "轻便窄款", focus: "室内转运", users: "家庭室内、短途护理、窄空间推行", configuration: "轻量车架、紧凑折叠" },
+        { id: "default-manual-st03a", model: "JL01GA-ST03", position: "银色护理款", focus: "舒适推行", users: "家庭护理、机构转运、日常出行", configuration: "银色车架、8寸前轮" },
+        { id: "default-manual-st02", model: "JL01GA-ST02", position: "高承重护理款", focus: "宽座承重", users: "高承重需求、长期护理、机构转运", configuration: "宽座设计、加强车架" },
+        { id: "default-manual-st01", model: "JL02GA-ST01", position: "高靠背护理款", focus: "长期乘坐", users: "长期护理、康复机构、舒适支撑需求", configuration: "高靠背、加长车身" },
+        { id: "default-manual-st02b", model: "JL02GA-ST02", position: "高靠背护理款", focus: "长期护理", users: "长期护理、康复机构、舒适支撑需求", configuration: "高靠背、护理脚托" }
+      ];
       let activeFilter = "all";
+      let activeProductPage = 0;
+      let compareRows = defaultCompareRows.map((row) => ({ ...row }));
+      let editingCompareId = null;
 
       function readFilters() {
         try {
@@ -1881,12 +2180,35 @@
         return Boolean(window.JunlongAuth && window.JunlongAuth.isAuthorized());
       }
 
-      function applyFilter(filter) {
-        activeFilter = filter;
+      function getFilteredCards(filter = activeFilter) {
+        return cards.filter((card) => filter === "all" || card.dataset.category === filter);
+      }
+
+      function renderProductPage() {
+        const filteredCards = getFilteredCards();
+        const totalPages = Math.max(1, Math.ceil(filteredCards.length / PRODUCT_PAGE_SIZE));
+        if (activeProductPage >= totalPages) activeProductPage = 0;
+        const start = activeProductPage * PRODUCT_PAGE_SIZE;
+        const visibleCards = new Set(filteredCards.slice(start, start + PRODUCT_PAGE_SIZE));
+
         cards.forEach((card) => {
-          const visible = filter === "all" || card.dataset.category === filter;
-          card.style.display = visible ? "flex" : "none";
+          card.style.display = visibleCards.has(card) ? "flex" : "none";
         });
+
+        const hasPrevious = activeProductPage > 0;
+        const hasNext = start + PRODUCT_PAGE_SIZE < filteredCards.length;
+        if (productPrevPager) {
+          productPrevPager.style.display = hasPrevious ? "" : "none";
+        }
+        if (productNextPager) {
+          productNextPager.style.display = hasNext ? "" : "none";
+        }
+      }
+
+      function applyFilter(filter, resetPage = true) {
+        activeFilter = filter;
+        if (resetPage) activeProductPage = 0;
+        renderProductPage();
       }
 
       function applyStoredCardCategories() {
@@ -1951,7 +2273,7 @@
         categories[getCardKey(card, index)] = selected.key;
         saveCardCategories(categories);
         card.dataset.category = selected.key;
-        applyFilter(activeFilter);
+        applyFilter(activeFilter, false);
         renderFilters();
         renderCategoryAssignButtons();
         closeCategorySelects();
@@ -2002,6 +2324,22 @@
         renderFilters();
       });
 
+      productsPrevButton?.addEventListener("click", () => {
+        if (activeProductPage <= 0) return;
+        activeProductPage -= 1;
+        renderProductPage();
+        modelsGrid?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      productsNextButton?.addEventListener("click", () => {
+        const filteredCards = getFilteredCards();
+        const totalPages = Math.ceil(filteredCards.length / PRODUCT_PAGE_SIZE);
+        if (totalPages <= 1 || activeProductPage >= totalPages - 1) return;
+        activeProductPage += 1;
+        renderProductPage();
+        modelsGrid?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
       document.addEventListener("click", (event) => {
         const assignButton = event.target.closest("[data-card-category-index]");
         if (assignButton) {
@@ -2030,14 +2368,238 @@
         assignCardCategory(Number(categorySelect.dataset.cardCategorySelect), categorySelect.value);
       });
 
+      function canManageCompare() {
+        return Boolean(window.JunlongAuth && window.JunlongAuth.isAuthorized());
+      }
+
+      function setCompareMessage(message = "", type = "") {
+        if (!compareMessage) return;
+        compareMessage.textContent = message;
+        compareMessage.classList.toggle("error", type === "error");
+        compareMessage.classList.toggle("success", type === "success");
+      }
+
+      async function compareRequest(url, options = {}) {
+        const response = await fetch(url, {
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
+          },
+          ...options
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.message || "操作失败");
+        }
+        return data;
+      }
+
+      function updateCompareSelectionState() {
+        const checkboxes = Array.from(document.querySelectorAll("[data-compare-select]"));
+        const selected = checkboxes.filter((checkbox) => checkbox.checked);
+        if (compareSelectAll) {
+          compareSelectAll.checked = Boolean(checkboxes.length && selected.length === checkboxes.length);
+          compareSelectAll.indeterminate = Boolean(selected.length && selected.length < checkboxes.length);
+        }
+      }
+
+      function updateCompareAuth() {
+        const canManage = canManageCompare();
+        if (!canManage) {
+          setCompareMessage("");
+        }
+        if (compareSelectAll && !canManage) {
+          compareSelectAll.checked = false;
+          compareSelectAll.indeterminate = false;
+        }
+        document.querySelectorAll(".compare-admin-toolbar, .compare-admin-message").forEach((node) => {
+          node.style.display = canManage ? "" : "none";
+        });
+      }
+
+      function renderCompareTable() {
+        if (!compareBody) return;
+        const canManage = canManageCompare();
+        if (!compareRows.length) {
+          compareBody.innerHTML = `
+            <tr>
+              ${canManage ? `<td class="compare-select auth-only"></td>` : ""}
+              <td class="compare-empty" colspan="5">暂无对比项</td>
+            </tr>
+          `;
+          updateCompareAuth();
+          return;
+        }
+        compareBody.innerHTML = compareRows.map((row) => `
+          <tr data-compare-row="${escapeHtml(row.id)}">
+            ${canManage ? `
+              <td class="compare-select auth-only">
+                <input type="checkbox" data-compare-select value="${escapeHtml(row.id)}" aria-label="选择${escapeHtml(row.model)}" />
+              </td>
+            ` : ""}
+            <td>${escapeHtml(row.model)}</td>
+            <td>${escapeHtml(row.position)}</td>
+            <td>${escapeHtml(row.focus)}</td>
+            <td>${escapeHtml(row.users)}</td>
+            <td>${escapeHtml(row.configuration)}</td>
+          </tr>
+        `).join("");
+        updateCompareAuth();
+        updateCompareSelectionState();
+      }
+
+      async function loadCompareRows() {
+        try {
+          const data = await compareRequest(COMPARE_API_URL);
+          compareRows = Array.isArray(data.items) ? data.items : defaultCompareRows.map((row) => ({ ...row }));
+          renderCompareTable();
+        } catch (error) {
+          compareRows = defaultCompareRows.map((row) => ({ ...row }));
+          renderCompareTable();
+          if (canManageCompare()) {
+            setCompareMessage(error.message || "对比表加载失败，已显示默认内容。", "error");
+          }
+        }
+      }
+
+      function getSelectedCompareIds() {
+        return Array.from(document.querySelectorAll("[data-compare-select]:checked")).map((checkbox) => checkbox.value);
+      }
+
+      function fillCompareForm(row = {}) {
+        if (!compareForm) return;
+        compareForm.elements.model.value = row.model || "";
+        compareForm.elements.position.value = row.position || "";
+        compareForm.elements.focus.value = row.focus || "";
+        compareForm.elements.users.value = row.users || "";
+        compareForm.elements.configuration.value = row.configuration || "";
+      }
+
+      function toggleCompareModal(open, row = null) {
+        if (!compareModal) return;
+        if (open && !canManageCompare()) return;
+        if (open) {
+          editingCompareId = row ? row.id : null;
+          compareModalTitle.textContent = row ? "修改对比项" : "添加对比项";
+          fillCompareForm(row || {});
+          window.setTimeout(() => compareForm.elements.model.focus(), 0);
+        } else {
+          editingCompareId = null;
+          compareForm.reset();
+        }
+        compareModal.classList.toggle("open", open);
+        compareModal.setAttribute("aria-hidden", open ? "false" : "true");
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      function selectedCompareRow() {
+        const ids = getSelectedCompareIds();
+        if (ids.length !== 1) {
+          setCompareMessage("请只勾选一条需要修改的对比项。", "error");
+          return null;
+        }
+        return compareRows.find((row) => row.id === ids[0]) || null;
+      }
+
+      async function handleCompareSubmit(event) {
+        event.preventDefault();
+        if (!canManageCompare()) return;
+        const payload = {
+          model: compareForm.elements.model.value.trim(),
+          position: compareForm.elements.position.value.trim(),
+          focus: compareForm.elements.focus.value.trim(),
+          users: compareForm.elements.users.value.trim(),
+          configuration: compareForm.elements.configuration.value.trim()
+        };
+        if (!payload.model) {
+          setCompareMessage("请填写型号。", "error");
+          return;
+        }
+        const isEditing = Boolean(editingCompareId);
+        try {
+          const data = await compareRequest(isEditing ? `${COMPARE_API_URL}/${encodeURIComponent(editingCompareId)}` : COMPARE_API_URL, {
+            method: isEditing ? "PUT" : "POST",
+            body: JSON.stringify(payload)
+          });
+          if (isEditing) {
+            compareRows = compareRows.map((row) => row.id === editingCompareId ? data.item : row);
+          } else {
+            compareRows.push(data.item);
+          }
+          toggleCompareModal(false);
+          renderCompareTable();
+          setCompareMessage(data.message || "已保存", "success");
+        } catch (error) {
+          setCompareMessage(error.message || "保存失败", "error");
+        }
+      }
+
+      compareAddButton?.addEventListener("click", () => {
+        setCompareMessage("");
+        toggleCompareModal(true);
+      });
+
+      compareEditButton?.addEventListener("click", () => {
+        if (!canManageCompare()) return;
+        const row = selectedCompareRow();
+        if (!row) return;
+        setCompareMessage("");
+        toggleCompareModal(true, row);
+      });
+
+      compareDeleteButton?.addEventListener("click", async () => {
+        if (!canManageCompare()) return;
+        const ids = getSelectedCompareIds();
+        if (!ids.length) {
+          setCompareMessage("请先勾选需要删除的对比项。", "error");
+          return;
+        }
+        if (!window.confirm(`确定删除选中的 ${ids.length} 条对比项吗？`)) return;
+        try {
+          const data = await compareRequest(COMPARE_API_URL, {
+            method: "DELETE",
+            body: JSON.stringify({ ids })
+          });
+          const idSet = new Set(ids);
+          compareRows = compareRows.filter((row) => !idSet.has(row.id));
+          renderCompareTable();
+          setCompareMessage(data.message || "已删除", "success");
+        } catch (error) {
+          setCompareMessage(error.message || "删除失败", "error");
+        }
+      });
+
+      compareSelectAll?.addEventListener("change", () => {
+        document.querySelectorAll("[data-compare-select]").forEach((checkbox) => {
+          checkbox.checked = compareSelectAll.checked;
+        });
+        updateCompareSelectionState();
+      });
+
+      compareBody?.addEventListener("change", (event) => {
+        if (!event.target.closest("[data-compare-select]")) return;
+        updateCompareSelectionState();
+      });
+
+      compareForm?.addEventListener("submit", handleCompareSubmit);
+      compareForm?.addEventListener("click", (event) => event.stopPropagation());
+      compareClose?.addEventListener("click", () => toggleCompareModal(false));
+      compareCancel?.addEventListener("click", () => toggleCompareModal(false));
+      compareModal?.addEventListener("click", (event) => {
+        if (event.target === compareModal) toggleCompareModal(false);
+      });
+
       window.addEventListener("junlong-auth-change", () => {
         renderFilters();
         renderCategoryAssignButtons();
+        renderCompareTable();
       });
       applyStoredCardCategories();
       renderFilters();
       renderCategoryAssignButtons();
       applyFilter(activeFilter);
+      loadCompareRows();
 
       const galleries = {
         product1: {
@@ -2863,6 +3425,10 @@
       viewerStage.addEventListener("click", () => setFrame(currentFrame + 1));
 
       document.addEventListener("keydown", (event) => {
+        if (compareModal.classList.contains("open") && event.key === "Escape") {
+          toggleCompareModal(false);
+          return;
+        }
         if (optionsModal.classList.contains("open") && event.key === "Escape") {
           toggleOptions(false);
           return;

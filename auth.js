@@ -26,7 +26,11 @@
   }
 
   function isAuthorized(session = getSession()) {
-    return Boolean(session && (session.username === "admin" || session.role === "系统管理员"));
+    return Boolean(session && (
+      session.permissions.includes("employee") ||
+      session.username === "admin" ||
+      session.role === "系统管理员"
+    ));
   }
 
   function clearLegacySessions() {

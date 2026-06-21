@@ -16,6 +16,7 @@
     let partsCache = [];
     let finishedGoodsCache = [];
     let finishedModelsCache = [];
+    let employeeAccountsCache = [];
     let customerDirectoryCache = [];
     let currentSalesWheelchairType = "";
     let currentPartsWheelchairType = "";
@@ -72,6 +73,10 @@
 
     function hasPermission(user, permissionName) {
         return Boolean(user && Array.isArray(user.permissions) && user.permissions.includes(permissionName));
+    }
+
+    function isSystemAdministrator(user) {
+        return Boolean(user && user.role === "系统管理员");
     }
 
     function escapeHtml(value) {
@@ -3015,17 +3020,33 @@
     async function loadEmployeeAccounts() {
         const list = document.querySelector("[data-employee-list]");
         const message = document.querySelector("[data-employee-message]");
+        const checkAll = document.querySelector("[data-employee-check-all]");
+        const deleteButton = document.querySelector("[data-employee-delete-selected]");
 
         if (!list) {
             return;
         }
 
+        if (checkAll) {
+            checkAll.checked = false;
+            checkAll.indeterminate = false;
+        }
+
         try {
+            const currentUser = await loadCurrentUser();
+            const canDeleteAccounts = isSystemAdministrator(currentUser);
+            if (deleteButton) {
+                deleteButton.hidden = !canDeleteAccounts;
+            }
+            if (checkAll) {
+                checkAll.disabled = !canDeleteAccounts;
+            }
             const data = await apiFetch("/api/employees");
             const employees = data.employees || [];
+            employeeAccountsCache = employees;
 
             if (!employees.length) {
-                list.innerHTML = '<tr><td colspan="6">暂无员工账号</td></tr>';
+                list.innerHTML = '<tr><td colspan="7">暂无员工账号</td></tr>';
                 return;
             }
 
@@ -3035,9 +3056,14 @@
                     : "普通登录";
                 const statusClass = employee.active ? "badge-success" : "badge-danger";
                 const statusText = employee.active ? "启用" : "停用";
+                const isCurrentUser = currentUser && currentUser.id === employee.id;
+                const cannotDelete = !canDeleteAccounts || isCurrentUser;
 
                 return `
                     <tr>
+                        <td class="checkbox-cell">
+                            <input type="checkbox" data-employee-check value="${escapeHtml(employee.id)}" ${cannotDelete ? "disabled" : ""}>
+                        </td>
                         <td>${escapeHtml(employee.username)}</td>
                         <td>${escapeHtml(employee.name)}</td>
                         <td>${escapeHtml(employee.department)}</td>
@@ -3052,7 +3078,8 @@
                 message.textContent = "";
             }
         } catch (error) {
-            list.innerHTML = '<tr><td colspan="6">员工列表加载失败</td></tr>';
+            employeeAccountsCache = [];
+            list.innerHTML = '<tr><td colspan="7">员工列表加载失败</td></tr>';
 
             if (message) {
                 message.textContent = error.message || "员工列表加载失败";
@@ -3060,9 +3087,96 @@
         }
     }
 
+    function employeeMessage(text) {
+        const message = document.querySelector("[data-employee-message]");
+
+        if (message) {
+            message.textContent = text || "";
+        }
+    }
+
+    function selectedEmployeeAccountIds() {
+        return Array.from(document.querySelectorAll("[data-employee-check]:checked")).map((checkbox) => checkbox.value);
+    }
+
+    function updateEmployeeCheckAllState() {
+        const checkAll = document.querySelector("[data-employee-check-all]");
+
+        if (!checkAll) {
+            return;
+        }
+
+        const checkboxes = Array.from(document.querySelectorAll("[data-employee-check]:not(:disabled)"));
+        const checked = checkboxes.filter((checkbox) => checkbox.checked);
+        checkAll.checked = Boolean(checkboxes.length && checked.length === checkboxes.length);
+        checkAll.indeterminate = Boolean(checked.length && checked.length < checkboxes.length);
+    }
+
+    async function deleteSelectedEmployeeAccounts() {
+        const currentUser = await loadCurrentUser();
+
+        if (!isSystemAdministrator(currentUser)) {
+            employeeMessage("只有系统管理员可以删除账号");
+            return;
+        }
+
+        const ids = selectedEmployeeAccountIds();
+
+        if (!ids.length) {
+            alert("请先勾选需要删除的账号");
+            return;
+        }
+
+        const idSet = new Set(ids);
+        const names = employeeAccountsCache
+            .filter((employee) => idSet.has(employee.id))
+            .map((employee) => employee.username)
+            .join("、");
+
+        if (!window.confirm(`确定删除选中的 ${ids.length} 个账号${names ? `（${names}）` : ""}吗？删除后不可恢复。`)) {
+            return;
+        }
+
+        try {
+            const data = await apiFetch("/api/employees", {
+                method: "DELETE",
+                body: JSON.stringify({ ids })
+            });
+
+            employeeMessage(data.message || `已删除 ${ids.length} 个账号`);
+            await loadEmployeeAccounts();
+        } catch (error) {
+            employeeMessage(error.message || "删除账号失败");
+        }
+    }
+
     function bindEmployeeForm() {
         const form = document.querySelector("[data-employee-form]");
         const message = document.querySelector("[data-employee-message]");
+        const deleteButton = document.querySelector("[data-employee-delete-selected]");
+        const checkAll = document.querySelector("[data-employee-check-all]");
+        const list = document.querySelector("[data-employee-list]");
+
+        if (deleteButton) {
+            deleteButton.addEventListener("click", deleteSelectedEmployeeAccounts);
+        }
+
+        if (checkAll) {
+            checkAll.addEventListener("change", function () {
+                document.querySelectorAll("[data-employee-check]:not(:disabled)").forEach(function (checkbox) {
+                    checkbox.checked = checkAll.checked;
+                });
+                updateEmployeeCheckAllState();
+            });
+        }
+
+        if (list) {
+            list.addEventListener("change", function (event) {
+                if (event.target.closest("[data-employee-check]")) {
+                    updateEmployeeCheckAllState();
+                }
+            });
+        }
 
         if (!form) {
             return;

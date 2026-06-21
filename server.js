@@ -47,11 +47,18 @@ const partsInventoryFile = path.join(dataDir, "parts-inventory.json");
 const finishedGoodsFile = path.join(dataDir, "finished-goods.json");
 const finishedModelsFile = path.join(dataDir, "finished-models.json");
 const customerDirectoryFile = path.join(dataDir, "customer-directory.json");
+const electricComparisonFile = path.join(dataDir, "electric-comparison.json");
+const manualComparisonFile = path.join(dataDir, "manual-comparison.json");
+const smsCodesFile = path.join(dataDir, "sms-codes.json");
 const port = Number(process.env.PORT || 3000);
 
 const sessions = new Map();
 const sessionMaxAgeSeconds = 60 * 60 * 8;
 const salesStatusFlow = ["待打印", "待发货", "已发货（待确认）", "已完成"];
+const smsScenes = new Set(["register", "sms_login", "reset_password"]);
+const smsCodeTtlSeconds = 5 * 60;
+const smsResendSeconds = 60;
+const phonePattern = /^1[3-9]\d{9}$/;
 
 const contentTypes = {
     ".html": "text/html; charset=utf-8",
@@ -138,6 +145,14 @@ function ensureDataStore() {
     if (!fs.existsSync(customerDirectoryFile)) {
         writeCustomerDirectory(seedCustomerDirectory());
     }
+
+    if (!fs.existsSync(electricComparisonFile)) {
+        writeElectricComparison(seedElectricComparison());
+    }
+
+    if (!fs.existsSync(manualComparisonFile)) {
+        writeManualComparison(seedManualComparison());
+    }
 }
 
 function hashPassword(password) {
@@ -172,6 +187,23 @@ function writeEmployees(employees) {
 
 function readJsonFile(filePath) {
     return JSON.parse(fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, ""));
+}
+
+function readSmsCodes() {
+    if (!fs.existsSync(smsCodesFile)) {
+        return [];
+    }
+
+    const items = readJsonFile(smsCodesFile);
+    return Array.isArray(items) ? items : [];
+}
+
+function writeSmsCodes(items) {
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    fs.writeFileSync(smsCodesFile, `${JSON.stringify(items, null, 2)}\n`, "utf8");
 }
 
 function seedCustomerDirectory() {
@@ -508,6 +540,59 @@ function seedFinishedModels() {
     ];
 }
 
+function seedElectricComparison() {
+    const now = new Date().toISOString();
+
+    return [
+        {
+            id: crypto.randomUUID(),
+            model: "JL-E100",
+            position: "城市轻便款",
+            range: "约 20km",
+            users: "日常短途、室内外基础代步",
+            configuration: "折叠车架、轻便收纳",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            model: "JL-E200",
+            position: "全地形增强款",
+            range: "约 35km",
+            users: "社区道路、坡道、户外路况",
+            configuration: "增强驱动、稳定轮组",
+            createdAt: now,
+            updatedAt: now
+        },
+        {
+            id: crypto.randomUUID(),
+            model: "JL-E300",
+            position: "护理舒适款",
+            range: "约 28km",
+            users: "长期乘坐、家庭护理、康复机构",
+            configuration: "舒适坐垫、护理推行配置",
+            createdAt: now,
+            updatedAt: now
+        }
+    ];
+}
+
+function seedManualComparison() {
+    const now = new Date().toISOString();
+
+    return [
+        { id: crypto.randomUUID(), model: "JL-M6001", position: "轻便折叠款", focus: "护理推行", users: "家庭出行、短途转运、便携收纳", configuration: "折叠车架、快拆脚踏", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL-M6005R", position: "后减震舒适款", focus: "舒适乘坐", users: "较长时间乘坐、机构护理、康复转运", configuration: "后减震、贴轮毂轮组", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL-M6005A", position: "铝合金轮毂款", focus: "稳固耐用", users: "医院、养老机构、频繁推行场景", configuration: "铝合金轮毂、减震配置", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL01GA-ST07", position: "轻便护理款", focus: "便携推行", users: "家庭护理、短途转运、日常外出", configuration: "折叠车架、轻量配置", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL01GB-ST03", position: "轻便窄款", focus: "室内转运", users: "家庭室内、短途护理、窄空间推行", configuration: "轻量车架、紧凑折叠", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL01GA-ST03", position: "银色护理款", focus: "舒适推行", users: "家庭护理、机构转运、日常出行", configuration: "银色车架、8寸前轮", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL01GA-ST02", position: "高承重护理款", focus: "宽座承重", users: "高承重需求、长期护理、机构转运", configuration: "宽座设计、加强车架", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL02GA-ST01", position: "高靠背护理款", focus: "长期乘坐", users: "长期护理、康复机构、舒适支撑需求", configuration: "高靠背、加长车身", createdAt: now, updatedAt: now },
+        { id: crypto.randomUUID(), model: "JL02GA-ST02", position: "高靠背护理款", focus: "长期护理", users: "长期护理、康复机构、舒适支撑需求", configuration: "高靠背、护理脚托", createdAt: now, updatedAt: now }
+    ];
+}
+
 function readFinishedGoods() {
     ensureDataStore();
     return readJsonFile(finishedGoodsFile);
@@ -526,10 +611,33 @@ function writeFinishedModels(models) {
     fs.writeFileSync(finishedModelsFile, JSON.stringify(models, null, 2), "utf8");
 }
 
+function readElectricComparison() {
+    ensureDataStore();
+    const items = readJsonFile(electricComparisonFile);
+    return Array.isArray(items) ? items : [];
+}
+
+function writeElectricComparison(items) {
+    fs.writeFileSync(electricComparisonFile, `${JSON.stringify(items, null, 2)}\n`, "utf8");
+}
+
+function readManualComparison() {
+    ensureDataStore();
+    const items = readJsonFile(manualComparisonFile);
+    return Array.isArray(items) ? items : [];
+}
+
+function writeManualComparison(items) {
+    fs.writeFileSync(manualComparisonFile, `${JSON.stringify(items, null, 2)}\n`, "utf8");
+}
+
 function publicEmployee(employee) {
+    const username = employee.username || "";
+
     return {
         id: employee.id,
-        username: employee.username,
+        username,
+        phone: employee.phone || (phonePattern.test(username) ? username : ""),
         name: employee.name,
         department: employee.department,
         role: employee.role,
@@ -570,6 +678,155 @@ function createSession(employee) {
     return token;
 }
 
+function sendLoginResponse(res, employee, message = "登录成功") {
+    const token = createSession(employee);
+
+    sendJson(res, 200, {
+        message,
+        user: publicEmployee(employee)
+    }, {
+        "Set-Cookie": `session=${token}; HttpOnly; Path=/; Max-Age=${sessionMaxAgeSeconds}; SameSite=Lax`
+    });
+}
+
+function normalizePhone(value) {
+    const phone = String(value || "").replace(/\D/g, "");
+
+    if (!phonePattern.test(phone)) {
+        const error = new Error("手机号格式不正确");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    return phone;
+}
+
+function normalizeSmsScene(value) {
+    const scene = String(value || "").trim();
+
+    if (!smsScenes.has(scene)) {
+        const error = new Error("验证码场景不正确");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    return scene;
+}
+
+function employeePhone(employee) {
+    const phone = String(employee.phone || "").trim();
+    const username = String(employee.username || "").trim();
+
+    if (phonePattern.test(phone)) {
+        return phone;
+    }
+
+    return phonePattern.test(username) ? username : "";
+}
+
+function findPhoneAccount(phone, activeOnly = true) {
+    return readEmployees().find((employee) => employeePhone(employee) === phone && (!activeOnly || employee.active !== false)) || null;
+}
+
+function ensurePasswordValue(value) {
+    const password = String(value || "");
+
+    if (!password) {
+        const error = new Error("密码不能为空");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    if (password.length < 6) {
+        const error = new Error("密码至少需要6位");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    return password;
+}
+
+function sendSmsCode(phone, code) {
+    const configured = [
+        "TENCENTCLOUD_SECRET_ID",
+        "TENCENTCLOUD_SECRET_KEY",
+        "TENCENT_SMS_SDK_APP_ID",
+        "TENCENT_SMS_SIGN_NAME",
+        "TENCENT_SMS_TEMPLATE_ID"
+    ].every((name) => process.env[name]);
+
+    if (configured) {
+        console.log(`[sms] Tencent SMS config detected; development fallback code for ${phone}: ${code}`);
+        return;
+    }
+
+    console.log(`[sms][dev] 手机号 ${phone} 的验证码是 ${code}，5分钟内有效。`);
+}
+
+function issueSmsCode(phone, scene) {
+    const now = Date.now();
+    const codes = readSmsCodes();
+
+    codes.forEach((item) => {
+        if (item.phone === phone && item.scene === scene && !item.used) {
+            const createdAt = Date.parse(item.created_at || "");
+
+            if (Number.isFinite(createdAt) && now - createdAt < smsResendSeconds * 1000) {
+                const error = new Error("验证码发送太频繁，请稍后再试");
+                error.statusCode = 429;
+                throw error;
+            }
+
+            item.used = true;
+        }
+    });
+
+    const code = String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+    codes.push({
+        id: crypto.randomUUID(),
+        phone,
+        code,
+        scene,
+        expires_at: new Date(now + smsCodeTtlSeconds * 1000).toISOString(),
+        used: false,
+        created_at: new Date(now).toISOString()
+    });
+    writeSmsCodes(codes);
+    sendSmsCode(phone, code);
+}
+
+function verifySmsCode(phone, code, scene) {
+    const codeValue = String(code || "").trim();
+
+    if (!codeValue) {
+        const error = new Error("验证码不能为空");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const now = Date.now();
+    const codes = readSmsCodes();
+    const candidates = codes
+        .filter((item) => item.phone === phone && item.scene === scene && !item.used)
+        .sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
+    const matched = candidates.find((item) => {
+        const expiresAt = Date.parse(item.expires_at || "");
+        return item.code === codeValue && Number.isFinite(expiresAt) && expiresAt >= now;
+    });
+
+    if (!matched) {
+        const error = new Error("验证码错误或已过期");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const target = codes.find((item) => item.id === matched.id);
+    if (target) {
+        target.used = true;
+    }
+    writeSmsCodes(codes);
+}
+
 function getSessionUser(req) {
     const token = parseCookies(req).session;
 
@@ -589,6 +846,10 @@ function getSessionUser(req) {
 
 function hasPermission(employee, permission) {
     return Boolean(employee && Array.isArray(employee.permissions) && employee.permissions.includes(permission));
+}
+
+function isSystemAdministrator(employee) {
+    return Boolean(employee && employee.role === "系统管理员");
 }
 
 function requireEmployeeAccess(req, res) {
@@ -1150,6 +1411,74 @@ function filterFinishedGoods(goods, query) {
     })).sort((a, b) => a.model.localeCompare(b.model, "zh-CN"));
 }
 
+function normalizeElectricComparisonItem(body, existingItem) {
+    const model = String(body.model || "").trim();
+
+    if (!model) {
+        throw new Error("请填写型号");
+    }
+
+    const now = new Date().toISOString();
+
+    return {
+        id: existingItem ? existingItem.id : crypto.randomUUID(),
+        model,
+        position: String(body.position || "").trim(),
+        range: String(body.range || "").trim(),
+        users: String(body.users || "").trim(),
+        configuration: String(body.configuration || "").trim(),
+        createdAt: existingItem ? existingItem.createdAt : now,
+        updatedAt: now
+    };
+}
+
+function normalizeElectricComparisonRows(items) {
+    return items.map((item) => ({
+        id: String(item.id || crypto.randomUUID()),
+        model: String(item.model || "").trim(),
+        position: String(item.position || "").trim(),
+        range: String(item.range || "").trim(),
+        users: String(item.users || "").trim(),
+        configuration: String(item.configuration || "").trim(),
+        createdAt: item.createdAt || "",
+        updatedAt: item.updatedAt || ""
+    }));
+}
+
+function normalizeManualComparisonItem(body, existingItem) {
+    const model = String(body.model || "").trim();
+
+    if (!model) {
+        throw new Error("请填写型号");
+    }
+
+    const now = new Date().toISOString();
+
+    return {
+        id: existingItem ? existingItem.id : crypto.randomUUID(),
+        model,
+        position: String(body.position || "").trim(),
+        focus: String(body.focus || "").trim(),
+        users: String(body.users || "").trim(),
+        configuration: String(body.configuration || "").trim(),
+        createdAt: existingItem ? existingItem.createdAt : now,
+        updatedAt: now
+    };
+}
+
+function normalizeManualComparisonRows(items) {
+    return items.map((item) => ({
+        id: String(item.id || crypto.randomUUID()),
+        model: String(item.model || "").trim(),
+        position: String(item.position || "").trim(),
+        focus: String(item.focus || "").trim(),
+        users: String(item.users || "").trim(),
+        configuration: String(item.configuration || "").trim(),
+        createdAt: item.createdAt || "",
+        updatedAt: item.updatedAt || ""
+    }));
+}
+
 function sendFinishedGoodsCsv(res, goods) {
     const headers = ["成品编号", "产品型号", "类型", "分类", "当前库存", "安全库存", "单位", "状态", "库位", "批次", "备注", "更新时间"];
     const rows = goods.map((item) => [
@@ -1189,6 +1518,125 @@ async function handleApi(req, res, url) {
         return;
     }
 
+    if (url.pathname === "/api/auth/sms/send" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+        const scene = normalizeSmsScene(body.scene);
+        const account = findPhoneAccount(phone, true);
+
+        if (scene === "register" && account) {
+            sendJson(res, 409, { message: "该手机号已注册，请直接登录" });
+            return;
+        }
+
+        if (scene === "sms_login" && !account) {
+            sendJson(res, 404, { message: "该手机号尚未注册，请先注册" });
+            return;
+        }
+
+        if (scene === "reset_password" && !account) {
+            sendJson(res, 404, { message: "该手机号尚未注册" });
+            return;
+        }
+
+        issueSmsCode(phone, scene);
+        sendJson(res, 200, { message: "验证码已发送" });
+        return;
+    }
+
+    if (url.pathname === "/api/auth/register-phone" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+        const password = ensurePasswordValue(body.password);
+
+        if (findPhoneAccount(phone, false)) {
+            sendJson(res, 409, { message: "该手机号已注册，请直接登录" });
+            return;
+        }
+
+        verifySmsCode(phone, body.code, "register");
+
+        const employee = {
+            id: crypto.randomUUID(),
+            username: phone,
+            phone,
+            name: `客户${phone.slice(-4)}`,
+            department: "客户",
+            role: "客户",
+            permissions: [],
+            active: true,
+            passwordHash: hashPassword(password),
+            createdAt: new Date().toISOString(),
+            registeredAt: new Date().toISOString()
+        };
+        const employees = readEmployees();
+        employees.push(employee);
+        writeEmployees(employees);
+        sendLoginResponse(res, employee, "注册成功");
+        return;
+    }
+
+    if (url.pathname === "/api/auth/login-password" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+        const password = String(body.password || "");
+
+        if (!password) {
+            sendJson(res, 400, { message: "密码不能为空" });
+            return;
+        }
+
+        const employee = findPhoneAccount(phone, true);
+
+        if (!employee) {
+            sendJson(res, 404, { message: "该手机号尚未注册，请先注册" });
+            return;
+        }
+
+        if (!verifyPassword(password, employee.passwordHash)) {
+            sendJson(res, 401, { message: "密码错误" });
+            return;
+        }
+
+        sendLoginResponse(res, employee);
+        return;
+    }
+
+    if (url.pathname === "/api/auth/login-sms" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+        const employee = findPhoneAccount(phone, true);
+
+        if (!employee) {
+            sendJson(res, 404, { message: "该手机号尚未注册，请先注册" });
+            return;
+        }
+
+        verifySmsCode(phone, body.code, "sms_login");
+        sendLoginResponse(res, employee);
+        return;
+    }
+
+    if (url.pathname === "/api/auth/reset-password" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+        const newPassword = ensurePasswordValue(body.new_password);
+        const employees = readEmployees();
+        const index = employees.findIndex((employee) => employeePhone(employee) === phone && employee.active !== false);
+
+        if (index < 0) {
+            sendJson(res, 404, { message: "该手机号尚未注册" });
+            return;
+        }
+
+        verifySmsCode(phone, body.code, "reset_password");
+        employees[index].passwordHash = hashPassword(newPassword);
+        employees[index].updatedAt = new Date().toISOString();
+        writeEmployees(employees);
+        sendJson(res, 200, { message: "密码重置成功，请重新登录" });
+        return;
+    }
+
     if (url.pathname === "/api/login" && req.method === "POST") {
         const body = await readBody(req);
         const username = String(body.username || "").trim();
@@ -1200,14 +1648,7 @@ async function handleApi(req, res, url) {
             return;
         }
 
-        const token = createSession(employee);
-
-        sendJson(res, 200, {
-            message: "登录成功",
-            user: publicEmployee(employee)
-        }, {
-            "Set-Cookie": `session=${token}; HttpOnly; Path=/; Max-Age=${sessionMaxAgeSeconds}; SameSite=Lax`
-        });
+        sendLoginResponse(res, employee);
         return;
     }
 
@@ -1221,6 +1662,192 @@ async function handleApi(req, res, url) {
         sendJson(res, 200, { message: "已退出登录" }, {
             "Set-Cookie": "session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax"
         });
+        return;
+    }
+
+    if (url.pathname === "/api/electric-comparison" && req.method === "GET") {
+        sendJson(res, 200, { items: normalizeElectricComparisonRows(readElectricComparison()) });
+        return;
+    }
+
+    if (url.pathname === "/api/electric-comparison" && req.method === "POST") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const items = readElectricComparison();
+            const item = normalizeElectricComparisonItem(body);
+
+            items.push(item);
+            writeElectricComparison(items);
+            sendJson(res, 201, { message: "对比项已添加", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "对比项添加失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/electric-comparison" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id).trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先勾选需要删除的对比项" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+            const items = readElectricComparison();
+            const nextItems = items.filter((item) => !idSet.has(item.id));
+            const deletedCount = items.length - nextItems.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的对比项" });
+                return;
+            }
+
+            writeElectricComparison(nextItems);
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 条对比项`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "对比项删除失败" });
+        }
+
+        return;
+    }
+
+    const electricComparisonMatch = url.pathname.match(/^\/api\/electric-comparison\/([^/]+)$/);
+
+    if (electricComparisonMatch && req.method === "PUT") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const itemId = decodeURIComponent(electricComparisonMatch[1]);
+            const body = await readBody(req);
+            const items = readElectricComparison();
+            const index = items.findIndex((item) => item.id === itemId);
+
+            if (index < 0) {
+                sendJson(res, 404, { message: "对比项不存在" });
+                return;
+            }
+
+            const item = normalizeElectricComparisonItem(body, items[index]);
+            items[index] = item;
+            writeElectricComparison(items);
+            sendJson(res, 200, { message: "对比项已修改", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "对比项修改失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/manual-comparison" && req.method === "GET") {
+        sendJson(res, 200, { items: normalizeManualComparisonRows(readManualComparison()) });
+        return;
+    }
+
+    if (url.pathname === "/api/manual-comparison" && req.method === "POST") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const items = readManualComparison();
+            const item = normalizeManualComparisonItem(body);
+
+            items.push(item);
+            writeManualComparison(items);
+            sendJson(res, 201, { message: "对比项已添加", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "对比项添加失败" });
+        }
+
+        return;
+    }
+
+    if (url.pathname === "/api/manual-comparison" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id).trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先勾选需要删除的对比项" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+            const items = readManualComparison();
+            const nextItems = items.filter((item) => !idSet.has(item.id));
+            const deletedCount = items.length - nextItems.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的对比项" });
+                return;
+            }
+
+            writeManualComparison(nextItems);
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 条对比项`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "对比项删除失败" });
+        }
+
+        return;
+    }
+
+    const manualComparisonMatch = url.pathname.match(/^\/api\/manual-comparison\/([^/]+)$/);
+
+    if (manualComparisonMatch && req.method === "PUT") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const itemId = decodeURIComponent(manualComparisonMatch[1]);
+            const body = await readBody(req);
+            const items = readManualComparison();
+            const index = items.findIndex((item) => item.id === itemId);
+
+            if (index < 0) {
+                sendJson(res, 404, { message: "对比项不存在" });
+                return;
+            }
+
+            const item = normalizeManualComparisonItem(body, items[index]);
+            items[index] = item;
+            writeManualComparison(items);
+            sendJson(res, 200, { message: "对比项已修改", item });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "对比项修改失败" });
+        }
+
         return;
     }
 
@@ -1282,6 +1909,57 @@ async function handleApi(req, res, url) {
         employees.push(employee);
         writeEmployees(employees);
         sendJson(res, 201, { message: "员工已创建", employee: publicEmployee(employee) });
+        return;
+    }
+
+    if (url.pathname === "/api/employees" && req.method === "DELETE") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        if (!isSystemAdministrator(user)) {
+            sendJson(res, 403, { message: "只有系统管理员可以删除账号" });
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const ids = Array.isArray(body.ids) ? body.ids.map((id) => String(id || "").trim()).filter(Boolean) : [];
+
+            if (!ids.length) {
+                sendJson(res, 400, { message: "请先勾选需要删除的账号" });
+                return;
+            }
+
+            const idSet = new Set(ids);
+
+            if (idSet.has(user.id)) {
+                sendJson(res, 400, { message: "不能删除当前登录账号" });
+                return;
+            }
+
+            const employees = readEmployees();
+            const nextEmployees = employees.filter((employee) => !idSet.has(employee.id));
+            const deletedCount = employees.length - nextEmployees.length;
+
+            if (!deletedCount) {
+                sendJson(res, 404, { message: "未找到需要删除的账号" });
+                return;
+            }
+
+            writeEmployees(nextEmployees);
+            for (const [token, session] of sessions.entries()) {
+                if (idSet.has(session.employeeId)) {
+                    sessions.delete(token);
+                }
+            }
+            sendJson(res, 200, { message: `已删除 ${deletedCount} 个账号`, deletedCount });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "账号删除失败" });
+        }
+
         return;
     }
 
@@ -2012,7 +2690,7 @@ const server = http.createServer(async (req, res) => {
 
         serveStatic(req, res, url);
     } catch (error) {
-        sendJson(res, 500, { message: error.message || "服务器错误" });
+        sendJson(res, error.statusCode || 500, { message: error.message || "服务器错误" });
     }
 });
 

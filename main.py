@@ -5,7 +5,7 @@ import os
 import re
 import secrets
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -35,11 +35,18 @@ PARTS_INVENTORY_FILE = DATA_DIR / "parts-inventory.json"
 FINISHED_GOODS_FILE = DATA_DIR / "finished-goods.json"
 FINISHED_MODELS_FILE = DATA_DIR / "finished-models.json"
 CUSTOMER_DIRECTORY_FILE = DATA_DIR / "customer-directory.json"
+ELECTRIC_COMPARISON_FILE = DATA_DIR / "electric-comparison.json"
+MANUAL_COMPARISON_FILE = DATA_DIR / "manual-comparison.json"
+SMS_CODES_FILE = DATA_DIR / "sms-codes.json"
 
 SESSION_COOKIE = "session"
 SESSION_MAX_AGE_SECONDS = int(os.getenv("SESSION_MAX_AGE_SECONDS") or 60 * 60 * 8)
 COOKIE_SECURE = os.getenv("COOKIE_SECURE", "").lower() in {"1", "true", "yes"}
 SALES_STATUS_FLOW = ["待打印", "待发货", "已发货（待确认）", "已完成"]
+SMS_SCENES = {"register", "sms_login", "reset_password"}
+SMS_CODE_TTL_SECONDS = 5 * 60
+SMS_RESEND_SECONDS = 60
+PHONE_PATTERN = re.compile(r"^1[3-9]\d{9}$")
 
 sessions: dict[str, dict[str, Any]] = {}
 app = FastAPI(title="Wheelchair Website Backend", docs_url=None, redoc_url=None)
@@ -51,6 +58,13 @@ class ChatRequest(BaseModel):
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def parse_iso_datetime(value: Any) -> datetime | None:
+    try:
+        return datetime.fromisoformat(str(value or "").replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def required_env(name: str) -> str:
@@ -75,6 +89,14 @@ def write_json_file(file_path: Path, items: list[dict[str, Any]]) -> None:
         json.dump(items, file, ensure_ascii=False, indent=2)
         file.write("\n")
     tmp_path.replace(file_path)
+
+
+def read_sms_codes() -> list[dict[str, Any]]:
+    return read_json_file(SMS_CODES_FILE)
+
+
+def write_sms_codes(items: list[dict[str, Any]]) -> None:
+    write_json_file(SMS_CODES_FILE, items)
 
 
 def hash_password(password: str) -> str:
@@ -147,6 +169,30 @@ def seed_finished_models() -> list[dict[str, Any]]:
     ]
 
 
+def seed_electric_comparison() -> list[dict[str, Any]]:
+    now = now_iso()
+    return [
+        {"id": str(uuid.uuid4()), "model": "JL-E100", "position": "城市轻便款", "range": "约 20km", "users": "日常短途、室内外基础代步", "configuration": "折叠车架、轻便收纳", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL-E200", "position": "全地形增强款", "range": "约 35km", "users": "社区道路、坡道、户外路况", "configuration": "增强驱动、稳定轮组", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL-E300", "position": "护理舒适款", "range": "约 28km", "users": "长期乘坐、家庭护理、康复机构", "configuration": "舒适坐垫、护理推行配置", "createdAt": now, "updatedAt": now},
+    ]
+
+
+def seed_manual_comparison() -> list[dict[str, Any]]:
+    now = now_iso()
+    return [
+        {"id": str(uuid.uuid4()), "model": "JL-M6001", "position": "轻便折叠款", "focus": "护理推行", "users": "家庭出行、短途转运、便携收纳", "configuration": "折叠车架、快拆脚踏", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL-M6005R", "position": "后减震舒适款", "focus": "舒适乘坐", "users": "较长时间乘坐、机构护理、康复转运", "configuration": "后减震、贴轮毂轮组", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL-M6005A", "position": "铝合金轮毂款", "focus": "稳固耐用", "users": "医院、养老机构、频繁推行场景", "configuration": "铝合金轮毂、减震配置", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL01GA-ST07", "position": "轻便护理款", "focus": "便携推行", "users": "家庭护理、短途转运、日常外出", "configuration": "折叠车架、轻量配置", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL01GB-ST03", "position": "轻便窄款", "focus": "室内转运", "users": "家庭室内、短途护理、窄空间推行", "configuration": "轻量车架、紧凑折叠", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL01GA-ST03", "position": "银色护理款", "focus": "舒适推行", "users": "家庭护理、机构转运、日常出行", "configuration": "银色车架、8寸前轮", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL01GA-ST02", "position": "高承重护理款", "focus": "宽座承重", "users": "高承重需求、长期护理、机构转运", "configuration": "宽座设计、加强车架", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL02GA-ST01", "position": "高靠背护理款", "focus": "长期乘坐", "users": "长期护理、康复机构、舒适支撑需求", "configuration": "高靠背、加长车身", "createdAt": now, "updatedAt": now},
+        {"id": str(uuid.uuid4()), "model": "JL02GA-ST02", "position": "高靠背护理款", "focus": "长期护理", "users": "长期护理、康复机构、舒适支撑需求", "configuration": "高靠背、护理脚托", "createdAt": now, "updatedAt": now},
+    ]
+
+
 def ensure_data_store() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     if not EMPLOYEES_FILE.exists():
@@ -162,6 +208,8 @@ def ensure_data_store() -> None:
         FINISHED_GOODS_FILE: seed_finished_goods,
         FINISHED_MODELS_FILE: seed_finished_models,
         CUSTOMER_DIRECTORY_FILE: seed_customer_directory,
+        ELECTRIC_COMPARISON_FILE: seed_electric_comparison,
+        MANUAL_COMPARISON_FILE: seed_manual_comparison,
     }
     for file_path, seed_func in defaults.items():
         if not file_path.exists():
@@ -222,10 +270,30 @@ def write_customer_directory(items: list[dict[str, Any]]) -> None:
     write_json_file(CUSTOMER_DIRECTORY_FILE, items)
 
 
+def read_electric_comparison() -> list[dict[str, Any]]:
+    ensure_data_store()
+    return read_json_file(ELECTRIC_COMPARISON_FILE)
+
+
+def write_electric_comparison(items: list[dict[str, Any]]) -> None:
+    write_json_file(ELECTRIC_COMPARISON_FILE, items)
+
+
+def read_manual_comparison() -> list[dict[str, Any]]:
+    ensure_data_store()
+    return read_json_file(MANUAL_COMPARISON_FILE)
+
+
+def write_manual_comparison(items: list[dict[str, Any]]) -> None:
+    write_json_file(MANUAL_COMPARISON_FILE, items)
+
+
 def public_employee(employee: dict[str, Any]) -> dict[str, Any]:
+    username = employee.get("username", "")
     return {
         "id": employee.get("id", ""),
-        "username": employee.get("username", ""),
+        "username": username,
+        "phone": employee.get("phone", username if PHONE_PATTERN.match(str(username or "")) else ""),
         "name": employee.get("name", ""),
         "department": employee.get("department", ""),
         "role": employee.get("role", ""),
@@ -241,6 +309,135 @@ def create_session(employee: dict[str, Any]) -> str:
     return token
 
 
+def login_response(employee: dict[str, Any], message: str = "登录成功") -> Response:
+    token = create_session(employee)
+    response = JSONResponse({"message": message, "user": public_employee(employee)})
+    response.set_cookie(SESSION_COOKIE, token, max_age=SESSION_MAX_AGE_SECONDS, httponly=True, samesite="lax", secure=COOKIE_SECURE, path="/")
+    return response
+
+
+def normalize_phone(value: Any) -> str:
+    phone = re.sub(r"\D", "", str(value or "").strip())
+    if not PHONE_PATTERN.match(phone):
+        raise HTTPException(status_code=400, detail="手机号格式不正确")
+    return phone
+
+
+def normalize_sms_scene(value: Any) -> str:
+    scene = str(value or "").strip()
+    if scene not in SMS_SCENES:
+        raise HTTPException(status_code=400, detail="验证码场景不正确")
+    return scene
+
+
+def employee_phone(employee: dict[str, Any]) -> str:
+    phone = str(employee.get("phone") or "").strip()
+    username = str(employee.get("username") or "").strip()
+    if PHONE_PATTERN.match(phone):
+        return phone
+    return username if PHONE_PATTERN.match(username) else ""
+
+
+def find_phone_account(phone: str, active_only: bool = True) -> dict[str, Any] | None:
+    return next(
+        (
+            item
+            for item in read_employees()
+            if employee_phone(item) == phone
+            and (not active_only or item.get("active") is not False)
+        ),
+        None,
+    )
+
+
+def ensure_password_value(value: Any, field_name: str = "password") -> str:
+    password = str(value or "")
+    if not password:
+        raise HTTPException(status_code=400, detail="密码不能为空")
+    if len(password) < 6:
+        raise HTTPException(status_code=400, detail="密码至少需要6位")
+    return password
+
+
+def send_sms_code(phone: str, code: str) -> None:
+    configured = all(
+        os.getenv(name)
+        for name in (
+            "TENCENTCLOUD_SECRET_ID",
+            "TENCENTCLOUD_SECRET_KEY",
+            "TENCENT_SMS_SDK_APP_ID",
+            "TENCENT_SMS_SIGN_NAME",
+            "TENCENT_SMS_TEMPLATE_ID",
+        )
+    )
+    if configured:
+        # Tencent Cloud SMS integration can be placed here. Keep secrets in .env only.
+        print(f"[sms] Tencent SMS config detected; development fallback code for {phone}: {code}")
+        return
+    print(f"[sms][dev] 手机号 {phone} 的验证码是 {code}，5分钟内有效。")
+
+
+def issue_sms_code(phone: str, scene: str) -> None:
+    now = datetime.now(timezone.utc)
+    codes = read_sms_codes()
+    for item in codes:
+        if item.get("phone") == phone and item.get("scene") == scene and not item.get("used"):
+            created_at = parse_iso_datetime(item.get("created_at"))
+            if created_at and (now - created_at).total_seconds() < SMS_RESEND_SECONDS:
+                raise HTTPException(status_code=429, detail="验证码发送太频繁，请稍后再试")
+            item["used"] = True
+
+    code = f"{secrets.randbelow(1_000_000):06d}"
+    codes.append(
+        {
+            "id": str(uuid.uuid4()),
+            "phone": phone,
+            "code": code,
+            "scene": scene,
+            "expires_at": (now + timedelta(seconds=SMS_CODE_TTL_SECONDS)).isoformat().replace("+00:00", "Z"),
+            "used": False,
+            "created_at": now.isoformat().replace("+00:00", "Z"),
+        }
+    )
+    write_sms_codes(codes)
+    send_sms_code(phone, code)
+
+
+def verify_sms_code(phone: str, code: Any, scene: str) -> None:
+    code_value = str(code or "").strip()
+    if not code_value:
+        raise HTTPException(status_code=400, detail="验证码不能为空")
+
+    now = datetime.now(timezone.utc)
+    codes = read_sms_codes()
+    candidates = [
+        item
+        for item in codes
+        if item.get("phone") == phone
+        and item.get("scene") == scene
+        and not item.get("used")
+    ]
+    candidates.sort(key=lambda item: str(item.get("created_at") or ""), reverse=True)
+    matched = next(
+        (
+            item
+            for item in candidates
+            if str(item.get("code") or "") == code_value
+            and parse_iso_datetime(item.get("expires_at")) is not None
+            and parse_iso_datetime(item.get("expires_at")) >= now
+        ),
+        None,
+    )
+    if not matched:
+        raise HTTPException(status_code=400, detail="验证码错误或已过期")
+
+    for item in codes:
+        if item.get("id") == matched.get("id"):
+            item["used"] = True
+            break
+    write_sms_codes(codes)
+
+
 def get_session_user(request: Request) -> dict[str, Any] | None:
     token = request.cookies.get(SESSION_COOKIE)
     if not token or token not in sessions:
@@ -254,6 +451,10 @@ def get_session_user(request: Request) -> dict[str, Any] | None:
 
 def has_permission(employee: dict[str, Any] | None, permission: str) -> bool:
     return bool(employee and isinstance(employee.get("permissions"), list) and permission in employee["permissions"])
+
+
+def is_system_administrator(employee: dict[str, Any] | None) -> bool:
+    return bool(employee and employee.get("role") == "系统管理员")
 
 
 def require_employee_access(request: Request) -> dict[str, Any]:
@@ -530,6 +731,76 @@ def filter_finished_goods(goods: list[dict[str, Any]], query: Any) -> list[dict[
     return sorted(rows, key=lambda item: str(item.get("model", "")))
 
 
+def normalize_electric_comparison_item(body: dict[str, Any], existing: dict[str, Any] | None = None) -> dict[str, Any]:
+    model = str(body.get("model") or "").strip()
+    if not model:
+        raise HTTPException(status_code=400, detail="请填写型号")
+    now = now_iso()
+    return {
+        "id": existing.get("id") if existing else str(uuid.uuid4()),
+        "model": model,
+        "position": str(body.get("position") or "").strip(),
+        "range": str(body.get("range") or "").strip(),
+        "users": str(body.get("users") or "").strip(),
+        "configuration": str(body.get("configuration") or "").strip(),
+        "createdAt": existing.get("createdAt") if existing else now,
+        "updatedAt": now,
+    }
+
+
+def normalize_electric_comparison_rows(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows = []
+    for item in items:
+        rows.append(
+            {
+                "id": str(item.get("id") or str(uuid.uuid4())),
+                "model": str(item.get("model") or "").strip(),
+                "position": str(item.get("position") or "").strip(),
+                "range": str(item.get("range") or "").strip(),
+                "users": str(item.get("users") or "").strip(),
+                "configuration": str(item.get("configuration") or "").strip(),
+                "createdAt": item.get("createdAt", ""),
+                "updatedAt": item.get("updatedAt", ""),
+            }
+        )
+    return rows
+
+
+def normalize_manual_comparison_item(body: dict[str, Any], existing: dict[str, Any] | None = None) -> dict[str, Any]:
+    model = str(body.get("model") or "").strip()
+    if not model:
+        raise HTTPException(status_code=400, detail="请填写型号")
+    now = now_iso()
+    return {
+        "id": existing.get("id") if existing else str(uuid.uuid4()),
+        "model": model,
+        "position": str(body.get("position") or "").strip(),
+        "focus": str(body.get("focus") or "").strip(),
+        "users": str(body.get("users") or "").strip(),
+        "configuration": str(body.get("configuration") or "").strip(),
+        "createdAt": existing.get("createdAt") if existing else now,
+        "updatedAt": now,
+    }
+
+
+def normalize_manual_comparison_rows(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows = []
+    for item in items:
+        rows.append(
+            {
+                "id": str(item.get("id") or str(uuid.uuid4())),
+                "model": str(item.get("model") or "").strip(),
+                "position": str(item.get("position") or "").strip(),
+                "focus": str(item.get("focus") or "").strip(),
+                "users": str(item.get("users") or "").strip(),
+                "configuration": str(item.get("configuration") or "").strip(),
+                "createdAt": item.get("createdAt", ""),
+                "updatedAt": item.get("updatedAt", ""),
+            }
+        )
+    return rows
+
+
 def csv_cell(value: Any) -> str:
     text = str("" if value is None else value)
     if text.startswith(("=", "+", "-", "@")):
@@ -569,6 +840,96 @@ def me(request: Request) -> dict[str, Any]:
     return {"loggedIn": bool(employee), "user": public_employee(employee) if employee else None}
 
 
+@app.post("/api/auth/sms/send")
+async def send_auth_sms(request: Request) -> dict[str, str]:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    scene = normalize_sms_scene(body.get("scene"))
+    account = find_phone_account(phone, active_only=True)
+
+    if scene == "register" and account:
+        raise HTTPException(status_code=409, detail="该手机号已注册，请直接登录")
+    if scene == "sms_login" and not account:
+        raise HTTPException(status_code=404, detail="该手机号尚未注册，请先注册")
+    if scene == "reset_password" and not account:
+        raise HTTPException(status_code=404, detail="该手机号尚未注册")
+
+    issue_sms_code(phone, scene)
+    return {"message": "验证码已发送"}
+
+
+@app.post("/api/auth/register-phone")
+async def register_phone(request: Request) -> Response:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    password = ensure_password_value(body.get("password"))
+
+    if find_phone_account(phone, active_only=False):
+        raise HTTPException(status_code=409, detail="该手机号已注册，请直接登录")
+
+    verify_sms_code(phone, body.get("code"), "register")
+    employee = {
+        "id": str(uuid.uuid4()),
+        "username": phone,
+        "phone": phone,
+        "name": f"客户{phone[-4:]}",
+        "department": "客户",
+        "role": "客户",
+        "permissions": [],
+        "active": True,
+        "passwordHash": hash_password(password),
+        "createdAt": now_iso(),
+        "registeredAt": now_iso(),
+    }
+    items = read_employees()
+    items.append(employee)
+    write_employees(items)
+    return login_response(employee, "注册成功")
+
+
+@app.post("/api/auth/login-password")
+async def login_password(request: Request) -> Response:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    password = str(body.get("password") or "")
+    if not password:
+        raise HTTPException(status_code=400, detail="密码不能为空")
+
+    employee = find_phone_account(phone, active_only=True)
+    if not employee:
+        raise HTTPException(status_code=404, detail="该手机号尚未注册，请先注册")
+    if not verify_password(password, str(employee.get("passwordHash") or "")):
+        raise HTTPException(status_code=401, detail="密码错误")
+    return login_response(employee)
+
+
+@app.post("/api/auth/login-sms")
+async def login_sms(request: Request) -> Response:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    employee = find_phone_account(phone, active_only=True)
+    if not employee:
+        raise HTTPException(status_code=404, detail="该手机号尚未注册，请先注册")
+    verify_sms_code(phone, body.get("code"), "sms_login")
+    return login_response(employee)
+
+
+@app.post("/api/auth/reset-password")
+async def reset_password(request: Request) -> dict[str, str]:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    new_password = ensure_password_value(body.get("new_password"))
+    items = read_employees()
+    index = next((i for i, item in enumerate(items) if employee_phone(item) == phone and item.get("active") is not False), -1)
+    if index < 0:
+        raise HTTPException(status_code=404, detail="该手机号尚未注册")
+    verify_sms_code(phone, body.get("code"), "reset_password")
+    items[index]["passwordHash"] = hash_password(new_password)
+    items[index]["updatedAt"] = now_iso()
+    write_employees(items)
+    return {"message": "密码重置成功，请重新登录"}
+
+
 @app.post("/api/login")
 async def login(request: Request) -> Response:
     body = await read_body(request)
@@ -577,10 +938,7 @@ async def login(request: Request) -> Response:
     employee = next((item for item in read_employees() if item.get("username") == username and item.get("active") is not False), None)
     if not employee or not verify_password(password, str(employee.get("passwordHash") or "")):
         raise HTTPException(status_code=401, detail="账号或密码错误")
-    token = create_session(employee)
-    response = JSONResponse({"message": "登录成功", "user": public_employee(employee)})
-    response.set_cookie(SESSION_COOKIE, token, max_age=SESSION_MAX_AGE_SECONDS, httponly=True, samesite="lax", secure=COOKIE_SECURE, path="/")
-    return response
+    return login_response(employee)
 
 
 @app.post("/api/logout")
@@ -591,6 +949,96 @@ def logout(request: Request) -> Response:
     response = JSONResponse({"message": "已退出登录"})
     response.delete_cookie(SESSION_COOKIE, path="/", samesite="lax", secure=COOKIE_SECURE, httponly=True)
     return response
+
+
+@app.get("/api/electric-comparison")
+def electric_comparison() -> dict[str, Any]:
+    return {"items": normalize_electric_comparison_rows(read_electric_comparison())}
+
+
+@app.post("/api/electric-comparison")
+async def create_electric_comparison(request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    items = read_electric_comparison()
+    item = normalize_electric_comparison_item(await read_body(request))
+    items.append(item)
+    write_electric_comparison(items)
+    return {"message": "对比项已添加", "item": item}
+
+
+@app.put("/api/electric-comparison/{item_id}")
+async def update_electric_comparison(item_id: str, request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    items = read_electric_comparison()
+    index = next((i for i, item in enumerate(items) if item.get("id") == item_id), -1)
+    if index < 0:
+        raise HTTPException(status_code=404, detail="对比项不存在")
+    item = normalize_electric_comparison_item(await read_body(request), items[index])
+    items[index] = item
+    write_electric_comparison(items)
+    return {"message": "对比项已修改", "item": item}
+
+
+@app.delete("/api/electric-comparison")
+async def delete_electric_comparison(request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    body = await read_body(request)
+    ids = [str(item).strip() for item in body.get("ids", []) if str(item).strip()] if isinstance(body.get("ids"), list) else []
+    if not ids:
+        raise HTTPException(status_code=400, detail="请先勾选需要删除的对比项")
+    items = read_electric_comparison()
+    id_set = set(ids)
+    next_items = [item for item in items if item.get("id") not in id_set]
+    deleted_count = len(items) - len(next_items)
+    if not deleted_count:
+        raise HTTPException(status_code=404, detail="未找到需要删除的对比项")
+    write_electric_comparison(next_items)
+    return {"message": f"已删除 {deleted_count} 条对比项", "deletedCount": deleted_count}
+
+
+@app.get("/api/manual-comparison")
+def manual_comparison() -> dict[str, Any]:
+    return {"items": normalize_manual_comparison_rows(read_manual_comparison())}
+
+
+@app.post("/api/manual-comparison")
+async def create_manual_comparison(request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    items = read_manual_comparison()
+    item = normalize_manual_comparison_item(await read_body(request))
+    items.append(item)
+    write_manual_comparison(items)
+    return {"message": "对比项已添加", "item": item}
+
+
+@app.put("/api/manual-comparison/{item_id}")
+async def update_manual_comparison(item_id: str, request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    items = read_manual_comparison()
+    index = next((i for i, item in enumerate(items) if item.get("id") == item_id), -1)
+    if index < 0:
+        raise HTTPException(status_code=404, detail="对比项不存在")
+    item = normalize_manual_comparison_item(await read_body(request), items[index])
+    items[index] = item
+    write_manual_comparison(items)
+    return {"message": "对比项已修改", "item": item}
+
+
+@app.delete("/api/manual-comparison")
+async def delete_manual_comparison(request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    body = await read_body(request)
+    ids = [str(item).strip() for item in body.get("ids", []) if str(item).strip()] if isinstance(body.get("ids"), list) else []
+    if not ids:
+        raise HTTPException(status_code=400, detail="请先勾选需要删除的对比项")
+    items = read_manual_comparison()
+    id_set = set(ids)
+    next_items = [item for item in items if item.get("id") not in id_set]
+    deleted_count = len(items) - len(next_items)
+    if not deleted_count:
+        raise HTTPException(status_code=404, detail="未找到需要删除的对比项")
+    write_manual_comparison(next_items)
+    return {"message": f"已删除 {deleted_count} 条对比项", "deletedCount": deleted_count}
 
 
 @app.get("/api/employees")
@@ -628,6 +1076,30 @@ async def create_employee(request: Request) -> dict[str, Any]:
     items.append(employee)
     write_employees(items)
     return {"message": "员工已创建", "employee": public_employee(employee)}
+
+
+@app.delete("/api/employees")
+async def delete_employees(request: Request) -> dict[str, Any]:
+    user = require_employee_access(request)
+    if not is_system_administrator(user):
+        raise HTTPException(status_code=403, detail="只有系统管理员可以删除账号")
+    body = await read_body(request)
+    ids = [str(item).strip() for item in body.get("ids", []) if str(item).strip()] if isinstance(body.get("ids"), list) else []
+    if not ids:
+        raise HTTPException(status_code=400, detail="请先勾选需要删除的账号")
+    id_set = set(ids)
+    if user.get("id") in id_set:
+        raise HTTPException(status_code=400, detail="不能删除当前登录账号")
+    items = read_employees()
+    next_items = [item for item in items if item.get("id") not in id_set]
+    deleted_count = len(items) - len(next_items)
+    if not deleted_count:
+        raise HTTPException(status_code=404, detail="未找到需要删除的账号")
+    write_employees(next_items)
+    for token, session in list(sessions.items()):
+        if session.get("employeeId") in id_set:
+            sessions.pop(token, None)
+    return {"message": f"已删除 {deleted_count} 个账号", "deletedCount": deleted_count}
 
 
 @app.get("/api/customer-directory")

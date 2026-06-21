@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>账号登录 - 信防源医疗</title>
+  <title>手机号登录 - 骏龙医疗</title>
   <style>
     :root {
       --primary: #0b66c3;
@@ -13,6 +13,7 @@
       --line: #d7e6f5;
       --soft: #eef6ff;
       --danger: #b42318;
+      --success: #157347;
     }
 
     * {
@@ -22,37 +23,412 @@
     body {
       min-height: 100vh;
       margin: 0;
+      display: flex;
+      flex-direction: column;
       color: var(--headline);
       font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
-      background:
-        linear-gradient(135deg, rgba(11, 102, 195, 0.14), rgba(255, 255, 255, 0.8) 42%, rgba(64, 168, 130, 0.16)),
-        #f5f9fd;
+      background: #05070a;
+      overflow-x: hidden;
     }
 
     .login-shell {
-      min-height: calc(100vh - 92px);
+      flex: 1 0 auto;
+      min-height: 0;
       display: grid;
-      place-items: center;
-      padding: 34px 18px;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      background: #070b10;
     }
 
     .login-panel {
-      width: min(460px, 100%);
-      border: 1px solid rgba(215, 230, 245, 0.95);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.94);
-      box-shadow: 0 22px 58px rgba(9, 39, 74, 0.16);
-      padding: 30px;
+      width: 100%;
+      min-height: 100%;
+      align-self: stretch;
+      justify-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 0;
+      border-radius: 0;
+      background:
+        radial-gradient(circle at 72% 18%, rgba(11, 102, 195, 0.18), transparent 30%),
+        linear-gradient(180deg, #08111a 0%, #05070a 100%);
+      box-shadow: none;
+      padding: clamp(44px, 7vw, 86px) 0;
+      margin: 0;
+      color: #f8fafc;
+    }
+
+    .login-panel > * {
+      width: min(420px, calc(100% - 72px));
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .login-visual {
+      position: relative;
+      min-height: 100%;
+      align-self: stretch;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background:
+        radial-gradient(circle at 72% 72%, rgba(35, 191, 173, 0.12), transparent 34%),
+        radial-gradient(circle at 24% 26%, rgba(11, 102, 195, 0.10), transparent 30%),
+        linear-gradient(135deg, #f4f7f9 0%, #eaf0f4 48%, #dde8ee 100%);
+      box-shadow: none;
+      color: #09243c;
+      isolation: isolate;
+      --look-x: 0px;
+      --look-y: 0px;
+      --body-skew: 0deg;
+      --peek-x: 0px;
+      --peek-y: 0px;
+    }
+
+    .login-visual::before,
+    .login-visual::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(12px);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .login-visual::before {
+      width: 360px;
+      height: 360px;
+      left: -130px;
+      top: -90px;
+      background: radial-gradient(circle, rgba(11, 102, 195, 0.10), transparent 70%);
+      animation: haloDrift 13s ease-in-out infinite alternate;
+    }
+
+    .login-visual::after {
+      width: 460px;
+      height: 460px;
+      right: -170px;
+      bottom: -160px;
+      background: radial-gradient(circle, rgba(27, 176, 160, 0.14), transparent 70%);
+      animation: haloDrift 16s ease-in-out infinite alternate-reverse;
+    }
+
+    .visual-particles {
+      display: none;
+    }
+
+    .visual-particles span {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(11, 102, 195, 0.38);
+      box-shadow: 0 0 18px rgba(11, 102, 195, 0.18);
+      opacity: 0.52;
+      animation: particlePulse 4.8s ease-in-out infinite;
+    }
+
+    .visual-particles span:nth-child(1) { left: 11%; top: 22%; animation-delay: -0.4s; }
+    .visual-particles span:nth-child(2) { left: 24%; top: 75%; animation-delay: -1.5s; }
+    .visual-particles span:nth-child(3) { left: 44%; top: 18%; animation-delay: -2.1s; }
+    .visual-particles span:nth-child(4) { left: 68%; top: 31%; animation-delay: -3.2s; }
+    .visual-particles span:nth-child(5) { left: 83%; top: 63%; animation-delay: -1.1s; }
+    .visual-particles span:nth-child(6) { left: 56%; top: 84%; animation-delay: -2.7s; }
+
+    .visual-content {
+      position: relative;
+      z-index: 1;
+      min-height: 100%;
+      padding: clamp(34px, 5vw, 64px);
+    }
+
+    .visual-copy {
+      position: absolute;
+      left: clamp(34px, 5vw, 72px);
+      top: clamp(30px, 4.5vw, 58px);
+      max-width: min(360px, calc(100% - 80px));
+    }
+
+    .visual-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #0b2239;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .visual-brand .brand-mark {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+    }
+
+    .visual-kicker {
+      margin: 18px 0 0;
+      color: rgba(9, 36, 60, 0.56);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .visual-copy h2 {
+      margin: 8px 0 0;
+      color: rgba(9, 36, 60, 0.72);
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+
+    .visual-copy p {
+      display: none;
+    }
+
+    .visual-stage {
+      position: absolute;
+      left: clamp(24px, 5.5vw, 72px);
+      right: clamp(12px, 3vw, 44px);
+      bottom: -2px;
+      height: min(58vh, 560px);
+      display: grid;
+      place-items: end start;
+    }
+
+    .character-scene {
+      position: relative;
+      width: 560px;
+      height: 420px;
+      max-width: 100%;
+      transform: translateY(8px) scale(1.22);
+      transform-origin: left bottom;
+      animation: characterFloat 6.5s ease-in-out infinite;
+    }
+
+    .character {
+      position: absolute;
+      bottom: 0;
+      transform-origin: bottom center;
+      transition: transform 520ms ease, height 520ms ease, border-radius 520ms ease;
+      box-shadow: 0 34px 58px rgba(25, 46, 68, 0.12);
+    }
+
+    .character--purple {
+      left: 92px;
+      width: 188px;
+      height: 380px;
+      z-index: 1;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(160deg, #3b7fd8, #1b9e95);
+      transform: skewX(var(--body-skew));
+    }
+
+    .character--black {
+      left: 248px;
+      width: 128px;
+      height: 306px;
+      z-index: 3;
+      border-radius: 10px 10px 0 0;
+      background: linear-gradient(180deg, #17202b, #0f1722);
+      transform: skewX(calc(var(--body-skew) * -0.8));
+    }
+
+    .character--orange {
+      left: 20px;
+      width: 248px;
+      height: 190px;
+      z-index: 4;
+      border-radius: 124px 124px 0 0;
+      background: linear-gradient(160deg, #64c7d8, #2aa0bd);
+      transform: skewX(calc(var(--body-skew) * 0.55));
+    }
+
+    .character--yellow {
+      left: 330px;
+      width: 146px;
+      height: 224px;
+      z-index: 5;
+      border-radius: 74px 74px 0 0;
+      background: linear-gradient(160deg, #f0dc66, #d6c13f);
+      transform: skewX(calc(var(--body-skew) * -0.4));
+    }
+
+    .eyes {
+      position: absolute;
+      display: flex;
+      gap: 22px;
+      transition: transform 160ms ease, left 520ms ease, top 520ms ease;
+      transform: translate(var(--look-x), var(--look-y));
+    }
+
+    .character--purple .eyes { left: 46px; top: 48px; gap: 28px; }
+    .character--black .eyes { left: 26px; top: 34px; }
+    .character--orange .eyes { left: 88px; top: 84px; gap: 30px; }
+    .character--yellow .eyes { left: 54px; top: 44px; gap: 24px; }
+
+    .eye {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 50%;
+      background: #ffffff;
+      transition: height 140ms ease, transform 160ms ease;
+    }
+
+    .eye::after,
+    .dot-eye::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #111827;
+      transform: translate(var(--look-x), var(--look-y));
+      transition: transform 110ms ease;
+    }
+
+    .dot-eye {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: transparent;
+    }
+
+    .dot-eye::after {
+      width: 12px;
+      height: 12px;
+    }
+
+    .mouth {
+      position: absolute;
+      left: 38px;
+      top: 94px;
+      width: 72px;
+      height: 4px;
+      border-radius: 99px;
+      background: #17202b;
+      transform: translate(var(--look-x), var(--look-y));
+      transition: transform 160ms ease, width 240ms ease;
+    }
+
+    .privacy-shield {
+      position: absolute;
+      left: 18px;
+      top: 78px;
+      width: 152px;
+      height: 78px;
+      border-radius: 46px 46px 24px 24px;
+      background: rgba(238, 244, 247, 0.96);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+      opacity: 0;
+      transform: translateY(18px) scale(0.92);
+      transition: opacity 260ms ease, transform 320ms ease;
+      pointer-events: none;
+    }
+
+    .privacy-shield::before,
+    .privacy-shield::after {
+      content: "";
+      position: absolute;
+      top: 28px;
+      width: 46px;
+      height: 8px;
+      border-radius: 99px;
+      background: #0b66c3;
+    }
+
+    .privacy-shield::before { left: 28px; transform: rotate(8deg); }
+    .privacy-shield::after { right: 28px; transform: rotate(-8deg); }
+
+    .login-visual.is-typing .character--purple {
+      height: 414px;
+      transform: translateX(34px) skewX(calc(var(--body-skew) - 8deg));
+    }
+
+    .login-visual.is-typing .character--black {
+      transform: translateX(20px) skewX(calc(var(--body-skew) + 8deg));
+    }
+
+    .login-visual.is-typing .character--purple .eyes {
+      left: 62px;
+      top: 70px;
+    }
+
+    .login-visual.is-typing .character--black .eyes {
+      left: 34px;
+      top: 16px;
+    }
+
+    .login-visual.is-password .character--purple,
+    .login-visual.is-password .character--black,
+    .login-visual.is-password .character--orange,
+    .login-visual.is-password .character--yellow {
+      transform: skewX(0deg);
+    }
+
+    .login-visual.is-password .character--purple {
+      height: 414px;
+      transform: translateX(34px);
+    }
+
+    .login-visual.is-password .privacy-shield {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .login-visual.is-password.is-peeking .privacy-shield {
+      transform: translateY(-8px) rotate(-2deg) scale(0.96);
+    }
+
+    .login-visual.is-password.is-peeking .character--purple .eyes,
+    .login-visual.is-password.is-peeking .character--black .eyes,
+    .login-visual.is-password.is-peeking .character--orange .eyes,
+    .login-visual.is-password.is-peeking .character--yellow .eyes {
+      transform: translate(var(--peek-x), var(--peek-y));
+    }
+
+    .login-visual.is-blinking .character--purple .eye,
+    .login-visual.is-blinking .character--black .eye {
+      height: 3px;
+    }
+
+    @keyframes haloDrift {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(28px, 18px, 0) scale(1.08); }
+    }
+
+    @keyframes particlePulse {
+      0%, 100% { transform: scale(0.82); opacity: 0.42; }
+      50% { transform: scale(1.24); opacity: 1; }
+    }
+
+    @keyframes characterFloat {
+      0%, 100% { transform: translateY(8px) scale(1.22); }
+      50% { transform: translateY(-10px) scale(1.22); }
     }
 
     .brand-link {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      color: inherit;
+      color: #f8fafc;
       text-decoration: none;
       font-weight: 800;
       letter-spacing: 0;
+      margin-bottom: 28px;
+    }
+
+    .login-panel > .brand-link {
+      display: none;
     }
 
     .brand-mark {
@@ -61,15 +437,26 @@
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background: var(--primary);
-      color: #fff;
-      font-size: 20px;
-      font-weight: 900;
+      border: 1px solid rgba(226, 232, 240, 0.72);
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+      padding: 0;
+      flex: 0 0 auto;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
     }
 
     h1 {
-      margin: 26px 0 8px;
-      font-size: 28px;
+      margin: 0 0 10px;
+      color: #f8fafc;
+      font-size: 32px;
       line-height: 1.25;
     }
 
@@ -77,7 +464,7 @@
     .account-note,
     .return-note {
       margin: 0;
-      color: var(--sub);
+      color: rgba(226, 232, 240, 0.68);
       font-size: 14px;
       line-height: 1.7;
     }
@@ -88,37 +475,74 @@
       margin-top: 24px;
     }
 
+    .mode-panel {
+      display: grid;
+      gap: 15px;
+    }
+
     .field {
       display: grid;
       gap: 8px;
       font-size: 14px;
       font-weight: 700;
-      color: #284765;
+      color: rgba(226, 232, 240, 0.86);
     }
 
     .field input {
       width: 100%;
-      min-height: 46px;
-      border: 1px solid #c9ddf1;
-      border-radius: 8px;
-      background: #fff;
-      color: var(--headline);
+      min-height: 50px;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.075);
+      color: #f8fafc;
       font: inherit;
-      padding: 0 13px;
+      padding: 0 15px;
       outline: none;
     }
 
-    .field input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(11, 102, 195, 0.12);
+    .field input::placeholder {
+      color: rgba(203, 213, 225, 0.52);
     }
 
-    .login-error {
+    .field input:focus {
+      border-color: rgba(125, 211, 252, 0.76);
+      background: rgba(255, 255, 255, 0.10);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+    }
+
+    .code-field {
+      display: grid;
+      grid-template-columns: 1fr 126px;
+      gap: 10px;
+    }
+
+    .send-code {
+      min-height: 50px;
+      border: 1px solid rgba(125, 211, 252, 0.34);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #bae6fd;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .send-code:disabled {
+      cursor: wait;
+      opacity: 0.68;
+    }
+
+    .login-message {
       min-height: 20px;
       margin: 0;
-      color: var(--danger);
+      color: #fca5a5;
       font-size: 13px;
       line-height: 1.5;
+    }
+
+    .login-message.is-success {
+      color: #86efac;
     }
 
     .actions {
@@ -129,11 +553,11 @@
 
     .primary-button,
     .secondary-button {
-      min-height: 46px;
+      min-height: 50px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
+      border-radius: 10px;
       font: inherit;
       font-size: 15px;
       font-weight: 800;
@@ -143,13 +567,13 @@
 
     .primary-button {
       border: 0;
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 12px 24px rgba(11, 102, 195, 0.22);
+      background: #f8fafc;
+      color: #071421;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
     }
 
     .primary-button:hover {
-      background: var(--primary-dark);
+      background: #e0f2fe;
     }
 
     .primary-button:disabled {
@@ -158,16 +582,42 @@
     }
 
     .secondary-button {
-      border: 1px solid rgba(11, 102, 195, 0.24);
-      background: #fff;
-      color: var(--primary);
+      border: 1px solid rgba(148, 163, 184, 0.30);
+      background: rgba(255, 255, 255, 0.06);
+      color: #dbeafe;
+    }
+
+    .form-links {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 14px;
+      min-height: 22px;
+      margin-top: -2px;
+    }
+
+    .link-button {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: #93c5fd;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .link-button:hover {
+      color: #bfdbfe;
+      text-decoration: underline;
     }
 
     .account-note {
       margin-top: 18px;
       padding: 13px 14px;
-      border-radius: 8px;
-      background: var(--soft);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.055);
     }
 
     .logged-panel {
@@ -179,27 +629,127 @@
     .current-user {
       margin: 0;
       padding: 13px 14px;
-      border-radius: 8px;
-      background: #f4f9ff;
-      color: #284765;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.055);
+      color: rgba(226, 232, 240, 0.92);
       font-weight: 700;
+    }
+
+    .login-panel > .brand-link,
+    .login-panel > h1,
+    .login-panel > .login-note,
+    .login-panel > .return-note,
+    .login-panel > .login-form,
+    .login-panel > .logged-panel,
+    .login-panel > .account-note {
+      width: min(420px, calc(100% - 72px));
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .login-panel > .brand-link {
+      margin-bottom: 28px;
+    }
+
+    .login-panel > h1 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .login-panel > .account-note {
+      margin-top: 18px;
     }
 
     .hidden {
       display: none !important;
     }
 
-    @media (max-width: 560px) {
+    .site-footer.site-footer--compact {
+      flex: 0 0 auto;
+      margin-top: 0;
+      background: #05070a;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      color: rgba(148, 163, 184, 0.66);
+    }
+
+    .site-footer.site-footer--compact a {
+      color: rgba(147, 197, 253, 0.70);
+    }
+
+    .agent-chat-launcher,
+    .agent-chat-tip,
+    .agent-chat {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    @media (max-width: 980px) {
       .login-shell {
-        padding: 18px;
+        grid-template-columns: 1fr;
+        place-items: center;
+        min-height: 0;
+        padding: 0;
+      }
+
+      .login-visual {
+        display: none;
       }
 
       .login-panel {
-        padding: 24px;
+        width: 100%;
+        min-height: 100%;
+        padding: 48px 0;
+        margin: 0;
+      }
+
+      .login-panel > * {
+        width: min(420px, calc(100% - 48px));
+      }
+
+      .login-panel > .brand-link {
+        display: inline-flex;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .login-shell {
+        padding: 0;
+      }
+
+      .login-panel {
+        padding: 34px 0;
+        border-radius: 0;
       }
 
       h1 {
-        font-size: 24px;
+        font-size: 28px;
+      }
+
+      .code-field {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+
+      .login-visual::before,
+      .login-visual::after,
+      .visual-particles span,
+      .character-scene {
+        animation: none !important;
+      }
+
+      .character-scene {
+        transform: translateY(0) scale(1.22) !important;
       }
     }
   </style>
@@ -209,26 +759,164 @@
 </head>
 <body>
   <main class="login-shell">
+    <section class="login-visual" aria-label="骏龙医疗智能服务展示">
+      <div class="visual-particles" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="visual-content">
+        <div class="visual-copy">
+          <a class="visual-brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">
+              <img src="./assets/home/junlong-trademark.png" alt="" />
+            </span>
+            <span>骏龙医疗</span>
+          </a>
+          <p class="visual-kicker">智能轮椅与医疗器械服务</p>
+          <h2>智能推荐，让选型更可靠</h2>
+        </div>
+
+        <div class="visual-stage" aria-hidden="true">
+          <div class="character-scene" data-character-scene>
+            <div class="character character--purple" data-character="primary-care">
+              <div class="eyes">
+                <span class="eye"></span>
+                <span class="eye"></span>
+              </div>
+              <span class="privacy-shield"></span>
+            </div>
+            <div class="character character--black" data-character="support">
+              <div class="eyes">
+                <span class="eye"></span>
+                <span class="eye"></span>
+              </div>
+            </div>
+            <div class="character character--orange" data-character="recommend">
+              <div class="eyes">
+                <span class="dot-eye"></span>
+                <span class="dot-eye"></span>
+              </div>
+            </div>
+            <div class="character character--yellow" data-character="service">
+              <div class="eyes">
+                <span class="dot-eye"></span>
+                <span class="dot-eye"></span>
+              </div>
+              <span class="mouth"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="login-panel" aria-labelledby="loginTitle">
       <a class="brand-link" href="index.html">
-        <span class="brand-mark">信</span>
-        <span>信防源医疗</span>
+        <span class="brand-mark" aria-hidden="true">
+          <img src="./assets/home/junlong-trademark.png" alt="" />
+        </span>
+        <span>骏龙医疗</span>
       </a>
 
-      <h1 id="loginTitle">账号登录</h1>
-      <p class="login-note">登录成功后会自动返回刚才访问的页面。</p>
+      <h1 id="loginTitle">手机号登录</h1>
+      <p class="login-note" data-login-note>登录成功后会自动返回刚才访问的页面。</p>
       <p class="return-note">返回位置：<span data-next-label>index.html</span></p>
 
-      <form class="login-form" data-login-form>
-        <label class="field">
-          账号
-          <input name="username" autocomplete="username" placeholder="请输入账号" required />
-        </label>
-        <label class="field">
-          密码
-          <input name="password" type="password" autocomplete="current-password" placeholder="请输入密码" required />
-        </label>
-        <p class="login-error" data-login-error aria-live="polite"></p>
+      <form class="login-form" data-auth-form>
+        <div class="mode-panel" data-mode-panel="password">
+          <label class="field">
+            手机号
+            <input name="passwordPhone" type="tel" autocomplete="tel" inputmode="numeric" placeholder="请输入手机号" />
+          </label>
+          <label class="field">
+            密码
+            <input name="password" type="password" autocomplete="current-password" placeholder="请输入密码" />
+          </label>
+          <div class="form-links">
+            <button class="link-button" type="button" data-mode-target="sms">短信验证码登录</button>
+            <button class="link-button" type="button" data-mode-target="reset">忘记密码</button>
+          </div>
+        </div>
+
+        <div class="mode-panel hidden" data-mode-panel="sms">
+          <label class="field">
+            手机号
+            <input name="smsPhone" type="tel" autocomplete="tel" inputmode="numeric" placeholder="请输入手机号" />
+          </label>
+          <label class="field">
+            短信验证码
+            <span class="code-field">
+              <input name="smsCode" inputmode="numeric" autocomplete="one-time-code" placeholder="请输入验证码" />
+              <button class="send-code" type="button" data-send-code data-scene="sms_login" data-phone-field="smsPhone">获取验证码</button>
+            </span>
+          </label>
+          <div class="form-links">
+            <button class="link-button" type="button" data-mode-target="password">手机号密码登录</button>
+            <button class="link-button" type="button" data-mode-target="reset">忘记密码</button>
+          </div>
+        </div>
+
+        <div class="mode-panel hidden" data-mode-panel="register">
+          <label class="field">
+            手机号
+            <input name="registerPhone" type="tel" autocomplete="tel" inputmode="numeric" placeholder="请输入手机号" />
+          </label>
+          <label class="field">
+            短信验证码
+            <span class="code-field">
+              <input name="registerCode" inputmode="numeric" autocomplete="one-time-code" placeholder="请输入验证码" />
+              <button class="send-code" type="button" data-send-code data-scene="register" data-phone-field="registerPhone">获取验证码</button>
+            </span>
+          </label>
+          <label class="field">
+            设置登录密码
+            <input name="registerPassword" type="password" autocomplete="new-password" placeholder="请设置登录密码" />
+          </label>
+          <div class="form-links">
+            <button class="link-button" type="button" data-mode-target="password">已有账号，去登录</button>
+          </div>
+        </div>
+
+        <div class="mode-panel hidden" data-mode-panel="reset">
+          <label class="field">
+            手机号
+            <input name="resetPhone" type="tel" autocomplete="tel" inputmode="numeric" placeholder="请输入手机号" />
+          </label>
+          <label class="field">
+            短信验证码
+            <span class="code-field">
+              <input name="resetCode" inputmode="numeric" autocomplete="one-time-code" placeholder="请输入验证码" />
+              <button class="send-code" type="button" data-send-code data-scene="reset_password" data-phone-field="resetPhone">获取验证码</button>
+            </span>
+          </label>
+          <label class="field">
+            重置密码
+            <input name="resetPassword" type="password" autocomplete="new-password" placeholder="请输入新密码" />
+          </label>
+          <div class="form-links">
+            <button class="link-button" type="button" data-mode-target="password">手机号密码登录</button>
+            <button class="link-button" type="button" data-mode-target="register">手机号注册</button>
+          </div>
+        </div>
+
+        <div class="mode-panel hidden" data-mode-panel="employee">
+          <label class="field">
+            内部账号
+            <input name="employeeUsername" autocomplete="username" placeholder="请输入员工或管理员账号" />
+          </label>
+          <label class="field">
+            密码
+            <input name="employeePassword" type="password" autocomplete="current-password" placeholder="请输入密码" />
+          </label>
+          <div class="form-links">
+            <button class="link-button" type="button" data-mode-target="password">返回客户登录</button>
+          </div>
+        </div>
+
+        <p class="login-message" data-login-message aria-live="polite"></p>
         <div class="actions">
           <button class="primary-button" type="submit" data-login-submit>登录</button>
           <a class="secondary-button" href="index.html">返回首页</a>
@@ -241,7 +929,7 @@
         <button class="secondary-button" type="button" data-logout-button>退出当前账号</button>
       </div>
 
-      <p class="account-note">账号密码由服务器初始化配置提供。只有管理员账号有官网编辑和员工管理权限。</p>
+      <p class="account-note" data-account-note></p>
     </section>
   </main>
   <footer class="site-footer site-footer--compact">
@@ -265,25 +953,65 @@
         home: "index.html#home"
       };
       const allowedPages = ["index.html", "manual.html", "electric.html", "factory.html", "staff.html"];
+      const phonePattern = /^1[3-9]\d{9}$/;
       const params = new URLSearchParams(window.location.search);
       const nextTarget = safeNext(params.get("next"));
-      const form = document.querySelector("[data-login-form]");
+      const form = document.querySelector("[data-auth-form]");
       const submitButton = document.querySelector("[data-login-submit]");
-      const errorNode = document.querySelector("[data-login-error]");
+      const messageNode = document.querySelector("[data-login-message]");
       const nextLabel = document.querySelector("[data-next-label]");
       const loggedPanel = document.querySelector("[data-logged-panel]");
       const currentUserNode = document.querySelector("[data-current-user]");
       const returnLink = document.querySelector("[data-return-link]");
       const logoutButton = document.querySelector("[data-logout-button]");
+      const loginTitle = document.getElementById("loginTitle");
+      const loginNote = document.querySelector("[data-login-note]");
+      const accountNote = document.querySelector("[data-account-note]");
+      let currentMode = nextTarget.includes("staff.html") ? "employee" : "password";
+      const countdownTimers = new WeakMap();
+
+      const modeText = {
+        password: {
+          title: "手机号登录",
+          note: "登录成功后会自动返回刚才访问的页面。",
+          submit: "登录",
+          noteHtml: '还没有账号？<button class="link-button" type="button" data-mode-target="register">手机号注册</button><br />员工或管理员请使用 <button class="link-button" type="button" data-mode-target="employee">内部账号登录</button>。'
+        },
+        sms: {
+          title: "短信验证码登录",
+          note: "验证码验证通过后会自动登录。",
+          submit: "登录",
+          noteHtml: '还没有账号？<button class="link-button" type="button" data-mode-target="register">手机号注册</button>'
+        },
+        register: {
+          title: "手机号注册",
+          note: "注册成功后会自动登录并返回刚才访问的页面。",
+          submit: "注册",
+          noteHtml: '注册方式仅支持中国大陆手机号。验证码 5 分钟内有效。'
+        },
+        reset: {
+          title: "忘记密码",
+          note: "验证手机号后即可设置新密码。",
+          submit: "重置密码",
+          noteHtml: '密码重置成功后，请使用新密码重新登录。'
+        },
+        employee: {
+          title: "内部账号登录",
+          note: "员工后台和官网编辑权限仍使用内部账号登录。",
+          submit: "登录",
+          noteHtml: '客户请返回 <button class="link-button" type="button" data-mode-target="password">手机号登录</button>。'
+        }
+      };
 
       if (window.location.protocol === "file:") {
-        errorNode.textContent = "请通过正式网站域名或后端服务访问登录页，不要直接打开本地HTML文件。";
+        setMessage("请通过正式网站域名或后端服务访问登录页，不要直接打开本地HTML文件。");
         submitButton.disabled = true;
         return;
       }
 
       nextLabel.textContent = decodeURIComponent(nextTarget.replace(/^\//, "")) || "index.html";
       returnLink.href = nextTarget;
+      setMode(currentMode);
 
       function safeNext(value) {
         let target = String(value || "index.html").trim();
@@ -326,7 +1054,7 @@
             ...options
           });
         } catch (error) {
-          throw new Error("无法连接登录服务器，请确认 node server.js 正在运行。");
+          throw new Error("无法连接登录服务器，请确认后端服务正在运行。");
         }
 
         const data = await response.json().catch(() => ({}));
@@ -338,13 +1066,94 @@
         return data;
       }
 
-      function showError(message) {
-        errorNode.textContent = message || "";
+      function setMessage(message, type = "error") {
+        messageNode.textContent = message || "";
+        messageNode.classList.toggle("is-success", type === "success");
+      }
+
+      function setMode(mode, keepMessage = false) {
+        currentMode = modeText[mode] ? mode : "password";
+        document.querySelectorAll("[data-mode-panel]").forEach((panel) => {
+          panel.classList.toggle("hidden", panel.dataset.modePanel !== currentMode);
+        });
+        loginTitle.textContent = modeText[currentMode].title;
+        loginNote.textContent = modeText[currentMode].note;
+        submitButton.textContent = modeText[currentMode].submit;
+        accountNote.innerHTML = modeText[currentMode].noteHtml;
+        if (!keepMessage) {
+          setMessage("");
+        }
+      }
+
+      function normalizePhoneInput(fieldName) {
+        const field = form.elements[fieldName];
+        const phone = String(field ? field.value : "").replace(/\D/g, "");
+        if (!phonePattern.test(phone)) {
+          throw new Error("手机号格式不正确");
+        }
+        if (field) {
+          field.value = phone;
+        }
+        return phone;
+      }
+
+      function requireValue(fieldName, message) {
+        const field = form.elements[fieldName];
+        const value = String(field ? field.value : "").trim();
+        if (!value) {
+          throw new Error(message);
+        }
+        return value;
+      }
+
+      function startCountdown(button) {
+        const existingTimer = countdownTimers.get(button);
+        if (existingTimer) {
+          window.clearInterval(existingTimer);
+        }
+
+        let seconds = 60;
+        button.disabled = true;
+        button.textContent = `${seconds}秒后重试`;
+        const timer = window.setInterval(() => {
+          seconds -= 1;
+          if (seconds <= 0) {
+            window.clearInterval(timer);
+            countdownTimers.delete(button);
+            button.disabled = false;
+            button.textContent = "获取验证码";
+            return;
+          }
+          button.textContent = `${seconds}秒后重试`;
+        }, 1000);
+        countdownTimers.set(button, timer);
+      }
+
+      async function sendCode(button) {
+        setMessage("");
+        const phone = normalizePhoneInput(button.dataset.phoneField);
+        const scene = button.dataset.scene;
+        button.disabled = true;
+
+        try {
+          const data = await apiFetch("/api/auth/sms/send", {
+            method: "POST",
+            body: JSON.stringify({ phone, scene })
+          });
+          setMessage(data.message || "验证码已发送", "success");
+          startCountdown(button);
+        } catch (error) {
+          button.disabled = false;
+          setMessage(error.message || "验证码发送失败");
+        }
       }
 
       function showLoggedIn(user) {
         form.classList.add("hidden");
+        accountNote.classList.add("hidden");
         loggedPanel.classList.remove("hidden");
+        loginTitle.textContent = "已登录";
+        loginNote.textContent = "你可以继续返回刚才访问的页面。";
         currentUserNode.textContent = `当前已登录：${user.name || user.username}`;
       }
 
@@ -356,31 +1165,104 @@
             showLoggedIn(data.user);
           }
         } catch (error) {
-          showError(error.message);
+          setMessage(error.message);
         }
       }
 
+      async function submitPasswordLogin() {
+        const phone = normalizePhoneInput("passwordPhone");
+        const password = requireValue("password", "密码不能为空");
+        await apiFetch("/api/auth/login-password", {
+          method: "POST",
+          body: JSON.stringify({ phone, password })
+        });
+        window.location.href = nextTarget;
+      }
+
+      async function submitSmsLogin() {
+        const phone = normalizePhoneInput("smsPhone");
+        const code = requireValue("smsCode", "验证码不能为空");
+        await apiFetch("/api/auth/login-sms", {
+          method: "POST",
+          body: JSON.stringify({ phone, code })
+        });
+        window.location.href = nextTarget;
+      }
+
+      async function submitRegister() {
+        const phone = normalizePhoneInput("registerPhone");
+        const code = requireValue("registerCode", "验证码不能为空");
+        const password = requireValue("registerPassword", "密码不能为空");
+        const data = await apiFetch("/api/auth/register-phone", {
+          method: "POST",
+          body: JSON.stringify({ phone, code, password })
+        });
+        setMessage(data.message || "注册成功", "success");
+        window.setTimeout(() => {
+          window.location.href = nextTarget;
+        }, 700);
+      }
+
+      async function submitResetPassword() {
+        const phone = normalizePhoneInput("resetPhone");
+        const code = requireValue("resetCode", "验证码不能为空");
+        const newPassword = requireValue("resetPassword", "密码不能为空");
+        const data = await apiFetch("/api/auth/reset-password", {
+          method: "POST",
+          body: JSON.stringify({ phone, code, new_password: newPassword })
+        });
+        setMode("password", true);
+        setMessage(data.message || "密码重置成功，请重新登录", "success");
+      }
+
+      async function submitEmployeeLogin() {
+        const username = requireValue("employeeUsername", "账号不能为空");
+        const password = requireValue("employeePassword", "密码不能为空");
+        await apiFetch("/api/login", {
+          method: "POST",
+          body: JSON.stringify({ username, password })
+        });
+        window.location.href = nextTarget;
+      }
+
+      document.addEventListener("click", (event) => {
+        const modeButton = event.target.closest("[data-mode-target]");
+        if (modeButton) {
+          event.preventDefault();
+          setMode(modeButton.dataset.modeTarget);
+          return;
+        }
+
+        const codeButton = event.target.closest("[data-send-code]");
+        if (codeButton) {
+          event.preventDefault();
+          sendCode(codeButton);
+        }
+      });
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        showError("");
+        setMessage("");
         submitButton.disabled = true;
-        submitButton.textContent = "登录中...";
+        submitButton.textContent = currentMode === "reset" ? "提交中..." : "登录中...";
 
         try {
-          const formData = new FormData(form);
-          await apiFetch("/api/login", {
-            method: "POST",
-            body: JSON.stringify({
-              username: String(formData.get("username") || "").trim(),
-              password: String(formData.get("password") || "")
-            })
-          });
-          window.location.href = nextTarget;
+          if (currentMode === "password") {
+            await submitPasswordLogin();
+          } else if (currentMode === "sms") {
+            await submitSmsLogin();
+          } else if (currentMode === "register") {
+            await submitRegister();
+          } else if (currentMode === "reset") {
+            await submitResetPassword();
+          } else {
+            await submitEmployeeLogin();
+          }
         } catch (error) {
-          showError(error.message || "登录失败");
+          setMessage(error.message || "操作失败");
         } finally {
           submitButton.disabled = false;
-          submitButton.textContent = "登录";
+          submitButton.textContent = modeText[currentMode].submit;
         }
       });
 
@@ -388,13 +1270,176 @@
         try {
           await apiFetch("/api/logout", { method: "POST", body: "{}" });
         } catch (error) {
-          showError(error.message);
+          setMessage(error.message);
         }
 
         window.location.reload();
       });
 
       checkCurrentUser();
+    })();
+  </script>
+  <script>
+    (function () {
+      "use strict";
+
+      const visual = document.querySelector(".login-visual");
+      if (!visual) {
+        return;
+      }
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const watchedNames = new Set([
+        "passwordPhone",
+        "password",
+        "smsPhone",
+        "smsCode",
+        "registerPhone",
+        "registerCode",
+        "registerPassword",
+        "resetPhone",
+        "resetCode",
+        "resetPassword",
+        "employeeUsername",
+        "employeePassword"
+      ]);
+      const passwordNames = new Set(["password", "registerPassword", "resetPassword", "employeePassword"]);
+      let typingTimer = 0;
+      let blinkTimer = 0;
+      let peekTimer = 0;
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function setLook(x, y, skew) {
+        visual.style.setProperty("--look-x", `${x}px`);
+        visual.style.setProperty("--look-y", `${y}px`);
+        visual.style.setProperty("--body-skew", `${skew}deg`);
+      }
+
+      function lookAtLoginPanel() {
+        setLook(7, 2, -4);
+      }
+
+      function handlePointerMove(event) {
+        if (reducedMotion.matches) {
+          return;
+        }
+
+        const rect = visual.getBoundingClientRect();
+        const centerX = rect.left + rect.width * 0.48;
+        const centerY = rect.top + rect.height * 0.54;
+        const x = clamp((event.clientX - centerX) / 42, -7, 8);
+        const y = clamp((event.clientY - centerY) / 52, -5, 6);
+        const skew = clamp((event.clientX - centerX) / 165, -5, 5);
+        setLook(x, y, skew);
+      }
+
+      function getWatchedInput(target) {
+        if (!(target instanceof HTMLInputElement)) {
+          return null;
+        }
+
+        return watchedNames.has(target.name) ? target : null;
+      }
+
+      function getActiveInput() {
+        return getWatchedInput(document.activeElement);
+      }
+
+      function setTypingState(input) {
+        window.clearTimeout(typingTimer);
+
+        if (!input) {
+          visual.classList.remove("is-typing", "is-password", "is-peeking");
+          return;
+        }
+
+        const isPasswordInput = passwordNames.has(input.name);
+        visual.classList.toggle("is-password", isPasswordInput);
+        visual.classList.add("is-typing");
+        lookAtLoginPanel();
+
+        typingTimer = window.setTimeout(() => {
+          visual.classList.remove("is-typing");
+        }, isPasswordInput ? 620 : 900);
+      }
+
+      function scheduleBlink() {
+        window.clearTimeout(blinkTimer);
+
+        if (reducedMotion.matches) {
+          return;
+        }
+
+        blinkTimer = window.setTimeout(() => {
+          visual.classList.add("is-blinking");
+          window.setTimeout(() => {
+            visual.classList.remove("is-blinking");
+            scheduleBlink();
+          }, 150);
+        }, 2600 + Math.random() * 2400);
+      }
+
+      function schedulePeek() {
+        window.clearTimeout(peekTimer);
+
+        if (reducedMotion.matches) {
+          return;
+        }
+
+        peekTimer = window.setTimeout(() => {
+          if (visual.classList.contains("is-password")) {
+            visual.style.setProperty("--peek-x", "5px");
+            visual.style.setProperty("--peek-y", "-2px");
+            visual.classList.add("is-peeking");
+            window.setTimeout(() => {
+              visual.classList.remove("is-peeking");
+            }, 560);
+          }
+          schedulePeek();
+        }, 1800 + Math.random() * 2200);
+      }
+
+      function handleReducedMotionChange() {
+        if (reducedMotion.matches) {
+          window.clearTimeout(typingTimer);
+          window.clearTimeout(blinkTimer);
+          window.clearTimeout(peekTimer);
+          visual.classList.remove("is-typing", "is-password", "is-peeking", "is-blinking");
+          setLook(0, 0, 0);
+          return;
+        }
+
+        scheduleBlink();
+        schedulePeek();
+      }
+
+      document.addEventListener("pointermove", handlePointerMove, { passive: true });
+      document.addEventListener("focusin", (event) => {
+        const input = getWatchedInput(event.target);
+        if (input) {
+          setTypingState(input);
+        }
+      });
+      document.addEventListener("input", (event) => {
+        const input = getWatchedInput(event.target);
+        if (input) {
+          setTypingState(input);
+        }
+      });
+      document.addEventListener("focusout", () => {
+        window.setTimeout(() => {
+          setTypingState(getActiveInput());
+        }, 0);
+      });
+
+      if (typeof reducedMotion.addEventListener === "function") {
+        reducedMotion.addEventListener("change", handleReducedMotionChange);
+      }
+
+      handleReducedMotionChange();
     })();
   </script>
 </body>

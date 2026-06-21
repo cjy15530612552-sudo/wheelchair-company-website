@@ -200,6 +200,14 @@
         .warehouse-form textarea, .stock-adjust-form textarea { min-height: 76px; resize: vertical; }
         .finished-form textarea, .customer-form textarea { min-height: 76px; resize: vertical; }
         .employee-message { margin-bottom: 14px; color: var(--primary-color); font-weight: bold; min-height: 20px; }
+        .employee-toolbar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .employee-toolbar .employee-message { margin-bottom: 0; }
         .sales-message, .warehouse-message, .finished-message, .finished-model-message, .customer-directory-message { color: var(--primary-color); font-weight: bold; min-height: 20px; align-self: center; }
         .table-wrap { overflow-x: auto; }
         .finished-model-toolbar { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin: 14px 0 10px; }
@@ -875,11 +883,15 @@
                         <button class="btn btn-primary" type="submit">新增员工</button>
                     </form>
 
-                    <div class="employee-message" data-employee-message></div>
+                    <div class="employee-toolbar">
+                        <div class="employee-message" data-employee-message></div>
+                        <button class="btn btn-danger" type="button" data-employee-delete-selected hidden>删除勾选账号</button>
+                    </div>
 
                     <table class="data-table">
                         <thead>
                             <tr>
+                                <th class="checkbox-cell"><input type="checkbox" data-employee-check-all disabled></th>
                                 <th>账号</th>
                                 <th>姓名</th>
                                 <th>部门</th>
@@ -890,7 +902,7 @@
                         </thead>
                         <tbody data-employee-list>
                             <tr>
-                                <td colspan="6">正在加载员工账号...</td>
+                                <td colspan="7">正在加载员工账号...</td>
                             </tr>
                         </tbody>
                     </table>
