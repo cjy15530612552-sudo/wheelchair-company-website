@@ -3126,16 +3126,21 @@
         const options = readOptions();
         const categories = options[activeOptionsProduct] || [];
         if (!categories[pendingOptionCategory]) return;
+        const categoryItems = categories[pendingOptionCategory].items;
+        const nextItem = { name, price, isDefault };
         if (isDefault) {
-          categories[pendingOptionCategory].items.forEach((item) => {
+          if (pendingOptionItem !== null && !categoryItems[pendingOptionItem]) return;
+          categoryItems.forEach((item) => {
             item.isDefault = false;
           });
-        }
-        const nextItem = { name, price, isDefault };
-        if (pendingOptionItem === null) {
-          categories[pendingOptionCategory].items.push(nextItem);
-        } else if (categories[pendingOptionCategory].items[pendingOptionItem]) {
-          categories[pendingOptionCategory].items[pendingOptionItem] = nextItem;
+          if (pendingOptionItem !== null) {
+            categoryItems.splice(pendingOptionItem, 1);
+          }
+          categoryItems.unshift(nextItem);
+        } else if (pendingOptionItem === null) {
+          categoryItems.push(nextItem);
+        } else if (categoryItems[pendingOptionItem]) {
+          categoryItems[pendingOptionItem] = nextItem;
         }
         options[activeOptionsProduct] = categories;
         saveOptions(options);
