@@ -475,6 +475,34 @@
       margin-top: 24px;
     }
 
+    .login-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.28);
+    }
+
+    .login-tab {
+      min-height: 40px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(226, 232, 240, 0.76);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .login-tab.is-active {
+      background: rgba(14, 165, 233, 0.24);
+      color: #f8fafc;
+      box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.34);
+    }
+
     .mode-panel {
       display: grid;
       gap: 15px;
@@ -826,6 +854,11 @@
       <p class="return-note">返回位置：<span data-next-label>index.html</span></p>
 
       <form class="login-form" data-auth-form>
+        <div class="login-tabs" role="tablist" aria-label="登录方式">
+          <button class="login-tab" type="button" role="tab" data-mode-tab="password" data-mode-target="password">账号密码登录</button>
+          <button class="login-tab" type="button" role="tab" data-mode-tab="sms" data-mode-target="sms">短信验证码登录</button>
+        </div>
+
         <div class="mode-panel" data-mode-panel="password">
           <label class="field">
             手机号
@@ -978,10 +1011,10 @@
           noteHtml: '还没有账号？<button class="link-button" type="button" data-mode-target="register">手机号注册</button><br />员工或管理员请使用 <button class="link-button" type="button" data-mode-target="employee">内部账号登录</button>。'
         },
         sms: {
-          title: "短信验证码登录",
-          note: "验证码验证通过后会自动登录。",
-          submit: "登录",
-          noteHtml: '还没有账号？<button class="link-button" type="button" data-mode-target="register">手机号注册</button>'
+          title: "短信验证码登录/注册",
+          note: "未注册手机号验证通过后会自动创建账号。",
+          submit: "登录/注册",
+          noteHtml: '验证码 5 分钟内有效。需要设置密码时，可登录后使用忘记密码流程重置。'
         },
         register: {
           title: "手机号注册",
@@ -1080,6 +1113,11 @@
         loginNote.textContent = modeText[currentMode].note;
         submitButton.textContent = modeText[currentMode].submit;
         accountNote.innerHTML = modeText[currentMode].noteHtml;
+        document.querySelectorAll("[data-mode-tab]").forEach((tab) => {
+          const isActive = tab.dataset.modeTab === currentMode;
+          tab.classList.toggle("is-active", isActive);
+          tab.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
         if (!keepMessage) {
           setMessage("");
         }
@@ -1136,9 +1174,11 @@
         button.disabled = true;
 
         try {
-          const data = await apiFetch("/api/auth/sms/send", {
+          const endpoint = scene === "sms_login" ? "/api/sms/send-code" : "/api/auth/sms/send";
+          const payload = scene === "sms_login" ? { phone } : { phone, scene };
+          const data = await apiFetch(endpoint, {
             method: "POST",
-            body: JSON.stringify({ phone, scene })
+            body: JSON.stringify(payload)
           });
           setMessage(data.message || "验证码已发送", "success");
           startCountdown(button);
@@ -1182,7 +1222,7 @@
       async function submitSmsLogin() {
         const phone = normalizePhoneInput("smsPhone");
         const code = requireValue("smsCode", "验证码不能为空");
-        await apiFetch("/api/auth/login-sms", {
+        await apiFetch("/api/auth/sms-login", {
           method: "POST",
           body: JSON.stringify({ phone, code })
         });

@@ -2972,6 +2972,7 @@
 
       const PARAMS_KEY = "junlongElectricProductParams";
       const OPTIONS_KEY = "junlongProductOptions";
+      const OPTIONS_API_URL = "/api/electric-options";
       const OPTION_BASE_PRICE_KEY = "junlongElectricOptionBasePrices";
       const OPTION_TEMPLATE_SYNC_KEY = "junlongElectricOptionCategoriesSyncedFromProduct1";
       const OPTION_SHARED_ITEMS_SYNC_KEY = "junlongElectricNonBatteryOptionsSyncedFromProduct1And2";
@@ -3073,6 +3074,9 @@
       let pendingOptionCategory = null;
       let pendingOptionItem = null;
       let pendingOptionDefault = false;
+      let optionStore = null;
+      let basePriceStore = null;
+      let optionSaveTimer = 0;
 
       function cloneDefaultOptions() {
         return Object.fromEntries(Object.entries(defaultOptions).map(([key, categories]) => [
@@ -3295,34 +3299,61 @@
         return options;
       }
 
-      function readOptions() {
+      function normalizeOptionStore(source) {
+        const stored = source && typeof source === "object" && !Array.isArray(source) ? source : {};
+        const merged = { ...cloneDefaultOptions(), ...stored };
+        Object.keys(merged).forEach((key) => {
+          merged[key] = normalizeCategories(merged[key] || []);
+        });
+        return restoreElectricOptionMemory(applyEmptyBatteryOptionsOnce(applyProduct3BatteryOptionsOnce(applySharedNonBatteryOptionsOnce(merged))));
+      }
+
+      function readLocalOptions() {
         try {
-          const stored = JSON.parse(localStorage.getItem(OPTIONS_KEY) || "{}");
-          const merged = { ...cloneDefaultOptions(), ...stored };
-          Object.keys(merged).forEach((key) => {
-            merged[key] = normalizeCategories(merged[key] || []);
-          });
-          return restoreElectricOptionMemory(applyEmptyBatteryOptionsOnce(applyProduct3BatteryOptionsOnce(applySharedNonBatteryOptionsOnce(merged))));
+          return normalizeOptionStore(JSON.parse(localStorage.getItem(OPTIONS_KEY) || "{}"));
         } catch (error) {
-          const defaults = cloneDefaultOptions();
-          Object.keys(defaults).forEach((key) => {
-            defaults[key] = normalizeCategories(defaults[key] || []);
-          });
-          return restoreElectricOptionMemory(applyEmptyBatteryOptionsOnce(applyProduct3BatteryOptionsOnce(applySharedNonBatteryOptionsOnce(defaults))));
+          return normalizeOptionStore({});
         }
       }
 
-      function saveOptions(options) {
+      function writeLocalOptions(options) {
         localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
       }
 
-      function readBasePrices() {
+      function readOptions() {
+        if (!optionStore) optionStore = readLocalOptions();
+        return optionStore;
+      }
+
+      function saveOptions(options) {
+        optionStore = normalizeOptionStore(options);
+        writeLocalOptions(optionStore);
+        scheduleOptionSave();
+      }
+
+      function normalizeBasePrices(source) {
+        const prices = source && typeof source === "object" && !Array.isArray(source) ? source : {};
+        return Object.fromEntries(Object.entries(prices).filter(([productKey, price]) => {
+          const number = Number(price);
+          return OPTION_PRODUCT_KEYS.includes(productKey) && Number.isFinite(number) && number >= 0;
+        }).map(([productKey, price]) => [productKey, Number(price)]));
+      }
+
+      function readLocalBasePrices() {
         try {
-          const stored = JSON.parse(localStorage.getItem(OPTION_BASE_PRICE_KEY) || "{}");
-          return stored && typeof stored === "object" ? stored : {};
+          return normalizeBasePrices(JSON.parse(localStorage.getItem(OPTION_BASE_PRICE_KEY) || "{}"));
         } catch (error) {
           return {};
         }
+      }
+
+      function readBasePrices() {
+        if (!basePriceStore) basePriceStore = readLocalBasePrices();
+        return basePriceStore;
+      }
+
+      function writeLocalBasePrices(prices) {
+        localStorage.setItem(OPTION_BASE_PRICE_KEY, JSON.stringify(prices));
       }
 
       function getBasePrice(productKey = activeOptionsProduct) {
@@ -3331,9 +3362,73 @@
       }
 
       function saveBasePrice(productKey, price) {
-        const prices = readBasePrices();
+        const prices = { ...readBasePrices() };
         prices[productKey] = price;
-        localStorage.setItem(OPTION_BASE_PRICE_KEY, JSON.stringify(prices));
+        basePriceStore = normalizeBasePrices(prices);
+        writeLocalBasePrices(basePriceStore);
+        scheduleOptionSave();
+      }
+
+      function hasSavedOptionStore(options) {
+        return options && typeof options === "object" && OPTION_PRODUCT_KEYS.some((productKey) => Array.isArray(options[productKey]));
+      }
+
+      function hasSavedBasePrices(basePrices) {
+        return basePrices && typeof basePrices === "object" && OPTION_PRODUCT_KEYS.some((productKey) => Object.prototype.hasOwnProperty.call(basePrices, productKey));
+      }
+
+      async function loadOptionsFromServer() {
+        try {
+          const response = await fetch(OPTIONS_API_URL, { headers: { Accept: "application/json" } });
+          if (!response.ok) throw new Error("可选配置加载失败");
+          const data = await response.json();
+          optionStore = hasSavedOptionStore(data.options) ? normalizeOptionStore(data.options) : readLocalOptions();
+          basePriceStore = hasSavedBasePrices(data.basePrices) ? normalizeBasePrices(data.basePrices) : readLocalBasePrices();
+          writeLocalOptions(optionStore);
+          writeLocalBasePrices(basePriceStore);
+          if (optionsModal.classList.contains("open")) renderOptions(activeOptionsProduct);
+        } catch (error) {
+          optionStore = readLocalOptions();
+          basePriceStore = readLocalBasePrices();
+          console.warn(error);
+        }
+      }
+
+      function scheduleOptionSave() {
+        window.clearTimeout(optionSaveTimer);
+        optionSaveTimer = window.setTimeout(saveOptionsToServer, 250);
+      }
+
+      async function saveOptionsToServer() {
+        if (!canEditOptions()) return;
+        try {
+          const response = await fetch(OPTIONS_API_URL, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify({
+              options: readOptions(),
+              basePrices: readBasePrices()
+            })
+          });
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.message || "可选配置保存失败");
+          }
+          const data = await response.json();
+          if (hasSavedOptionStore(data.options)) {
+            optionStore = normalizeOptionStore(data.options);
+            writeLocalOptions(optionStore);
+          }
+          if (hasSavedBasePrices(data.basePrices)) {
+            basePriceStore = normalizeBasePrices(data.basePrices);
+            writeLocalBasePrices(basePriceStore);
+          }
+        } catch (error) {
+          console.warn(error);
+        }
       }
 
       function escapeHtml(value) {
@@ -3822,6 +3917,7 @@
         updateOptionsAuth();
       });
       updateOptionsAuth();
+      loadOptionsFromServer();
       openViewers.forEach((button) => {
         button.addEventListener("click", () => toggleViewer(true, button.dataset.viewerOpen));
       });

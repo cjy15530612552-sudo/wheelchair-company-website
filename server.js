@@ -49,8 +49,10 @@ const finishedModelsFile = path.join(dataDir, "finished-models.json");
 const customerDirectoryFile = path.join(dataDir, "customer-directory.json");
 const electricComparisonFile = path.join(dataDir, "electric-comparison.json");
 const manualComparisonFile = path.join(dataDir, "manual-comparison.json");
+const electricOptionsFile = path.join(dataDir, "electric-options.json");
 const smsCodesFile = path.join(dataDir, "sms-codes.json");
 const port = Number(process.env.PORT || 3000);
+const fastApiBaseUrl = process.env.FASTAPI_BASE_URL || "http://127.0.0.1:8000";
 
 const sessions = new Map();
 const sessionMaxAgeSeconds = 60 * 60 * 8;
@@ -59,6 +61,21 @@ const smsScenes = new Set(["register", "sms_login", "reset_password"]);
 const smsCodeTtlSeconds = 5 * 60;
 const smsResendSeconds = 60;
 const phonePattern = /^1[3-9]\d{9}$/;
+const electricOptionProductKeys = new Set([
+    "product1",
+    "product2",
+    "product3",
+    "product4",
+    "product5",
+    "product6",
+    "product7",
+    "product8",
+    "product9",
+    "product10",
+    "product11",
+    "product12",
+    "product13"
+]);
 
 const contentTypes = {
     ".html": "text/html; charset=utf-8",
@@ -152,6 +169,10 @@ function ensureDataStore() {
 
     if (!fs.existsSync(manualComparisonFile)) {
         writeManualComparison(seedManualComparison());
+    }
+
+    if (!fs.existsSync(electricOptionsFile)) {
+        writeElectricOptions({ options: {}, basePrices: {} });
     }
 }
 
@@ -631,6 +652,105 @@ function writeManualComparison(items) {
     fs.writeFileSync(manualComparisonFile, `${JSON.stringify(items, null, 2)}\n`, "utf8");
 }
 
+function normalizeElectricOptionItem(item) {
+    const source = item && typeof item === "object" ? item : {};
+    const name = String(source.name || "").trim();
+    const isDefault = Boolean(source.isDefault || source.default || source.isDefaultOption);
+
+    return {
+        name: name || "未命名配置",
+        price: isDefault ? 0 : Math.max(0, Number(source.price) || 0),
+        isDefault
+    };
+}
+
+function normalizeElectricOptionCategories(categories) {
+    if (!Array.isArray(categories)) {
+        return [];
+    }
+
+    return categories.map((category) => {
+        const source = category && typeof category === "object" ? category : {};
+        const items = Array.isArray(source.items) ? source.items.map(normalizeElectricOptionItem) : [];
+        let hasDefault = false;
+
+        items.forEach((item) => {
+            if (!item.isDefault) {
+                return;
+            }
+
+            if (hasDefault) {
+                item.isDefault = false;
+                return;
+            }
+
+            item.price = 0;
+            hasDefault = true;
+        });
+
+        return {
+            name: String(source.name || "").trim() || "未命名种类",
+            items
+        };
+    });
+}
+
+function normalizeElectricOptionMap(options) {
+    const source = options && typeof options === "object" && !Array.isArray(options) ? options : {};
+    const normalized = {};
+
+    Object.entries(source).forEach(([productKey, categories]) => {
+        if (!electricOptionProductKeys.has(productKey)) {
+            return;
+        }
+
+        normalized[productKey] = normalizeElectricOptionCategories(categories);
+    });
+
+    return normalized;
+}
+
+function normalizeElectricOptionBasePrices(basePrices) {
+    const source = basePrices && typeof basePrices === "object" && !Array.isArray(basePrices) ? basePrices : {};
+    const normalized = {};
+
+    Object.entries(source).forEach(([productKey, price]) => {
+        if (!electricOptionProductKeys.has(productKey)) {
+            return;
+        }
+
+        const numericPrice = Number(price);
+        if (Number.isFinite(numericPrice) && numericPrice >= 0) {
+            normalized[productKey] = numericPrice;
+        }
+    });
+
+    return normalized;
+}
+
+function normalizeElectricOptionsPayload(payload) {
+    const source = payload && typeof payload === "object" && !Array.isArray(payload) ? payload : {};
+    const hasEnvelope = Object.prototype.hasOwnProperty.call(source, "options") || Object.prototype.hasOwnProperty.call(source, "basePrices");
+
+    return {
+        options: normalizeElectricOptionMap(hasEnvelope ? source.options : source),
+        basePrices: normalizeElectricOptionBasePrices(source.basePrices)
+    };
+}
+
+function readElectricOptions() {
+    ensureDataStore();
+    return normalizeElectricOptionsPayload(readJsonFile(electricOptionsFile));
+}
+
+function writeElectricOptions(payload) {
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    fs.writeFileSync(electricOptionsFile, `${JSON.stringify(normalizeElectricOptionsPayload(payload), null, 2)}\n`, "utf8");
+}
+
 function publicEmployee(employee) {
     const username = employee.username || "";
 
@@ -726,6 +846,28 @@ function employeePhone(employee) {
 
 function findPhoneAccount(phone, activeOnly = true) {
     return readEmployees().find((employee) => employeePhone(employee) === phone && (!activeOnly || employee.active !== false)) || null;
+}
+
+function createSmsCustomerAccount(phone) {
+    const now = new Date().toISOString();
+    const employee = {
+        id: crypto.randomUUID(),
+        username: phone,
+        phone,
+        name: `客户${phone.slice(-4)}`,
+        department: "客户",
+        role: "客户",
+        permissions: [],
+        active: true,
+        passwordHash: hashPassword(crypto.randomBytes(24).toString("hex")),
+        createdAt: now,
+        registeredAt: now,
+        authProvider: "sms"
+    };
+    const employees = readEmployees();
+    employees.push(employee);
+    writeEmployees(employees);
+    return employee;
 }
 
 function ensurePasswordValue(value) {
@@ -899,6 +1041,19 @@ function sendJson(res, statusCode, payload, extraHeaders = {}) {
         ...extraHeaders
     });
     res.end(JSON.stringify(payload));
+}
+
+async function forwardFastApiJson(apiPath, payload) {
+    const response = await fetch(`${fastApiBaseUrl}${apiPath}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify(payload || {})
+    });
+    const data = await response.json().catch(() => ({}));
+    return { status: response.status, data };
 }
 
 function redirect(res, location) {
@@ -1518,6 +1673,40 @@ async function handleApi(req, res, url) {
         return;
     }
 
+    if (url.pathname === "/api/sms/send-code" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+
+        try {
+            const upstream = await forwardFastApiJson("/api/sms/send-code", { phone });
+            sendJson(res, upstream.status, upstream.data);
+        } catch (error) {
+            sendJson(res, 502, { message: "短信服务暂时不可用，请确认 FastAPI 后端正在运行" });
+        }
+        return;
+    }
+
+    if (url.pathname === "/api/auth/sms-login" && req.method === "POST") {
+        const body = await readBody(req);
+        const phone = normalizePhone(body.phone);
+
+        verifySmsCode(phone, body.code, "sms_login");
+
+        let employee = findPhoneAccount(phone, false);
+
+        if (employee && employee.active === false) {
+            sendJson(res, 403, { message: "账号已停用，请联系管理员" });
+            return;
+        }
+
+        if (!employee) {
+            employee = createSmsCustomerAccount(phone);
+        }
+
+        sendLoginResponse(res, employee);
+        return;
+    }
+
     if (url.pathname === "/api/auth/sms/send" && req.method === "POST") {
         const body = await readBody(req);
         const phone = normalizePhone(body.phone);
@@ -1662,6 +1851,31 @@ async function handleApi(req, res, url) {
         sendJson(res, 200, { message: "已退出登录" }, {
             "Set-Cookie": "session=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax"
         });
+        return;
+    }
+
+    if (url.pathname === "/api/electric-options" && req.method === "GET") {
+        sendJson(res, 200, readElectricOptions());
+        return;
+    }
+
+    if (url.pathname === "/api/electric-options" && req.method === "PUT") {
+        const user = requireEmployeeAccess(req, res);
+
+        if (!user) {
+            return;
+        }
+
+        try {
+            const body = await readBody(req);
+            const payload = normalizeElectricOptionsPayload(body);
+
+            writeElectricOptions(payload);
+            sendJson(res, 200, { message: "可选配置已保存", ...payload });
+        } catch (error) {
+            sendJson(res, 400, { message: error.message || "可选配置保存失败" });
+        }
+
         return;
     }
 

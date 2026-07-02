@@ -37,6 +37,7 @@ FINISHED_MODELS_FILE = DATA_DIR / "finished-models.json"
 CUSTOMER_DIRECTORY_FILE = DATA_DIR / "customer-directory.json"
 ELECTRIC_COMPARISON_FILE = DATA_DIR / "electric-comparison.json"
 MANUAL_COMPARISON_FILE = DATA_DIR / "manual-comparison.json"
+ELECTRIC_OPTIONS_FILE = DATA_DIR / "electric-options.json"
 SMS_CODES_FILE = DATA_DIR / "sms-codes.json"
 
 SESSION_COOKIE = "session"
@@ -47,6 +48,7 @@ SMS_SCENES = {"register", "sms_login", "reset_password"}
 SMS_CODE_TTL_SECONDS = 5 * 60
 SMS_RESEND_SECONDS = 60
 PHONE_PATTERN = re.compile(r"^1[3-9]\d{9}$")
+ELECTRIC_OPTION_PRODUCT_KEYS = {f"product{index}" for index in range(1, 14)}
 
 sessions: dict[str, dict[str, Any]] = {}
 app = FastAPI(title="Wheelchair Website Backend", docs_url=None, redoc_url=None)
@@ -87,6 +89,25 @@ def write_json_file(file_path: Path, items: list[dict[str, Any]]) -> None:
     tmp_path = file_path.with_suffix(file_path.suffix + ".tmp")
     with tmp_path.open("w", encoding="utf-8") as file:
         json.dump(items, file, ensure_ascii=False, indent=2)
+        file.write("\n")
+    tmp_path.replace(file_path)
+
+
+def read_json_value(file_path: Path, fallback: Any) -> Any:
+    if not file_path.exists():
+        return fallback
+    with file_path.open("r", encoding="utf-8-sig") as file:
+        try:
+            return json.load(file)
+        except json.JSONDecodeError:
+            return fallback
+
+
+def write_json_value(file_path: Path, value: Any) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    tmp_path = file_path.with_suffix(file_path.suffix + ".tmp")
+    with tmp_path.open("w", encoding="utf-8") as file:
+        json.dump(value, file, ensure_ascii=False, indent=2)
         file.write("\n")
     tmp_path.replace(file_path)
 
@@ -214,6 +235,8 @@ def ensure_data_store() -> None:
     for file_path, seed_func in defaults.items():
         if not file_path.exists():
             write_json_file(file_path, seed_func())
+    if not ELECTRIC_OPTIONS_FILE.exists():
+        write_json_value(ELECTRIC_OPTIONS_FILE, {"options": {}, "basePrices": {}})
 
 
 def read_employees() -> list[dict[str, Any]]:
@@ -288,6 +311,15 @@ def write_manual_comparison(items: list[dict[str, Any]]) -> None:
     write_json_file(MANUAL_COMPARISON_FILE, items)
 
 
+def read_electric_options() -> dict[str, Any]:
+    ensure_data_store()
+    return normalize_electric_options_payload(read_json_value(ELECTRIC_OPTIONS_FILE, {"options": {}, "basePrices": {}}))
+
+
+def write_electric_options(payload: dict[str, Any]) -> None:
+    write_json_value(ELECTRIC_OPTIONS_FILE, normalize_electric_options_payload(payload))
+
+
 def public_employee(employee: dict[str, Any]) -> dict[str, Any]:
     username = employee.get("username", "")
     return {
@@ -350,6 +382,27 @@ def find_phone_account(phone: str, active_only: bool = True) -> dict[str, Any] |
     )
 
 
+def create_sms_customer_account(phone: str) -> dict[str, Any]:
+    employee = {
+        "id": str(uuid.uuid4()),
+        "username": phone,
+        "phone": phone,
+        "name": f"客户{phone[-4:]}",
+        "department": "客户",
+        "role": "客户",
+        "permissions": [],
+        "active": True,
+        "passwordHash": hash_password(secrets.token_urlsafe(32)),
+        "createdAt": now_iso(),
+        "registeredAt": now_iso(),
+        "authProvider": "sms",
+    }
+    items = read_employees()
+    items.append(employee)
+    write_employees(items)
+    return employee
+
+
 def ensure_password_value(value: Any, field_name: str = "password") -> str:
     password = str(value or "")
     if not password:
@@ -359,22 +412,71 @@ def ensure_password_value(value: Any, field_name: str = "password") -> str:
     return password
 
 
+def sms_env_value(primary_name: str, alias_name: str | None = None) -> str:
+    value = os.getenv(primary_name, "").strip()
+    if value:
+        return value
+    return os.getenv(alias_name or "", "").strip() if alias_name else ""
+
+
+def tencent_sms_settings() -> dict[str, str]:
+    settings = {
+        "secret_id": sms_env_value("TENCENT_SECRET_ID", "TENCENTCLOUD_SECRET_ID"),
+        "secret_key": sms_env_value("TENCENT_SECRET_KEY", "TENCENTCLOUD_SECRET_KEY"),
+        "sdk_app_id": sms_env_value("TENCENT_SMS_SDK_APP_ID"),
+        "sign_name": sms_env_value("TENCENT_SMS_SIGN_NAME"),
+        "template_id": sms_env_value("TENCENT_SMS_TEMPLATE_ID"),
+    }
+    missing = [name for name, value in settings.items() if not value]
+    if missing:
+        raise HTTPException(status_code=500, detail="短信服务配置不完整")
+    return settings
+
+
 def send_sms_code(phone: str, code: str) -> None:
-    configured = all(
-        os.getenv(name)
-        for name in (
-            "TENCENTCLOUD_SECRET_ID",
-            "TENCENTCLOUD_SECRET_KEY",
-            "TENCENT_SMS_SDK_APP_ID",
-            "TENCENT_SMS_SIGN_NAME",
-            "TENCENT_SMS_TEMPLATE_ID",
+    settings = tencent_sms_settings()
+    try:
+        from tencentcloud.common import credential
+        from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
+        from tencentcloud.common.profile.client_profile import ClientProfile
+        from tencentcloud.common.profile.http_profile import HttpProfile
+        from tencentcloud.sms.v20210111 import models, sms_client
+    except ImportError as error:
+        raise HTTPException(status_code=500, detail="腾讯云短信 SDK 未安装，请执行 pip install -r requirements.txt") from error
+
+    try:
+        cred = credential.Credential(settings["secret_id"], settings["secret_key"])
+        http_profile = HttpProfile()
+        http_profile.endpoint = "sms.tencentcloudapi.com"
+        client_profile = ClientProfile()
+        client_profile.httpProfile = http_profile
+        client = sms_client.SmsClient(cred, "ap-guangzhou", client_profile)
+        request = models.SendSmsRequest()
+        request.from_json_string(
+            json.dumps(
+                {
+                    "PhoneNumberSet": [f"+86{phone}"],
+                    "SmsSdkAppId": settings["sdk_app_id"],
+                    "SignName": settings["sign_name"],
+                    "TemplateId": settings["template_id"],
+                    "TemplateParamSet": [code, str(SMS_CODE_TTL_SECONDS // 60)],
+                }
+            )
         )
-    )
-    if configured:
-        # Tencent Cloud SMS integration can be placed here. Keep secrets in .env only.
-        print(f"[sms] Tencent SMS config detected; development fallback code for {phone}: {code}")
-        return
-    print(f"[sms][dev] 手机号 {phone} 的验证码是 {code}，5分钟内有效。")
+        response = client.SendSms(request)
+    except TencentCloudSDKException as error:
+        raise HTTPException(status_code=502, detail=f"短信发送失败：{error.message}") from error
+    except Exception as error:
+        raise HTTPException(status_code=502, detail="短信发送失败，请稍后再试") from error
+
+    status_set = getattr(response, "SendStatusSet", None) or []
+    if not status_set:
+        raise HTTPException(status_code=502, detail="短信发送失败：腾讯云未返回发送状态")
+    first_status = status_set[0]
+    status_code = str(getattr(first_status, "Code", "") or "")
+    if status_code.lower() != "ok":
+        message = str(getattr(first_status, "Message", "") or "腾讯云短信服务拒绝发送")
+        raise HTTPException(status_code=502, detail=f"短信发送失败：{message}")
 
 
 def issue_sms_code(phone: str, scene: str) -> None:
@@ -385,9 +487,12 @@ def issue_sms_code(phone: str, scene: str) -> None:
             created_at = parse_iso_datetime(item.get("created_at"))
             if created_at and (now - created_at).total_seconds() < SMS_RESEND_SECONDS:
                 raise HTTPException(status_code=429, detail="验证码发送太频繁，请稍后再试")
-            item["used"] = True
 
     code = f"{secrets.randbelow(1_000_000):06d}"
+    send_sms_code(phone, code)
+    for item in codes:
+        if item.get("phone") == phone and item.get("scene") == scene and not item.get("used"):
+            item["used"] = True
     codes.append(
         {
             "id": str(uuid.uuid4()),
@@ -400,7 +505,6 @@ def issue_sms_code(phone: str, scene: str) -> None:
         }
     )
     write_sms_codes(codes)
-    send_sms_code(phone, code)
 
 
 def verify_sms_code(phone: str, code: Any, scene: str) -> None:
@@ -801,6 +905,71 @@ def normalize_manual_comparison_rows(items: list[dict[str, Any]]) -> list[dict[s
     return rows
 
 
+def normalize_electric_option_item(item: Any) -> dict[str, Any]:
+    source = item if isinstance(item, dict) else {}
+    name = str(source.get("name") or "").strip() or "未命名配置"
+    is_default = bool(source.get("isDefault") or source.get("default") or source.get("isDefaultOption"))
+    price = 0 if is_default else max(0, float(source.get("price") or 0))
+    return {"name": name, "price": price, "isDefault": is_default}
+
+
+def normalize_electric_option_categories(categories: Any) -> list[dict[str, Any]]:
+    if not isinstance(categories, list):
+        return []
+    normalized_categories = []
+    for category in categories:
+        source = category if isinstance(category, dict) else {}
+        raw_items = source.get("items")
+        items = [normalize_electric_option_item(item) for item in raw_items] if isinstance(raw_items, list) else []
+        has_default = False
+        for item in items:
+            if not item["isDefault"]:
+                continue
+            if has_default:
+                item["isDefault"] = False
+                continue
+            item["price"] = 0
+            has_default = True
+        normalized_categories.append({"name": str(source.get("name") or "").strip() or "未命名种类", "items": items})
+    return normalized_categories
+
+
+def normalize_electric_option_map(options: Any) -> dict[str, list[dict[str, Any]]]:
+    if not isinstance(options, dict):
+        return {}
+    normalized: dict[str, list[dict[str, Any]]] = {}
+    for product_key, categories in options.items():
+        if product_key not in ELECTRIC_OPTION_PRODUCT_KEYS:
+            continue
+        normalized[product_key] = normalize_electric_option_categories(categories)
+    return normalized
+
+
+def normalize_electric_option_base_prices(base_prices: Any) -> dict[str, float]:
+    if not isinstance(base_prices, dict):
+        return {}
+    normalized: dict[str, float] = {}
+    for product_key, price in base_prices.items():
+        if product_key not in ELECTRIC_OPTION_PRODUCT_KEYS:
+            continue
+        try:
+            numeric_price = float(price)
+        except (TypeError, ValueError):
+            continue
+        if numeric_price >= 0:
+            normalized[product_key] = numeric_price
+    return normalized
+
+
+def normalize_electric_options_payload(payload: Any) -> dict[str, Any]:
+    source = payload if isinstance(payload, dict) else {}
+    has_envelope = "options" in source or "basePrices" in source
+    return {
+        "options": normalize_electric_option_map(source.get("options") if has_envelope else source),
+        "basePrices": normalize_electric_option_base_prices(source.get("basePrices")),
+    }
+
+
 def csv_cell(value: Any) -> str:
     text = str("" if value is None else value)
     if text.startswith(("=", "+", "-", "@")):
@@ -838,6 +1007,29 @@ def health() -> dict[str, str]:
 def me(request: Request) -> dict[str, Any]:
     employee = get_session_user(request)
     return {"loggedIn": bool(employee), "user": public_employee(employee) if employee else None}
+
+
+@app.post("/api/sms/send-code")
+async def send_sms_login_code(request: Request) -> dict[str, Any]:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    issue_sms_code(phone, "sms_login")
+    return {"success": True, "message": "验证码已发送"}
+
+
+@app.post("/api/auth/sms-login")
+async def sms_login_or_register(request: Request) -> Response:
+    body = await read_body(request)
+    phone = normalize_phone(body.get("phone"))
+    verify_sms_code(phone, body.get("code"), "sms_login")
+    employee = find_phone_account(phone, active_only=False)
+
+    if employee and employee.get("active") is False:
+        raise HTTPException(status_code=403, detail="账号已停用，请联系管理员")
+    if not employee:
+        employee = create_sms_customer_account(phone)
+
+    return login_response(employee, "登录成功")
 
 
 @app.post("/api/auth/sms/send")
@@ -949,6 +1141,19 @@ def logout(request: Request) -> Response:
     response = JSONResponse({"message": "已退出登录"})
     response.delete_cookie(SESSION_COOKIE, path="/", samesite="lax", secure=COOKIE_SECURE, httponly=True)
     return response
+
+
+@app.get("/api/electric-options")
+def electric_options() -> dict[str, Any]:
+    return read_electric_options()
+
+
+@app.put("/api/electric-options")
+async def update_electric_options(request: Request) -> dict[str, Any]:
+    require_employee_access(request)
+    payload = normalize_electric_options_payload(await read_body(request))
+    write_electric_options(payload)
+    return {"message": "可选配置已保存", **payload}
 
 
 @app.get("/api/electric-comparison")
